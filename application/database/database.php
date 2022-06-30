@@ -1,71 +1,118 @@
 <?php
 
-class Database 
+//database wrapper class
+class DB
 {
-    private $host = 'localhost';
-    private $user = 'root';
-    private $pass = '';
-    private $dbname = 'fitmissive';
-    
-    private $dbh;
-    private $stmt;
-    
-    public function __construct()
+    private static $_instance = null;
+    private $_pdo,
+            $_query, 
+            $_error, 
+            $_results, 
+            $_count = 0;
+
+    private function __construct()
     {
-        // Set DSN
-        $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
-        // Set options
-        $options = array(
-            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        );
-        // Create a new PDO instance
-        try {
-            $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
-        } catch (PDOException $e) {
+        try
+        {
+            $this->_pdo = new PDO('mysql:host=' . Config::get('mysql/host') . ';dbname=' . Config::get('mysql/db'), 
+                                    Config::get('mysql/username'), 
+                                    Config::get('mysql/password'));
+        }
+        catch (PDOException $e)
+        {
             die($e->getMessage());
         }
     }
-    
-    public function query($query)
+
+    public static function getInstance()
     {
-        $this->stmt = $this->dbh->prepare($query);
+        if (!isset(self::$_instance))
+        {
+            self::$_instance = new DB();
+        }
+
+        return self::$_instance;
     }
-    
-    public function bind($param, $value, $type = null)
+
+    public function query($sql, $params = array())
     {
-        if (is_null($type)) {
-            switch (true) {
-                case is_int($value):
-                    $type = PDO::PARAM_INT;
-                    break;
-                case is_bool($value):
-                    $type = PDO::PARAM_BOOL;
-                    break;
-                case is_null($value):
-                    $type = PDO::PARAM_NULL;
-                    break;
-                default:
-                    $type = PDO::PARAM_STR;
+        $this->_error = false;
+        if ($this->_query = $this->_pdo->prepare($sql))
+        {
+            if (count($params))
+            {
+                $x = 1;
+                foreach ($params as $param)
+                {
+                    $this->_query->bindValue($x, $param);
+                    $x++;
+                }
+            }
+
+            if ($this->_query->execute())
+            {
+                $this->_results = $this->_query->fetchAll(PDO::FETCH_OBJ);
+                $this->_count = $this->_query->rowCount();
+            }
+            else
+            {
+                $this->_error = true;
             }
         }
-        $this->stmt->bindValue($param, $value, $type);
+
+        return $this;
     }
-    
-    public function execute()
+
+    public function action($action, $table, $where = array())
     {
-        return $this->stmt->execute();
+        if (count($where) === 3)
+        {
+            $operators = array('=', '>', '<', '>=', '<=');
+
+            $field      = $where[0];
+            $operator   = $where[1];
+            $value      = $where[2];
+
+            if (in_array($operator, $operators))
+            {
+                $sql = "{$action} FROM {$table} WHERE {$field} {$operator} ?";
+
+                if (!$this->query($sql, array($value))->error())
+                {
+                    return $this;
+                }
+            }
+        }
+        return false;
     }
-    
-    public function resultset()
+
+    public function get($table, $where)
     {
-        $this->execute();
-        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->action('SELECT *', $table, $where);
     }
-    
-    public function single()
+
+    public function delete($table, $where)
     {
-        $this->execute();
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+        return $this->action('DELETE', $table, $where);
     }
-}
+
+    public function error()
+    {
+        return $this->_error;
+    }
+
+    public function count()
+    {
+        return $this->_count;
+    }
+
+    public function results()
+    {
+        return $this->_results;
+    }
+
+    public function first()
+    {
+        return $this->results()[0];
+    }
+} 
