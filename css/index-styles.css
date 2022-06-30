@@ -1,0 +1,66 @@
+body, html {
+    font-family: Candara;
+    font-size: 12pt;
+}
+
+.regForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0vh;
+    top: 15vh;
+    width: 50vw;
+    height: 70vh;
+    background-color: transparent;
+    border-width: 0px 3px 0px 0px;
+    border-style: solid;
+    border-color: black;
+}
+
+.loginForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 10vh;
+    left: 50vw;
+    width: 50vw;
+    height: 80vh;
+    background-color: transparent;
+}
+
+input[type=text], input[type=password] {
+    border-radius: 7px;
+    border-color:#137547;
+    padding: 5px;
+    margin: 5px;
+    width: 200px;
+}
+
+.header, .footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3FA34D;
+    position: absolute;
+    top: 0vh;
+    left: 0vh;
+    width: 100vw;
+    height: 10vh;
+}
+
+.footer {
+    top: 90vh;
+}
+
+input[type=submit] {
+    font-size: 12pt;
+    font-family: Candara;
+    font-style: italic;
+    padding: 10px 30px;
+    border-radius: 10px;
+    border-width: 0px;
+    margin-top: 10px;
+    background-color: #5BBA6F;
+}
