@@ -25,3 +25,4 @@ spl_autoload_register(function($class) {
 require_once 'application/utilities/functions/sanitize.php';
 require_once 'application/core/app.php';
 require_once 'application/core/controller.php';
+require_once 'application/database/database.php';

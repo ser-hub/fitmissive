@@ -10,7 +10,7 @@
     <header class="header">
         <img src="/img/logo-transparent.png" alt="error" width="400px" height="60px">
     </header>
-    <form method="POST" action="home/registerAction">
+    <form method="POST" action="/home/registerAction">
         <div class="regForm">
             <table>
                 <tr>
@@ -58,7 +58,7 @@
             </table>
         </div>
     </form>
-    <form method="POST" action="home/loginAction">
+    <form method="POST" action="/home/loginAction">
         <div class="loginForm">
             <table>
                 <tr>

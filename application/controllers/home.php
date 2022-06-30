@@ -2,6 +2,12 @@
 
 class Home extends Controller
 {
+
+    public function __construct()
+    {
+        require_once 'application/services/userService.php';   
+    }
+
     public function index() 
     {
         //$user = $this->model('user');
@@ -11,14 +17,10 @@ class Home extends Controller
     public function loginAction()
     {
         $this->view('test');
-
-        echo $_POST['username'];
     }
 
     public function registerAction()
     {
-        $this->view('test');
-
-        echo $_POST['username'];
+        
     }
 }
