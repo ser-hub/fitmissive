@@ -1,0 +1,62 @@
+.headerCust,
+.footerCust {
+    display: flex;
+    align-items: center;
+    background-color: #3FA34D;
+    position: absolute;
+    top: 0vh;
+    left: 0vh;
+    width: 100vw;
+    height: 10vh;
+}
+
+.footerCust {
+    top: 90vh;
+    justify-content: center;
+}
+
+.footer-items {
+    text-align: center;
+    padding-top: 5px
+}
+
+.footer-items a {
+    color: black;
+    text-decoration: underline;
+}
+
+.menu {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    width: inherit;
+    height: inherit;
+}
+
+.items {
+    display: inherit;
+    align-items: center;
+    height: 8vh;
+    border-left: 2px solid black;
+}
+
+.table {
+    display: table;
+}
+
+.row {
+    display: table-row;
+}
+
+.cell {
+    display: table-cell;
+    padding-right: 10px;
+}
+
+.error {
+    color: #A4161A;
+}
+
+.success {
+    color: #4F772D;
+}
