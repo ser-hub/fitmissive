@@ -1,13 +1,22 @@
 <?php
 
-class User 
-{
-    private $username, $email, $password;
+namespace Application\Models;
 
-    public function __construct($username, $email, $password) {
+use Application\Utilities\Hash;
+
+class User
+{
+    private $username;
+    private $email;
+    private $password;
+    private $salt;
+
+    public function __construct($username, $email, $password)
+    {
+        $this->salt = Hash::salt(16);
         $this->username = $username;
         $this->email = $email;
-        $this->password = $password;
+        $this->password = Hash::make($password, $this->salt);
     }
 
     public function getUsername()
@@ -35,10 +44,8 @@ class User
         $this->email = $email;
     }
 
-    public function setPassword($password)
+    public function getSalt()
     {
-        $this->password = $password;
+        return $this->salt;
     }
-
-
 }
