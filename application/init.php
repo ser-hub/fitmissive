@@ -1,6 +1,8 @@
 <?php
 
-session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 $GLOBALS['config'] = array(
     'mysql' => array(
@@ -14,15 +16,23 @@ $GLOBALS['config'] = array(
         'cookie_expiry' => 604800
     ),
     'session' => array(
-        'session_name' => 'user'
+        'session_name' => 'user',
+        'register_token' => 'token1',
+        'login_token' => 'token2',
+        'weekday_tokens' => array (
+            'Monday' => 'monday_token',
+            'Tuesday' => 'tuesday_token',
+            'Wednesday' => 'wednesday_token',
+            'Thursday' => 'thursday_token',
+            'Friday' => 'friday_token',
+            'Saturday' => 'saturday_token',
+            'Sunday' => 'sunday_token'
+        )
     )
 );
 
-spl_autoload_register(function($class) {
-    require_once 'application/utilities/' . $class . '.php';
+spl_autoload_register(function ($class) {
+    require_once __DIR__ . '/../' . $class . '.php';
 });
 
-require_once 'application/utilities/functions/sanitize.php';
-require_once 'application/core/app.php';
-require_once 'application/core/controller.php';
-require_once 'application/database/database.php';
+session_start();

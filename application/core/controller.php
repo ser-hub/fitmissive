@@ -1,15 +1,17 @@
-<?php 
+<?php
 
-class Controller 
+namespace Application\Core;
+
+class Controller
 {
     protected function model($model)
     {
-        require_once 'application/models/' . $model . '.php';
+        require_once 'Application/Models/' . $model . '.php';
         return new $model;
     }
 
     protected function view($view, $data = [])
     {
-        require_once 'application/views/' . $view . '.php';
+        require_once 'Application/Views/' . $view . '.php';
     }
 }
