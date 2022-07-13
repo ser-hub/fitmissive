@@ -27,7 +27,8 @@ $GLOBALS['config'] = array(
             'Friday' => 'friday_token',
             'Saturday' => 'saturday_token',
             'Sunday' => 'sunday_token'
-        )
+        ),
+        'profile_edit_token' => 'token3',
     )
 );
 
