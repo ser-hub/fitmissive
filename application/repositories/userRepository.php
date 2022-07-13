@@ -54,9 +54,65 @@ class UserRepository
         return false;
     }
 
+    public function getAllUsersLike($keyword = null)
+    {
+        if ($keyword && is_string($keyword)) {
+            
+            $data = $this->db->get('users', array('username', 'LIKE', '%' . $keyword . '%'));
+
+            if ($data->count()) {
+                return $data->results();
+            }
+        }
+        return false;
+    }
+
+    public function getUserFollows($user = null)
+    {
+        if ($user && is_numeric($user)) {
+            $results = $this->db->get('follows', array('follower_id', '=', $user));
+
+            if ($results->count()) {
+                return $results->results();
+            }
+        }
+        return false;
+    }
+
+    public function getUserFollowers($user = null)
+    {
+        if ($user && is_numeric($user)) {
+            $results = $this->db->get('follows', array('followed_id', '=', $user));
+
+            if ($results->count()) {
+                return $results->results();
+            }
+        }
+        return false;
+    }
+
+    public function addFollow($follower, $followed)
+    {
+        $fields = array(
+            'follower_id' => $follower,
+            'followed_id' => $followed,
+            'created_at' => date('Y-m-d H:i:s'),
+        );
+
+        return $this->db->insert('follows', $fields);
+    }
+
+    public function deleteFollow($follower, $followed)
+    {
+        return $this->db->query('DELETE from follows where follower_id = ? AND followed_id = ? ', array($follower, $followed));
+    }
+
     public function updateUser($user_id, $fields = [])
     {
-        return $this->db->update('users', $user_id, $fields);
+        return $this->db->update('users', array(
+            'field' => 'user_id',
+            'value' => $user_id
+        ), $fields);
     }
 
     public function deleteUser($user)

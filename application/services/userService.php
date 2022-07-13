@@ -48,13 +48,73 @@ class UserService
         return false;
     }
 
+    public function getUser($user)
+    {
+        return $this->userRepository->find($user);
+    }
+
     public function updateUser($fields = [], $id = null)
     {
         if (!$id && $this->isUserLoggedIn()) {
-            $id = Session::get($this->sessionName);
+            $id = $this->getLoggedUser()->user_id;
         }
 
         if (!$this->userRepository->updateUser($id, $fields)) {
+            throw new Exception('Something unexpected happened.');
+        }
+    }
+
+    public function searchUsers($logged, $keyword = null)
+    {
+        $results = $this->userRepository->getAllUsersLike($keyword);
+
+        if ($results) {
+            foreach($results as $key => $result) {
+                if ($result->user_id === $logged) {
+                    unset($results[$key]);
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    public function getFollowsArrayOf($user)
+    {
+        $results = $this->userRepository->getUserFollows($user);
+
+        if ($results) {
+            $followsArray = [];
+            foreach($results as $result) {
+                $followsArray[] = $result->followed_id;
+            }
+            return $followsArray;
+        }
+        return $results;
+    }
+
+    public function getFollowsCountOf($userId)
+    {
+        $follows = $this->getFollowsArrayOf($userId);
+        return $follows ? count($follows) : 0;
+    }
+
+    public function getFollowersCountOf($userId)
+    {
+        $followers = $this->userRepository->getUserFollowers($userId);
+        return $followers ? count($followers) : 0;
+    }
+
+    public function follow($follower, $followed)
+    {
+        if (!$this->userRepository->addFollow($follower, $followed)) {
+            throw new Exception('Something unexpected happened.');
+        }
+    }
+
+    public function unfollow($follower, $followed)
+    {
+        if (!$this->userRepository->deleteFollow($follower, $followed)) {
             throw new Exception('Something unexpected happened.');
         }
     }
