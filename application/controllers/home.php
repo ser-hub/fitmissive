@@ -17,15 +17,15 @@ class Home extends Controller
         $this->userService = UserService::getInstance();
         $this->splitService = SplitService::getInstance();
 
+        if (!$this->userService->isUserLoggedIn()) {
+            Redirect::to('/index');
+        }
+
         $this->loggedUser = $this->userService->getLoggedUser()->user_id;
     }
 
     public function index()
     {
-        //$this->userService->logout();
-
-        $this->checkUser();
-
         if ($this->loggedUser) {
             $this->view('home/home', array(
                 'loggedUser' => $this->loggedUser,
@@ -45,6 +45,7 @@ class Home extends Controller
                 if (!empty($_POST)) {
                     $data['addInput'] = $_POST;
                 }
+                $data['addInput']['day'] = $day;
 
                 $validate = new Validate();
                 $validate->check($_POST, array(
@@ -75,35 +76,20 @@ class Home extends Controller
                 } else {
                     $data['addErrors'] = $validate->errors();
                 }
-                $this->view('home/home', $this->view('home/home', array(
+                $this->view('home/home', array(
                     'splits' => $this->splitService->splitsOf($this->loggedUser),
                     'loggedUser' => $this->loggedUser,
                     'data' => $data,
-                )));
+                ));
                 return;
             }
         }
         $this->index();
     }
 
-    public function search($username)
-    {
-    }
-
     public function logout()
     {
         $this->userService->logout();
         Redirect::to('/index');
-    }
-
-    public function profile()
-    {
-    }
-
-    private function checkUser()
-    {
-        if (!$this->userService->isUserLoggedIn()) {
-            Redirect::to('/index');
-        }
     }
 }
