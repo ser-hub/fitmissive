@@ -1,8 +1,14 @@
+* {
+    font-family: Candara;
+    font-size: 12pt;
+    line-height: normal;
+}
+
 .headerCust,
 .footerCust {
     display: flex;
     align-items: center;
-    background-color: #3FA34D;
+    background-color: #2A9D8F;
     position: absolute;
     top: 0vh;
     left: 0vh;
@@ -37,11 +43,38 @@
     display: inherit;
     align-items: center;
     height: 8vh;
-    border-left: 2px solid black;
+}
+
+.menu-item {
+    background-color: white;
+    border-radius: 10px;
+    border-width: 0px;
+    padding: 6px 12px;
+}
+
+input[type=text],
+input[type=password],
+textarea {
+    caret-color: #2A9D8F;
+}
+
+input[type=submit]:hover {
+    background-color: #ADE8F4;
+}
+
+input[type=text]:hover,
+input[type=password]:hover,
+input[type=text]:focus,
+input[type=password]:focus,
+textarea:hover,
+textarea:focus {
+    outline-color: /*#FFAFCC*/ #2A9D8F;
 }
 
 .table {
     display: table;
+    width: wrap-content;
+    margin: 0px;
 }
 
 .row {

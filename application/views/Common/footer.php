@@ -2,8 +2,8 @@
     <div class="table">
         <div class="row">
             <div class="footer-items">
-                <a href="/index">Contacts</a> | <a href="/home">Home</a> | <a href="/index">About Us</a> |
-                <a href="/index">Privacy policy</a> | <a href="/index">Terms & Conditions</a>
+                <a href="/home">Home</a> | <a href="/info/contacts">Contacts</a> | <a href="/info/aboutUs">About Us</a> |
+                <a href="/info/privacyPolicy">Privacy policy</a> | <a href="/info/TermsConditions">Terms & Conditions</a>
             </div>
         </div>
         <div class="row">

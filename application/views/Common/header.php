@@ -4,18 +4,16 @@
     <?php if ($isLoggedIn) { ?>
         <div class="menu">
             <div class="items">
-                <form action="/home/search">
-                    <input type="text" name="search" placeholder="Search users" style="margin: 8px">
-                    <input type="submit" value="Search" style="margin-right:30px">
+                <form action="/search">
+                    <input type="text" class="menu-item" class name="search" placeholder="Search users" style="margin: 8px"
+                    value="<?php if (isset($data['keyword'])) echo $data['keyword'] ?>">
+                    <input type="submit" class="menu-item" value="Search" style="margin-right:30px">
                 </form>
-                <form action="/home" method="POST">
-                    <input type="submit" style="margin-right: 10px" value="My splits">
-                </form action="/home/profile">
-                <form>
-                    <input type="submit" value="My profile">
+                <form action="/profile">
+                    <input type="submit" class="menu-item" value="My profile">
                 </form>
                 <form action="/home/logout">
-                    <input type="submit" style="margin: 10px" value="Log out">
+                    <input type="submit" class="menu-item" style="margin: 10px" value="Log out">
                 </form>
             </div>
         </div>
