@@ -2,7 +2,7 @@
 
 use Application\Utilities\{Token, Functions, Input};
 
-$today = date('w');
+$today = date('N');
 $dayOfWeek = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
 $splits = null;
 $errors = null;
@@ -13,9 +13,16 @@ $isEdit = Input::keyExists('edit');
 if (isset($data['splits'])) $splits = $data['splits'];
 if (isset($data['data']['addErrors'])) $errors = $data['data']['addErrors'];
 if (isset($data['data']['addInput'])) $inputs = $data['data']['addInput'];
-if (isset($inputs['day'])) $today = array_search($inputs['day'], $dayOfWeek) + 1;
-if ($isEdit) {
+if (Input::keyExists('day')) {
     $day = Input::get('day');
+    $today = array_search($day, $dayOfWeek) + 1;
+}
+elseif (isset($inputs['day']))
+{
+    $day = $inputs['day'];
+    $today = array_search($day, $dayOfWeek) + 1;
+}
+if ($isEdit) {
     $edit = $splits[$day];
     unset($splits[$day]);
 }
@@ -31,9 +38,9 @@ if ($isEdit) {
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="/css/home.css" type="text/css">
+    
     <link rel="stylesheet" href="/css/common.css" type="text/css">
+    <link rel="stylesheet" href="/css/home.css" type="text/css">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 
@@ -65,7 +72,7 @@ if ($isEdit) {
                                 <form action="/home/update/<?php echo $dayOfWeek[$i] ?>" method="POST">
                                     <div class="add-form-description">
                                         <textarea class="description-area" id="description" rows="3" name="description" <?php if (!isset($errors)) echo "style='height: 45vh'"; ?> 
-                                        placeholder="Describe your split"><?php
+                                        placeholder="Describe your split" maxlength="800"><?php
                                                                             if (isset($inputs['description']) && $i + 1 == $today) echo Functions::escape($inputs['description']);
                                                                             else if ($isEdit) echo $edit->description;
                                                                             ?></textarea>
@@ -89,7 +96,7 @@ if ($isEdit) {
                                 </form>
                             <?php } else { ?>
 
-                                <input type="text" class="title-text" name="title" placeholder="Add a title" 
+                                <input type="text" class="title-text" name="title" placeholder="Add a title" maxlength="45" 
                                 value="<?php
                                         if (isset($inputs['title']) && $i + 1 == $today) echo Functions::escape($inputs['title']);
                                         else if ($isEdit) echo $edit->title;
@@ -98,7 +105,6 @@ if ($isEdit) {
                                     <input type="hidden" name="isEdit" value="true">
                                 <?php } ?>
                                 <input type="hidden" name="token" value="<?php echo Token::generate('session/weekday_tokens/' . $dayOfWeek[$i]); ?>">
-                                <!-- <input type="hidden" name="day" value="<?php echo $dayOfWeek[$i] ?>"> -->
                                 <input type="submit" class="submit-button" value="Save">
                                 </form>
 

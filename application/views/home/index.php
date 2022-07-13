@@ -8,8 +8,8 @@ use Application\Utilities\{Token, Session, Functions};
 
 <head>
     <title>Fitmissive</title>
-    <link rel="stylesheet" href="/css/index.css" type="text/css">
     <link rel="stylesheet" href="/css/common.css" type="text/css">
+    <link rel="stylesheet" href="/css/index.css" type="text/css">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 
@@ -60,15 +60,15 @@ use Application\Utilities\{Token, Session, Functions};
                         </div>
                     </div>
                 </div>
-                <div class="table">
-                    <div class="row">
-                        <div style="padding-left: 120px">
+                <div>
+                    <div>
+                        <div class="row-custom">
                             <input type="hidden" name="RegisterToken" value="<?php echo Token::generate('session/register_token'); ?>">
                             <input type="submit" name="submitRegistration" value="Register">
                         </div>
                     </div>
                     <!-- Errors -->
-                    <div class="row">
+                    <div class="row-custom">
                         <?php
                         $errorsLabel = 'RegErrors';
                         if (isset($data[$errorsLabel]) || Session::exists('error') || Session::exists('success')) {
@@ -109,17 +109,16 @@ use Application\Utilities\{Token, Session, Functions};
                         </div>
                     </div>
                 </div>
-                <div class="table">
-                    <div class="row">
-                        <div style="text-align:center;">
+                <div>
+                    <div>
+                        <div class="row-custom">
                             <input type="hidden" name="LoginToken" value="<?php echo Token::generate('session/login_token'); ?>">
                             <input type="submit" name="submitLogin" value="Login">
                         </div>
                     </div>
-                    <div class="row">
-                        <div style="text-align:center; padding: 15px 0px;">
-                            Forgot your password?
-                            <a href="forgot-password.php">Click here to reset it.</a>
+                    <div>
+                        <div class="row-custom">
+                            Forgot your password? <a href="/index/forgotPassword">Click here to reset it.</a>
                         </div>
                     </div>
                     <!-- Errors -->
