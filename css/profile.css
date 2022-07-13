@@ -1,0 +1,101 @@
+.carousel-area {
+    width: 70vw;
+    left: 30vw;
+}
+
+.carousel-content {
+    display: flex;
+    background-color: #ADB5BD /*#C5C3C6*/;
+    justify-content: center;
+    height: 70vh;
+    width: 70vw;
+}
+
+.profile-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    height: 70vh;
+    width: 30vw;
+    top: 15vh;
+}
+
+.profile-data 
+input[type=submit] {
+    background-color: #ADB5BD;
+}
+
+.profile-data 
+input[type=text],
+.profile-data 
+textarea {
+    border: 2px #2A9D8F solid;
+    resize: none;
+}
+
+.profile-data 
+input[type=submit]:hover {
+    background-color: #ADE8F4;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.header span{
+    display: block;
+    font-size: 15pt;
+}
+
+.body {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.description-section {
+    height: auto;
+    margin: 15px 10px;
+    overflow-y: auto;
+}
+
+.description {
+    white-space: pre-wrap;
+}
+
+.footer {
+    margin: 10px 0px;
+}
+
+textarea {
+    width: 25vw;
+    height: 40vh;
+}
+
+img {
+    margin-right: 15px;
+}
+
+h4 {
+    display: inline-block;
+}
+
+h1,
+h4 {
+    margin-bottom: 0;
+}
+
+.description-section::-webkit-scrollbar {
+    display: none;
+}
