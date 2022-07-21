@@ -46,7 +46,11 @@ class DB
             if (count($params)) {
                 $x = 1;
                 foreach ($params as $param) {
-                    $this->query->bindValue($x, $param);
+                    if (is_int($param)) {
+                        $this->query->bindValue($x, $param, PDO::PARAM_INT);
+                    } else {
+                        $this->query->bindValue($x, $param);
+                    }
                     $x++;
                 }
             }
@@ -65,7 +69,7 @@ class DB
     public function action($action, $table, $where = [])
     {
         if (count($where) === 3) {
-            $operators = array('=', '>', '<', '>=', '<=');
+            $operators = array('=', '>', '<', '>=', '<=', 'LIKE', 'AND', 'OR');
 
             $field      = $where[0];
             $operator   = $where[1];
@@ -128,7 +132,12 @@ class DB
             $x++;
         }
 
-        $sql = "UPDATE {$table} SET {$set} WHERE {$id['field']} = {$id['value']}";
+        $sql = "UPDATE {$table} SET {$set} WHERE {$id['field']} = ";
+        if (is_string($id['value'])) {
+            $sql .= "'{$id['value']}'";
+        } else {
+            $sql .= $id['value'];
+        }
 
         if (!$this->query($sql, $fields)->error()) {
             return true;
