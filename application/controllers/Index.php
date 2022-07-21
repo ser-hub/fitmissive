@@ -4,28 +4,31 @@ namespace Application\Controllers;
 
 use Application\Core\Controller;
 use Application\Services\UserService;
-use Application\Utilities\{Redirect, Session, Validate, Input, Token};
+use Application\Utilities\{Redirect, Session, Validator, Input, Token};
 use Application\Models\User;
 
 use \Exception;
 
 class Index extends Controller
 {
-    private $userService;
+    private $data;
 
     public function __construct()
     {
         $this->userService = UserService::getInstance();
+
+        if ($this->userService->isUserLoggedIn()) {
+            Redirect::to('/home');
+        }
     }
 
     public function index()
     {
-        //$this->userService->logout();
         if ($this->userService->isUserLoggedIn()) {
             Redirect::to('/home');
         }
 
-        $this->view('home/index');
+        $this->view('home/index', $this->data);
     }
 
     public function loginAction()
@@ -38,8 +41,8 @@ class Index extends Controller
                     $data['LogInput'] = $_POST;
                 }
 
-                $validate = new Validate();
-                $validate->check($_POST, array(
+                $validator = new Validator();
+                $validator->check($_POST, array(
                     'username' => array(
                         'required' => true,
                     ),
@@ -48,7 +51,7 @@ class Index extends Controller
                     )
                 ));
 
-                if ($validate->passed()) {
+                if ($validator->passed()) {
                     $user = array(
                         'username' => Input::get('username'),
                         'password' => Input::get('password')
@@ -61,10 +64,10 @@ class Index extends Controller
                         $data['LogErrors'] = array('Username or password is incorrect.');
                     }
                 } else {
-                    $data['LogErrors'] = $validate->errors();
+                    $data['LogErrors'] = $validator->errors();
                 }
-                $this->view('home/index', $data);
-                return;
+
+                $this->data = $data;
             }
         }
         $this->index();
@@ -80,11 +83,12 @@ class Index extends Controller
                     $data['RegInput'] = $_POST;
                 }
 
-                $validate = new Validate();
-                $validate->check($_POST, array(
+                $validator = new Validator();
+                $validator->check($_POST, array(
                     'usernameReg' => array(
                         'name' => 'Username',
                         'required' => true,
+                        '!contains' => ' \\/?%&#@!*()+=,;:\'"',
                         'min' => 2,
                         'max' => 32,
                         'unique' => 'users',
@@ -110,7 +114,7 @@ class Index extends Controller
                     )
                 ));
 
-                if ($validate->passed()) {
+                if ($validator->passed()) {
                     $user = new User(
                         Input::get('usernameReg'),
                         Input::get('email'),
@@ -125,11 +129,10 @@ class Index extends Controller
                     }
                     unset($data['RegInput']);
                 } else {
-                    $data['RegErrors'] = $validate->errors();
+                    $data['RegErrors'] = $validator->errors();
                 }
 
-                $this->view('home/index', $data);
-                return;
+                $this->data = $data;
             }
         }
         $this->index();
