@@ -11,10 +11,6 @@ $GLOBALS['config'] = array(
         'password' => '',
         'db' => 'fitmissive'
     ),
-    'remember' => array(
-        'cookie_name' => 'hash',
-        'cookie_expiry' => 604800
-    ),
     'session' => array(
         'session_name' => 'user',
         'register_token' => 'token1',
@@ -29,6 +25,10 @@ $GLOBALS['config'] = array(
             'Sunday' => 'sunday_token'
         ),
         'profile_edit_token' => 'token3',
+        'profile_delete_token' => 'token4',
+        'info_update_token' => 'token5',
+        'info_create_token' => 'token6',
+        'info_delete_token' => 'token7',
     )
 );
 
