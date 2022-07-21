@@ -3,25 +3,10 @@
 namespace Application\Controllers;
 
 use Application\Core\Controller;
-use Application\Services\UserService;
-use Application\Utilities\{Input, Redirect, Session};
+use Application\Utilities\{Input, Redirect, Session, Constants};
 
 class Search extends Controller
 {
-    private $loggedUser = null;
-    private $userService;
-
-    public function __construct()
-    {
-        $this->userService = UserService::getInstance();
-
-        if (!$this->userService->isUserLoggedIn()) {
-            Redirect::to('/index');
-        }
-
-        $this->loggedUser = $this->userService->getLoggedUser()->user_id;
-    }
-
     public function index()
     {
         $lastSearch = Session::flash('last_search');
@@ -39,12 +24,34 @@ class Search extends Controller
         if (strlen($keyword)) {
             Session::flash('last_search', $keyword);
 
+            $page = 1;
+            if (Input::keyExists('page') && Input::get('page') > 0) {
+                $page = Input::get('page');
+            }
+
+            $searchResults = $this->userService->searchUsers(
+                $keyword,
+                ($page - 1) * Constants::PAGINATION_SEARCH_RESULTS_PER_PAGE,
+                Constants::PAGINATION_SEARCH_RESULTS_PER_PAGE
+            );
+
+            $profilePictures = [];
+
+            if ($searchResults) {
+                foreach($searchResults['users'] as $user) {
+                    $profilePictures[$user->user_id] = $this->userService->getPicturePathOf($user->user_id);
+                }
+            }
+
             $this->view('search', array(
-                'loggedUser' => $this->loggedUser,
                 'keyword' => $keyword,
-                'searchResults' => $this->userService->searchUsers($this->loggedUser, $keyword),
+                'searchResults' => $searchResults,
+                'profilePictures' => $profilePictures,
                 'follows' => $this->userService->getFollowsArrayOf($this->loggedUser),
             ));
+        }
+        else {
+            Redirect::to('/home');
         }
     }
 
