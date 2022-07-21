@@ -2,25 +2,21 @@
 namespace Application\Controllers;
 
 use Application\Core\Controller;
-use Application\Services\{UserService, SplitService};
-use Application\Utilities\{Input, Token, Validate, Redirect};
+use Application\Services\SplitService;
+use Application\Utilities\{Constants, Input, Token, Validator, Redirect};
 
 class profile extends Controller
 {
-    private $loggedUser = null;
-    private $userService;
+    private $loggedUserRole;
     private $splitService;
+    private $data;
 
     public function __construct()
     {
-        $this->userService = UserService::getInstance();
         $this->splitService = SplitService::getInstance();
 
-        if (!$this->userService->isUserLoggedIn()) {
-            Redirect::to('/index');
-        }
-
-        $this->loggedUser = $this->userService->getLoggedUser()->user_id;
+        parent::__construct();
+        $this->loggedUserRole = $this->userService->getLoggedUser()->role_name;
     }
     
     public function index($username = null)
@@ -30,34 +26,44 @@ class profile extends Controller
             $user = $this->userService->getUser($this->loggedUser);
         } else {
             $user = $this->userService->getUser($username);
-        }   
 
+            if (!$user){
+                $user = $this->userService->getUser($this->loggedUser);
+            }
+        }
+
+        $isAdmin = $this->loggedUserRole === Constants::USER_ROLE_ADMIN;
+        
         $loggedUserFollowsArray = $this->userService->getFollowsArrayOf($this->loggedUser);
 
         $this->view('profile', array(
-            'loggedUser' => $this->loggedUser,
+            'isAdmin' => $isAdmin,
             'user' => $user,
+            'picturePath' => $this->userService->getPicturePathOf($user->user_id),
+            'data' => $this->data,
             'splits' => $this->splitService->splitsOf($user->user_id),
             'follows' => $this->userService->getFollowsCountOf($user->user_id),
             'followers' => $this->userService->getFollowersCountOf($user->user_id),
-            'isFollowing' => $loggedUserFollowsArray ? 
+            'isFollowing' => $loggedUserFollowsArray ?
                 in_array($user->user_id, $this->userService->getFollowsArrayOf($this->loggedUser)) : false
         ));
     }
 
     public function updateSplit($day)
     {
+        $username = '';
         if (Input::exists()) {
             if (Token::check(Input::get('token'), 'session/weekday_tokens/' . $day)) {
                 $data = [];
+                $username = Input::get('username');
 
                 if (!empty($_POST)) {
                     $data['addInput'] = $_POST;
                 }
                 $data['addInput']['day'] = $day;
 
-                $validate = new Validate();
-                $validate->check($_POST, array(
+                $validator = new Validator();
+                $validator->check($_POST, array(
                     'title' => array(
                         'name' => 'Title',
                         'required' => true,
@@ -70,51 +76,94 @@ class profile extends Controller
                     )
                 ));
 
-                if ($validate->passed()) {
+                if ($validator->passed()) {
                     if (Input::keyExists('isEdit')) {
-                        $this->splitService->updateSplit($day, $this->loggedUser, array(
+                        $this->splitService->updateSplit($day, Input::get('user_id'), array(
                             'title' => Input::get('title'),
                             'description' => trim(Input::get('description'))
                         ));
                     } else {
-                        $this->splitService->addSplit($this->loggedUser, $day, array(
+                        $this->splitService->addSplit(Input::get('user_id'), $day, array(
                             'title' => Input::get('title'),
                             'description' => trim(Input::get('description'))
                         ));
                     }
                 } else {
-                    $data['addErrors'] = $validate->errors();
+                    $data['addErrors'] = $validator->errors();
                 }
-                $this->view('profile', array(
-                    'splits' => $this->splitService->splitsOf($this->loggedUser),
-                    'loggedUser' => $this->loggedUser,
-                    'data' => $data,
-                    'user' => $this->userService->getUser($this->loggedUser),
-                    'follows' => $this->userService->getFollowsCountOf($this->loggedUser),
-                    'followers' => $this->userService->getFollowersCountOf($this->loggedUser),
-                ));
-                return;
+                
+                $this->data = $data;
             }
         }
-        $this->index();
+        if(isset($this->data['addErrors'])) {
+            $this->index($username);
+        } else {
+        Redirect::to('/profile/' . $username);
+        }
     }
 
     public function updateUser()
     {
+        $username = '';
         if (Input::exists()) {
             if (Token::check(Input::get('token'), 'session/profile_edit_token')) {
-                $this->userService->updateUser(array(
-                    'fullname' => Input::get('fullname'),
-                    'description' => Input::get('description')
-                ));
+                $username = Input::get('username');
+                $fullname = Input::get('fullname');
+                $description = Input::get('description');
+                $data = [];
+
+                if (strlen($fullname) > 64) {
+                    $data['uploadErrors'] = 'Name is too long';
+                } elseif (strlen($description) > 800) {
+                    $data['uploadErrors'] = 'Description is too long';
+                } else {
+                    $this->userService->updateUser(array(
+                        'fullname' => $fullname,
+                        'description' => $description,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ), Input::get('user_id'));
+                }
+
+                if (Input::keyExists('profilePic') && Input::get('profilePic')['name'] != '') {
+
+                    $validator = new Validator();
+                    $validator->checkFile(Input::get('profilePic'), array(
+                        'allowedTypes' => Constants::ALLOWED_IMAGE_TYPES,
+                        'maxSize' => 5242880,
+                        'illegalSymbols' => array(
+                            '.php',
+                        )
+                    ));
+
+                    if ($validator->passed()) {
+                        if (!$this->userService->savePictureOf(
+                            Input::get('user_id'), 
+                            Input::get('profilePic'))) {
+                            $data['uploadErrors'] = array('Error saving the file.');
+                        }
+
+                    } else {
+                        $data['uploadErrors'] = $validator->errors();
+                        $data['edit'] = true;
+                    } 
+                
+                $this->data = $data;
+                }
             }
         }
-        $this->index();
+        if(isset($this->data['uploadErrors'])) {
+            $this->index($username);
+        } else {
+        Redirect::to('/profile/' . $username);
+        }
     }
 
     public function follow()
     {
+        $username = '';
         if (Input::exists()) {
+            $username = Input::get('username');
+
             if (Input::get('action') == 'Follow') {
                 $this->userService->follow($this->loggedUser, Input::get('userId'));
             }
@@ -122,6 +171,17 @@ class profile extends Controller
                 $this->userService->unfollow($this->loggedUser, Input::get('userId'));
             }
         }
-        $this->index(Input::get('username'));
+        $this->index($username);
+    }
+
+    public function delete()
+    {
+        if ($this->loggedUserRole == Constants::USER_ROLE_ADMIN) {
+            if (Input::exists() && Token::check(Input::get('token'), 'session/profile_delete_token')) {
+                $this->userService->deleteUser(Input::get('user_id'));
+            }
+        }
+
+        Redirect::to('/home');
     }
 }
