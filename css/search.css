@@ -47,6 +47,22 @@
     align-items: center;
 }
 
+.pagination {
+    position: absolute;
+    width: inherit;
+    text-align: center;
+    bottom: 10px;
+}
+
+.pagination a {
+    font-size: 14pt;
+}
+
+.selected a {
+    font-size: 16pt;
+    font-weight: bolder;
+}
+
 a {
     text-decoration: none;
     color: #000000;

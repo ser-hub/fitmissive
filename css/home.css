@@ -6,13 +6,19 @@ input,
 textarea {
     border-radius: 10px;
     border: none;
-    padding: 5px 12px;
+    padding: 6px 12px;
 }
 
 .carousel-area {
     font-size: 12pt;
     position: absolute;
     margin-top: 15vh;
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.carousel-area::-webkit-scrollbar {
+    display: none;
 }
 
 .carousel-content {
@@ -48,14 +54,13 @@ textarea {
 }
 
 .description-area {
-    height: 35vh;
+    height: 45vh;
     width: inherit;
     resize: none;
 }
 
 .error-section {
     background-color: #EDF2F4;
-    margin: auto auto;
     padding: 5px 15px;
     text-align: center;
     border-radius: 15px;

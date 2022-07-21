@@ -75,12 +75,33 @@ input[type=submit]:hover {
 }
 
 .footer {
-    margin: 10px 0px;
+    display: flex;
+    align-items: baseline;
+    justify-content: right;
+    width: 25vw;
 }
 
 textarea {
     width: 25vw;
-    height: 40vh;
+    height: 35vh;
+}
+
+input[type=file] {
+    padding: 0px;
+    cursor: pointer;
+    margin-right: auto;
+}
+
+input[type=file]::-webkit-file-upload-button {
+    background-color: #ADB5BD;
+    border: none;
+    border-radius: 10px;
+    padding: 5px 12px;
+    cursor: pointer;
+}
+
+input[type=file]::-webkit-file-upload-button:hover {
+    background-color: #ADE8F4;
 }
 
 img {
@@ -98,4 +119,8 @@ h4 {
 
 .description-section::-webkit-scrollbar {
     display: none;
+}
+
+.bottom form {
+    display: inline;
 }

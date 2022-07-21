@@ -1,0 +1,52 @@
+.info-area {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 10vh;
+    left: 25vw;
+    width: 50vw;
+    height: 80vh;
+    margin: 0px;
+    background-color: #ADB5BD;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-area a {
+    text-decoration: none;
+    color: black;
+}
+
+textarea {
+    resize: none;
+    width: 40vw;
+    height: 40vh;
+    margin-bottom: 10px;
+}
+
+.bottom {
+    position: absolute;
+    bottom: 15px;
+    text-align: center;
+    width: inherit;
+}
+
+.top {
+    position: absolute;
+    top: 15px;
+    text-align: center;
+    width: inherit;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.yes-no {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
