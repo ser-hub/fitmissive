@@ -41,11 +41,25 @@ class UserRepository
         return $this->db->insert('users', $fields);
     }
 
+    public function updateUser($user_id, $fields = [])
+    {
+        return $this->db->update('users', array(
+            'field' => 'user_id',
+            'value' => $user_id
+        ), $fields);
+    }
+
+    public function deleteUser($userId)
+    {
+        return $this->db->delete('users', array('user_id', '=', $userId));
+    }
+
     public function find($user = null)
     {
         if ($user) {
             $field = (is_numeric($user)) ? 'user_id' : 'username';
-            $data = $this->db->get('users', array($field, '=', $user));
+            $data = $this->db->query('SELECT * FROM users ' .
+                'INNER JOIN roles ON users.role_id = roles.role_id WHERE ' . $field . ' = ?', array($user));
 
             if ($data->count()) {
                 return $data->first();
@@ -54,15 +68,37 @@ class UserRepository
         return false;
     }
 
-    public function getAllUsersLike($keyword = null)
+    public function getAllUsersLike($keyword = null, $exclude = null, $from = 0, $count = null)
     {
+        $sql = 'SELECT SQL_CALC_FOUND_ROWS * FROM users WHERE';
+        $params = [];
         if ($keyword && is_string($keyword)) {
-            
-            $data = $this->db->get('users', array('username', 'LIKE', '%' . $keyword . '%'));
+            $sql = $sql . ' username LIKE ?';
+            $params[] = $keyword . '%';
+        }
+        if ($exclude != null && is_numeric($exclude)) {
+            $sql = $sql . ' AND user_id != ?';
+            $params[] = $exclude;
+        }
 
-            if ($data->count()) {
-                return $data->results();
-            }
+        $sql = $sql . ' ORDER BY username ASC LIMIT';
+
+        if ($from != null && $from > 0) {
+            $sql = $sql . ' ?,';
+            $params[] = $from;
+        } 
+        if (is_numeric($count) && $count > 0) {
+            $sql = $sql . ' ?';
+            $params[] = $count;
+        }
+
+        $data = $this->db->query($sql, $params);
+
+        if ($data->count()) {
+            return [
+                'users' => $data->results(),
+                'total' => $this->db->query('SELECT FOUND_ROWS() as total')->first()->total
+            ];
         }
         return false;
     }
@@ -105,17 +141,5 @@ class UserRepository
     public function deleteFollow($follower, $followed)
     {
         return $this->db->query('DELETE from follows where follower_id = ? AND followed_id = ? ', array($follower, $followed));
-    }
-
-    public function updateUser($user_id, $fields = [])
-    {
-        return $this->db->update('users', array(
-            'field' => 'user_id',
-            'value' => $user_id
-        ), $fields);
-    }
-
-    public function deleteUser($user)
-    {
     }
 }

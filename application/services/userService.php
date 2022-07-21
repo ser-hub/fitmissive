@@ -2,20 +2,22 @@
 
 namespace Application\Services;
 
-use Application\Repositories\UserRepository;
-use Application\Utilities\{Config, Session, Hash};
+use Application\Repositories\{UserRepository, SplitRepository};
+use Application\Utilities\{Config, Constants, Session, Hash};
 
 use \Exception;
 
 class UserService
 {
+    private $splitRepository;
     private $userRepository;
     private $sessionName;
     private static $instance;
 
     private function __construct()
-    {;
+    {
         $this->userRepository = UserRepository::getInstance();
+        $this->splitRepository = SplitRepository::getInstance();
 
         $this->sessionName = Config::get('session/session_name');
     }
@@ -53,9 +55,14 @@ class UserService
         return $this->userRepository->find($user);
     }
 
+    public function getLoggedUserRole()
+    {
+        
+    }
+
     public function updateUser($fields = [], $id = null)
     {
-        if (!$id && $this->isUserLoggedIn()) {
+        if ($id == null && $this->isUserLoggedIn()) {
             $id = $this->getLoggedUser()->user_id;
         }
 
@@ -64,19 +71,21 @@ class UserService
         }
     }
 
-    public function searchUsers($logged, $keyword = null)
+    public function deleteUser($id = null)
     {
-        $results = $this->userRepository->getAllUsersLike($keyword);
-
-        if ($results) {
-            foreach($results as $key => $result) {
-                if ($result->user_id === $logged) {
-                    unset($results[$key]);
-                }
-            }
+        if (!$this->splitRepository->deleteUserSplits($id) || !$this->userRepository->deleteUser($id)) {
+            throw new Exception('Something unexpected happened.');
         }
+    }
 
-        return $results;
+    public function searchUsers($keyword = null, $from = null, $count = null)
+    {
+        return $this->userRepository->getAllUsersLike(
+            $keyword,
+            $this->getLoggedUser()->user_id, 
+            $from, 
+            $count
+        );
     }
 
     public function getFollowsArrayOf($user)
@@ -117,6 +126,43 @@ class UserService
         if (!$this->userRepository->deleteFollow($follower, $followed)) {
             throw new Exception('Something unexpected happened.');
         }
+    }
+
+    public function savePictureOf($userId, $file)
+    {
+        $fileNameExploded = explode('.', $file['name']);
+        $newExt = strtolower(end($fileNameExploded));
+        $fileName = Hash::make($userId);
+
+        if ($this->getPicturePathOf($userId) !== Constants::DEFAULT_IMAGE) {
+            unlink($this->getPicturePathOf($userId));
+        }
+
+        if (move_uploaded_file($file['tmp_name'], $this->getPicturePath($fileName, $newExt))) {
+            return true;
+        }
+        return false;
+    }
+
+    private function getPicturePath($filename = null, $ext = null)
+    {
+        return $filename != null ? Constants::IMAGE_PATH . $filename . '.' . $ext : Constants::DEFAULT_IMAGE;
+    }
+
+    public function getPicturePathOf($userId = null)
+    {
+        if ($userId == null) {
+            return $this->getPicturePath();
+        }
+
+        $fileName = Hash::make($userId);
+        foreach (Constants::ALLOWED_IMAGE_TYPES as $ext) {
+            if (file_exists($this->getPicturePath($fileName, $ext))) {
+                return $this->getPicturePath($fileName, $ext);
+            }
+        }
+
+        return $this->getPicturePath();
     }
 
     public function getLoggedUser()
