@@ -8,10 +8,20 @@ class SplitRepository
 {
     private static $instance = null;
     private $db;
+    private $dayTables = [];
 
     private function __construct()
     {
         $this->db = DB::getInstance();
+        $this->dayTables = [
+            'Monday' => 'mondays',
+            'Tuesday' => 'tuesdays',
+            'Wednesday' => 'wednesdays',
+            'Thursday' => 'thursdays',
+            'Friday' => 'fridays',
+            'Saturday' => 'saturdays',
+            'Sunday' => 'sundays'
+        ];
     }
 
     public static function getInstance()
@@ -30,7 +40,7 @@ class SplitRepository
 
     public function getSplitId($user_id, $day)
     {
-        $day = $this->parseDay($day);
+        $day = $this->dayTables[$day];
         $day = substr($day, 0, strlen($day) - 1);
         $property = $day . '_id';
         return $this->db->action(
@@ -42,22 +52,18 @@ class SplitRepository
 
     public function getUserSplits($user_id)
     {
-        $splits = array(
-            'Monday' => $this->db->get('mondays', array('user_id', '=', $user_id))->first(),
-            'Tuesday' => $this->db->get('tuesdays', array('user_id', '=', $user_id))->first(),
-            'Wednesday' => $this->db->get('wednesdays', array('user_id', '=', $user_id))->first(),
-            'Thursday' => $this->db->get('thursdays', array('user_id', '=', $user_id))->first(),
-            'Friday' => $this->db->get('fridays', array('user_id', '=', $user_id))->first(),
-            'Saturday' => $this->db->get('saturdays', array('user_id', '=', $user_id))->first(),
-            'Sunday' => $this->db->get('sundays', array('user_id', '=', $user_id))->first()
-        );
+        $splits = [];
+
+        foreach ($this->dayTables as $day => $table) {
+            $splits[$day] = $this->db->get($table, array('user_id', '=', $user_id))->first();
+        }
 
         return $splits;
     }
 
     public function insertSplit($user_id, $day, $data = [])
     {
-        return $this->db->insert($this->parseDay($day), array(
+        return $this->db->insert($this->dayTables[$day], array(
             'user_id' => $user_id,
             'title' => $data['title'],
             'description' => $data['description']
@@ -66,7 +72,7 @@ class SplitRepository
 
     public function updateSplit($day, $id, $data = [])
     {
-        $day = $this->parseDay($day);
+        $day = $this->dayTables[$day];
 
         return $this->db->update($day, array(
             'field' => substr($day, 0, strlen($day) - 1) . '_id',
@@ -77,32 +83,14 @@ class SplitRepository
         ));
     }
 
-    private function parseDay($day)
+    public function deleteUserSplits($userId)
     {
-        switch ($day) {
-            case 'Monday':
-                $day = 'mondays';
-                break;
-            case 'Tuesday':
-                $day = 'tuesdays';
-                break;
-            case 'Wednesday':
-                $day = 'wednesdays';
-                break;
-            case 'Thursday':
-                $day = 'thursdays';
-                break;
-            case 'Friday':
-                $day = 'fridays';
-                break;
-            case 'Saturday':
-                $day = 'saturdays';
-                break;
-            case 'Sunday':
-                $day = 'sundays';
-                break;
+        $result = null;
+
+        foreach ($this->dayTables as $table) {
+            $result = $this->db->delete($table, array('user_id', '=', $userId));
         }
 
-        return $day;
+        return $result;
     }
 }
