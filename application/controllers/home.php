@@ -3,37 +3,43 @@
 namespace Application\Controllers;
 
 use Application\Core\Controller;
-use Application\Services\{UserService, SplitService};
-use Application\Utilities\{Redirect, Input, Token, Validate};
+use Application\Services\SplitService;
+use Application\Utilities\{Redirect, Input, Token, Validator, Constants};
 
 class Home extends Controller
 {
-    private $loggedUser = null;
-    private $userService;
     private $splitService;
+    private $data;
 
     public function __construct()
     {
-        $this->userService = UserService::getInstance();
         $this->splitService = SplitService::getInstance();
 
-        if (!$this->userService->isUserLoggedIn()) {
-            Redirect::to('/index');
-        }
-
-        $this->loggedUser = $this->userService->getLoggedUser()->user_id;
+        parent::__construct();
     }
 
     public function index()
     {
-        if ($this->loggedUser) {
-            $this->view('home/home', array(
-                'loggedUser' => $this->loggedUser,
-                'splits' => $this->splitService->splitsOf($this->loggedUser)
-            ));
-        } else {
-            echo '<i>Error getting logged user</i>';
+        $followedSplits = $this->splitService->getRandomisedFollowedSplitsOf(
+            $this->userService->getFollowsArrayOf($this->loggedUser));
+
+        if (!empty($followedSplits)) {
+            foreach($followedSplits as $split) {
+                $user = $this->userService->getUser($split->user_id);
+
+                if (isset($user->fullname)) {
+                    $split->user_id = $user->fullname;
+                } else {
+                    $split->user_id = '@' . $user->username;
+                }
+            }
         }
+
+        $this->view('home/home', array(
+            'splits' => $this->splitService->splitsOf($this->loggedUser),
+            'followedSplits' => $followedSplits,
+            'data' => $this->data
+        ));
     }
 
     public function update($day)
@@ -43,12 +49,13 @@ class Home extends Controller
                 $data = [];
 
                 if (!empty($_POST)) {
-                    $data['addInput'] = $_POST;
+                    $data['updateInput'] = $_POST;
                 }
-                $data['addInput']['day'] = $day;
+                
+                $data['updateInput']['day'] = $day;
 
-                $validate = new Validate();
-                $validate->check($_POST, array(
+                $validator = new Validator();
+                $validator->check($_POST, array(
                     'title' => array(
                         'name' => 'Title',
                         'required' => true,
@@ -61,7 +68,7 @@ class Home extends Controller
                     )
                 ));
 
-                if ($validate->passed()) {
+                if ($validator->passed()) {
                     if (Input::keyExists('isEdit')) {
                         $this->splitService->updateSplit($day, $this->loggedUser, array(
                             'title' => Input::get('title'),
@@ -74,14 +81,9 @@ class Home extends Controller
                         ));
                     }
                 } else {
-                    $data['addErrors'] = $validate->errors();
+                    $data['updateErrors'] = $validator->errors();
                 }
-                $this->view('home/home', array(
-                    'splits' => $this->splitService->splitsOf($this->loggedUser),
-                    'loggedUser' => $this->loggedUser,
-                    'data' => $data,
-                ));
-                return;
+                $this->data = $data;
             }
         }
         $this->index();
