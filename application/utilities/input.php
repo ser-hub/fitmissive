@@ -24,15 +24,17 @@ class Input
 
     public static function keyExists($key)
     {
-        return array_key_exists($key, $_POST) || array_key_exists($key, $_GET);
+        return array_key_exists($key, $_POST) || array_key_exists($key, $_GET) || array_key_exists($key, $_FILES);
     }
 
     public static function get($item)
     {
         if (isset($_POST[$item])) {
             return $_POST[$item];
-        } else if (isset($_GET[$item])) {
+        } elseif (isset($_GET[$item])) {
             return $_GET[$item];
+        } elseif (isset($_FILES[$item])) {
+            return $_FILES[$item];
         } else {
             return '';
         }
