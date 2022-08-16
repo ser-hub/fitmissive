@@ -39,4 +39,8 @@ class Input
             return '';
         }
     }
+
+    public static function put($key, $value) {
+        $_POST[$key] = $value;
+    }
 }
