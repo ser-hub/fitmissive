@@ -27,38 +27,48 @@ if ($data['inputs'] != null) {
 </head>
 
 <body>
-    <?php require_once 'Application/Views/Common/header.php'; ?>
+    <?php require_once 'Application/Views/Common/header.php' ?>
     <div class="info-area">
         <?php if (Input::keyExists('action') && Input::get('action') == 'edit') { ?>
+            <?php if ($errors != null) include 'Application/Views/Common/error-section.php' ?>
             <form action="/info/update/<?= $slug ?>" method="POST">
                 <input type="hidden" name="title" value="<?= $data['title'] ?>">
                 <input type="hidden" name="token" value="<?= Token::generate('session/info_update_token') ?>">
-                <textarea name="content" maxlength="1000"><?= $data['content'] ?></textarea>
+                <textarea name="content" maxlength="5001"><?php
+                    if (isset($data['content'])) echo $data['content'];
+                    else if (isset($data['inputs']['content'])) echo $data['inputs']['content'] ?></textarea>
                 <input type="submit" value="Save">
             </form>
         <?php } elseif (Input::keyExists('action') && Input::get('action') == 'delete') { ?>
             Are you sure you want to delete '<?= $data['title'] ?>'?
             <div class='bottom'>
-                <form action="/info/delete/<?= $slug ?>" method="POST" class="yes-no">
+                <form action="/info/delete/<?php foreach ($data['info'] as $info) {
+                    if ($info->slug == $slug) {
+                        echo $info->info_id;
+                    }
+                } ?>" method="POST" class="yes-no">
                     <input type="hidden" name="token" value="<?= Token::generate('session/info_delete_token') ?>">
                     <input type="submit" value="Yes" style="margin-right: 10px">
                     <a href="/info/<?= $slug ?>" class="menu-item">No</a>
                 </form>
             </div>
         <?php } elseif ((Input::keyExists('action') && Input::get('action') == 'create') || $errors != null) { ?>
-            <?php if ($errors != null) include 'Application/Views/Common/error-section.php'?>
+            <?php if ($errors != null) include 'Application/Views/Common/error-section.php' ?>
             <form action="/info/create" method="POST">
-                <input type="text" name="title" maxlength="45" placeholder="Title" required value="<?php if ($inputs != null) echo $inputs['title']?>">
+                <input type="text" name="title" maxlength="45" placeholder="Title" required value="<?php if ($inputs != null) echo $inputs['title'] ?>">
                 <div style="margin: 10px">
-                    <input type="text" name="slug" maxlength="45" placeholder="Slug" required value="<?php if ($inputs != null) echo $inputs['slug']?>">
+                    <input type="text" name="slug" maxlength="45" placeholder="Slug" required value="<?php if ($inputs != null) echo $inputs['slug'] ?>">
                 </div>
-                <textarea name="content" maxlength="1000" placeholder="Content" required><?php if ($inputs != null) echo $inputs['content']?></textarea>
+                <textarea name="content" maxlength="1000" placeholder="Content" required><?php if ($inputs != null) echo $inputs['content'] ?></textarea>
                 <input type="hidden" name="token" value="<?= Token::generate('session/info_create_token') ?>">
                 <input type="submit" value="Save">
+                <a href="/info" class="menu-item" style="margin-top: 10px">Cancel</a>
             </form>
             <?php } else {
             if (isset($data['content']) && strlen($data['content'])) { ?>
-                <?= $data['content'] ?>
+                <span class="info-text">
+                    <?= $data['content'] ?>
+                </span>
                 <?php if ($data['adminMode']) { ?>
                     <div class='top'>
                         <a href="/info" class="menu-item">Info panel</a>
@@ -82,7 +92,7 @@ if ($data['inputs'] != null) {
             }
         } ?>
     </div>
-    <?php require_once 'Application/Views/Common/footer.php'; ?>
+    <?php require_once 'Application/Views/Common/footer.php' ?>
 </body>
 
 </html>
