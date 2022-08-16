@@ -59,7 +59,8 @@ class Validator
                         case '!contains':
                             foreach (str_split($ruleValue) as $char) {
                                 if (str_contains($value, $char)) {
-                                    $this->addError("{$rules['name']} must not contain '{$char}'.");
+                                    $this->addError("{$rules['name']} contains illegal characters.");
+                                    break;
                                 }
                             }
                             break;
