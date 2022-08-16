@@ -1,15 +1,20 @@
 <?php
 
+require __DIR__ . '/vendor/autoload.php';
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 $GLOBALS['config'] = array(
     'mysql' => array(
-        'host' => '127.0.0.1',
-        'username' => 'root',
-        'password' => '',
-        'db' => 'fitmissive'
+        'host' => $_SERVER['DB_HOST'],
+        'username' => $_SERVER['DB_USERNAME'],
+        'password' => $_SERVER['DB_PASSWORD'],
+        'db' => $_SERVER['DB_NAME']
     ),
     'session' => array(
         'session_name' => 'user',
