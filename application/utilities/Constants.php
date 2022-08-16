@@ -12,4 +12,6 @@ class Constants
     const PAGINATION_PAGES_TO_SHOW = 3;
     const FOLLOWS_MAX = 300;
     const INFO_MAX = 10;
+    const CHATS_MAX_COUNT = 15;
+    const MESSAGES_MAX_COUNT = 500;
 }
