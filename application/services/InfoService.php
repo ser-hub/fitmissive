@@ -43,8 +43,8 @@ class InfoService
         return $this->infoRepository->update($title, $fields); 
     }
 
-    public function deleteInfo($slug)
+    public function deleteInfo($id)
     {
-        return $this->infoRepository->delete($slug);
+        return $this->infoRepository->delete($id);
     }
 }

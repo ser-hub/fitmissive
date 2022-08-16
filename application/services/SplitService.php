@@ -2,17 +2,19 @@
 
 namespace Application\Services;
 
-use Application\Repositories\SplitRepository;
+use Application\Repositories\{SplitRepository, UserRepository};
 use Application\Utilities\Config;
 
 class SplitService
 {
     private static $instance;
     private $splitRepository;
+    private $userRepository;
 
     private function __construct()
     {
         $this->splitRepository = SplitRepository::getInstance();
+        $this->userRepository = UserRepository::getInstance();
 
         $this->_sessionName = Config::get('session/session_name');
     }
@@ -58,16 +60,19 @@ class SplitService
         return $allSplits;
     }
 
-    public function addSplit($user_id, $day, $data = [])
+    public function addSplit($username, $day, $data = [])
     {
-        return $this->splitRepository->insertSplit($user_id, $day, $data);
+        return $this->splitRepository->insertSplit(
+            $this->userRepository->find($username)->user_id, 
+            $day, 
+            $data);
     }
 
-    public function updateSplit($day, $id, $data = [])
+    public function updateSplit($day, $username, $data = [])
     {
         return $this->splitRepository->updateSplit(
             $day,
-            $this->splitRepository->getSplitId($id, $day),
+            $this->splitRepository->getSplitId($this->userRepository->find($username)->user_id, $day),
             $data
         );
     }

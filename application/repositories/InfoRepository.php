@@ -65,8 +65,8 @@ class InfoRepository
         ), $fields);
     }
 
-    public function delete($slug)
+    public function delete($id)
     {
-        $this->db->delete('info', array('slug', '=', $slug));
+        $this->db->delete('info', array('info_id', '=', $id));
     }
 }

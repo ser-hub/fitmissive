@@ -60,21 +60,26 @@ class UserService
         
     }
 
-    public function updateUser($fields = [], $id = null)
+    public function updateUser($fields = [], $username = null)
     {
-        if ($id == null && $this->isUserLoggedIn()) {
-            $id = $this->getLoggedUser()->user_id;
+        if ($username == null && $this->isUserLoggedIn()) {
+            $username = $this->getLoggedUser()->user_id;
         }
+
+        $id = $this->userRepository->find($username)->user_id;
 
         if (!$this->userRepository->updateUser($id, $fields)) {
             throw new Exception('Something unexpected happened.');
         }
     }
 
-    public function deleteUser($id = null)
+    public function deleteUser($username = null)
     {
-        if (!$this->splitRepository->deleteUserSplits($id) || !$this->userRepository->deleteUser($id)) {
-            throw new Exception('Something unexpected happened.');
+        $user = $this->userRepository->find($username);
+        if ($user) {
+            if (!$this->splitRepository->deleteUserSplits($user->id) || !$this->userRepository->deleteUser($user->id)) {
+                throw new Exception('Something unexpected happened.');
+            }
         }
     }
 
@@ -116,29 +121,35 @@ class UserService
 
     public function follow($follower, $followed)
     {
-        if (!$this->userRepository->addFollow($follower, $followed)) {
+        $followed = $this->userRepository->find($followed)->user_id;
+        if ($followed != $follower && 
+            $this->getFollowsCountOf($follower) < 300 &&
+            !$this->userRepository->addFollow($follower, $followed)) {
             throw new Exception('Something unexpected happened.');
         }
     }
 
     public function unfollow($follower, $followed)
     {
-        if (!$this->userRepository->deleteFollow($follower, $followed)) {
+        $followed = $this->userRepository->find($followed)->user_id;
+        if ($followed != $follower &&
+            !$this->userRepository->deleteFollow($follower, $followed)) {
             throw new Exception('Something unexpected happened.');
         }
     }
 
-    public function savePictureOf($userId, $file)
+    public function savePictureOf($username, $file)
     {
         $fileNameExploded = explode('.', $file['name']);
         $newExt = strtolower(end($fileNameExploded));
-        $fileName = Hash::make($userId);
+        $fileName = Hash::make($username);
 
-        if ($this->getPicturePathOf($userId) !== Constants::DEFAULT_IMAGE) {
-            unlink($this->getPicturePathOf($userId));
+        if ($this->getPicturePathOf($username) !== Constants::DEFAULT_IMAGE) {
+            unlink($this->getPicturePathOf($username));
         }
 
-        if (move_uploaded_file($file['tmp_name'], $this->getPicturePath($fileName, $newExt))) {
+        $path = $this->getPicturePath($fileName, $newExt);
+        if (move_uploaded_file($file['tmp_name'], substr($path, 1, strlen($path)- 1))) {
             return true;
         }
         return false;
@@ -149,15 +160,16 @@ class UserService
         return $filename != null ? Constants::IMAGE_PATH . $filename . '.' . $ext : Constants::DEFAULT_IMAGE;
     }
 
-    public function getPicturePathOf($userId = null)
+    public function getPicturePathOf($username = null)
     {
-        if ($userId == null) {
+        if ($username == null) {
             return $this->getPicturePath();
         }
 
-        $fileName = Hash::make($userId);
+        $fileName = Hash::make($username);
         foreach (Constants::ALLOWED_IMAGE_TYPES as $ext) {
-            if (file_exists($this->getPicturePath($fileName, $ext))) {
+            $path = $this->getPicturePath($fileName, $ext);
+            if (file_exists(substr($path, 1, strlen($path)- 1))) {
                 return $this->getPicturePath($fileName, $ext);
             }
         }
