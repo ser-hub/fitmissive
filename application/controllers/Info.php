@@ -30,8 +30,8 @@ class Info extends Controller
     public function index($slug = null)
     {
         $data = [
-            'title' => '',
-            'content' => ''
+            'title' => null,
+            'content' => null
         ];
         if ($slug != null) {
             $info = $this->infoService->getInfoBySlug($slug);
@@ -56,21 +56,28 @@ class Info extends Controller
             if (Token::check(Input::get("token"), "session/info_update_token")) {
                 $title = Input::get('title');
                 $content = Input::get('content');
-                if (strlen($content) < 1000) {
+                if (strlen($content) < 4000) {
                     $this->infoService->updateInfo($title, array(
-                        'content' => $content
+                        'content' => $content,
+                        'updated_at' => date('Y-m-d H:i:s')
                     ));
+                } else {
+                    $this->data['inputs'] = array(
+                        'content' => $content
+                    );
+                    $this->data['errors'] = array('Content is too long.');
+                    Input::put('action', 'edit');
                 }
             }
         }
-        Redirect::to('/info/' . $slug);
+        $this->index();
     }
 
-    public function delete($slug = null)
+    public function delete($id = null)
     {
-        if ($this->adminMode && $slug != null) {
+        if ($this->adminMode && $id != null) {
             if (Token::check(Input::get("token"), "session/info_delete_token")) {
-                $this->infoService->deleteInfo($slug);
+                $this->infoService->deleteInfo($id);
             }
         }
         $this->index();
@@ -88,7 +95,7 @@ class Info extends Controller
                 $validator->check($_POST, array(
                     'title' => array(
                         'name' => 'Title',
-                        '!contains' => '\\/?%&#@!*()+=,.;:\'"',
+                        '!contains' => '\\/?#@*=;\'"',
                         'required' => true,
                         'max' => 45
                     ),
@@ -96,14 +103,14 @@ class Info extends Controller
                         'name' => 'Slug',
                         'required' => true,
                         'max' => 45,
-                        '!contains' => ' \\/?%&#@!*()+=,.;:\'"',
+                        '!contains' => ' \\/?%&#@!*()+=,.;:\'"0123456789',
                         'unique' => 'info',
                         'dbColumn' => 'slug'
                     ),
                     'content' => array(
                         'name' => 'Content',
                         'required' => true,
-                        'max' => 1000
+                        'max' => 4000
                     )
                 ));
 

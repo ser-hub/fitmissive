@@ -14,10 +14,10 @@ use Application\Utilities\{Token, Session, Functions};
 </head>
 
 <body>
-    <?php require_once 'Application/Views/Common/header.php'; ?>
+    <?php require_once 'Application/Views/Common/header.php' ?>
     <div class="hint"><i>Track your workouts</i></div>
     <form method="POST" action="/index/registerAction">
-        <div class="regForm">
+        <div class="reg-form">
             <div>
                 <div class="table">
                     <div class="row">
@@ -82,7 +82,7 @@ use Application\Utilities\{Token, Session, Functions};
         </div>
     </form>
     <form method="POST" action="/index/loginAction">
-        <div class="loginForm">
+        <div class="login-form">
             <div>
                 <div class="table">
                     <div class="row">
@@ -135,7 +135,7 @@ use Application\Utilities\{Token, Session, Functions};
             </div>
         </div>
     </form>
-    <?php require_once 'Application/Views/Common/footer.php'; ?>
+    <?php require_once 'Application/Views/Common/footer.php' ?>
 </body>
 
 </html>

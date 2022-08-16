@@ -27,7 +27,7 @@ if (Input::keyExists('page') && Input::get('page') > 0) {
 </head>
 
 <body>
-    <?php require_once 'Application/Views/Common/header.php'; ?>
+    <?php require_once 'Application/Views/Common/header.php' ?>
     <div class="search-results">
         <?php if (!$results) { ?>
             <div class="search-results-empty">
@@ -39,7 +39,7 @@ if (Input::keyExists('page') && Input::get('page') > 0) {
                 $userId = $result->user_id;
             ?>
                 <div class="search-results-item">
-                    <a href="/profile/index/<?= $result->username ?>">
+                    <a href="/profile/<?= $result->username ?>">
                         <img src="<?= $pictures[$userId] ?>" width="50px" height="50px" alt="Profile picture">
                         <?= $result->username ?>
                     </a>
@@ -100,7 +100,7 @@ if (Input::keyExists('page') && Input::get('page') > 0) {
                 }?>
         </div>
     </div>
-    <?php require_once 'Application/Views/Common/footer.php'; ?>
+    <?php require_once 'Application/Views/Common/footer.php' ?>
 </body>
 
 </html>

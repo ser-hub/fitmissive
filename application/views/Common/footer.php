@@ -1,5 +1,5 @@
-<footer class="footerCust">
-    <div class="table">
+<footer class="footer-container">
+    <div class="infos">
         <div class="row">
             <div class="footer-items">
                 <a href="/home">Home</a>
