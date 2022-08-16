@@ -6,7 +6,7 @@
     text-align: center;
 }
 
-.regForm {
+.reg-form {
     display: flex;
     text-align: left;
     align-items: center;
@@ -22,7 +22,7 @@
     border-color: black;
 }
 
-.loginForm {
+.login-form {
     display: flex;
     align-items: center;
     justify-content: center;

@@ -12,6 +12,12 @@
     align-items: center;
 }
 
+.info-text {
+    margin: 15px;
+    white-space: pre-line;
+    text-align: center;
+}
+
 .info-area a {
     text-decoration: none;
     color: black;

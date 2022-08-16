@@ -2,10 +2,11 @@
     font-family: Candara;
     font-size: 12pt;
     line-height: normal;
+    box-sizing: unset;
 }
 
-.headerCust,
-.footerCust {
+.header-container,
+.footer-container {
     display: flex;
     align-items: center;
     background-color: #2A9D8F;
@@ -16,9 +17,13 @@
     height: 10vh;
 }
 
-.footerCust {
+.footer-container {
     top: 90vh;
     justify-content: center;
+}
+
+.header-container img {
+    display: block;
 }
 
 .footer-items {
@@ -53,6 +58,11 @@
     padding: 6px 12px;
     text-decoration: none;
     color: black;
+    margin-bottom: 0;
+}
+
+.menu-selected {
+    background-color: #ADE8F4;
 }
 
 input[type=text],
@@ -78,7 +88,7 @@ textarea:focus {
     outline-color: /*#FFAFCC*/ #2A9D8F;
 }
 
-.table {
+.infos {
     display: table;
     width: wrap-content;
     margin: 0px;
@@ -99,4 +109,8 @@ textarea:focus {
 
 .success {
     color: #4F772D;
+}
+
+.notification {
+    background-color: #A4161A;
 }

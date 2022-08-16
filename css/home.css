@@ -32,6 +32,7 @@ textarea {
 .element {
     text-align: center;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .scroller {
@@ -40,6 +41,7 @@ textarea {
     margin-top: 50px;
     position: relative;
     justify-content: center;
+    overflow-y: auto;
     align-items: center;
 }
 

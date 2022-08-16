@@ -71,7 +71,7 @@ input[type=submit]:hover {
 }
 
 .description {
-    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .footer {
@@ -83,7 +83,7 @@ input[type=submit]:hover {
 
 textarea {
     width: 25vw;
-    height: 35vh;
+    height: 30vh;
 }
 
 input[type=file] {
@@ -121,6 +121,14 @@ h4 {
     display: none;
 }
 
+.bottom {
+    text-align: center;
+}
+
 .bottom form {
     display: inline;
+}
+
+.bottom a {
+    background-color: #ADB5BD;
 }

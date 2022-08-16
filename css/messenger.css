@@ -1,0 +1,133 @@
+body {
+    margin: 0;
+    padding-bottom: 3rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.form {
+    position: absolute;
+    top: 10vh;
+    left: 30vw;
+    width: 55vw;
+    margin-bottom: 0;
+    bottom: 10vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.input:hover {
+    cursor: auto;
+}
+
+.input:focus,
+.input:hover {
+    outline: none;
+}
+
+.input {
+    border-top: 2px solid #2A9D8F;
+    border-left: 2px solid #2A9D8F;
+    border-right: 2px solid #2A9D8F;
+    border-bottom: none;
+    resize: none;
+    padding: 6px;
+    position: absolute;
+    height: 5vh;
+    width: inherit;
+    bottom: 0;
+}
+
+.messages {
+    position: absolute;
+    width: inherit;
+    height: calc(70vh + 2px);
+    list-style-type: none;
+    margin: 0;
+    padding: 11px 6px 11px 6px;
+    overflow-y: auto;
+    border-left: 2px solid #2A9D8F;
+    border-right: 2px solid #2A9D8F;
+}
+
+.messages>li {
+    padding: 0.5rem 1rem;
+}
+
+.chat-item {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+
+.status {
+    position: absolute;
+    bottom: 8vh;
+    right: 1vh;
+    background-color: white;
+    color:#2A9D8F
+}
+
+.author {
+    font-weight: bold; 
+    font-style: italic
+}
+
+.message {
+    overflow-wrap: anywhere; 
+    width: inherit
+}
+
+.user-chats {
+    position: absolute;
+    top: 10vh;
+    left: 15vw;
+    width: 15vw;
+    height: 80vh;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    border-left: 2px solid #2A9D8F;
+}
+
+.user-chats::-webkit-scrollbar {
+    display: none;
+}
+
+.chat-button {
+    display: flex;
+    position: relative;
+    width: 20vw;
+    height: 10vh;
+    align-items: center;
+}
+
+.user-chats a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+}
+
+.user-chats a .chat-button img {
+    margin-right: 10px
+}
+
+.selected {
+    background-color: #ADE8F4;
+}
+
+.chat-button-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.online {
+    font-size: smaller;
+    color: #2A9D8F;
+}
+
+.offline {
+    font-size: smaller;
+    color: #ADB5BD;
+}
