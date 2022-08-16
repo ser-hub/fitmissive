@@ -48,15 +48,14 @@ if ($isSplitEdit) {
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <?php require_once 'Application/Views/Common/header.php'; ?>
+    <?php require_once 'Application/Views/Common/header.php' ?>
 
     <div class="profile-data">
         <?php if ($isDelete) { ?>
             <span style="margin-bottom:10px">Are you sure you want to delete @<?= $user->username ?>?</span>
             <div>
-                <form action="/profile/delete" method="post" style="display: inline">
+                <form action="/profile/delete<?= $user->username ?>" method="post" style="display: inline">
                     <input type="hidden" name="token" value="<?= Token::generate('session/profile_delete_token') ?>">
-                    <input type="hidden" name="user_id" value="<?= $user->user_id ?>">
                     <input type="submit" value="Yes">
                 </form>
                 <form style="display: inline">
@@ -70,8 +69,8 @@ if ($isSplitEdit) {
                     <span>
                         <?php if ($user->fullname != null && !$isProfileEdit) echo $user->fullname;
                         elseif ($isProfileEdit) { ?>
-                            <form action="/profile/updateUser" method="post" enctype="multipart/form-data">
-                                <input type="text" name="fullname" placeholder="Enter your full name" maxlength="64" value="<?= $user->fullname ?>">
+                            <form action="/profile/updateUser/<?= $user->username ?>" method="post" enctype="multipart/form-data">
+                                <input type="text" name="fullname" placeholder="Enter your full name" maxlength="32" value="<?= $user->fullname ?>">
                             <?php } else echo '@' . $user->username ?>
                     </span>
                     <span style="font-size: 10pt">
@@ -104,21 +103,20 @@ if ($isSplitEdit) {
                 <?php if ($user->user_id == $data['loggedUser']) {
                     $form = array('action' => '', 'label' => 'Edit');
                 } elseif ($data['isFollowing']) {
-                    $form = array('action' => '/profile/follow', 'label' => 'Unfollow');
+                    $form = array('action' => '/profile/follow/' . $user->username, 'label' => 'Unfollow');
                 } else {
-                    $form = array('action' => '/profile/follow', 'label' => 'Follow');
+                    $form = array('action' => '/profile/follow/' . $user->username, 'label' => 'Follow');
                 }
                 ?>
                 <?php if ($isProfileEdit) { ?>
                     <div class="footer">
                         <input type="hidden" name="token" value="<?= Token::generate('session/profile_edit_token') ?>">
-                        <input type="hidden" name="user_id" value="<?= $user->user_id ?>">
-                        <input type="hidden" name="username" value="<?= $user->username ?>">
                         <input type="file" name="profilePic" accept="image/png, image/jpg, image/gif, image/jpeg">
                         <input type="submit" value="Save" name="save">
                         </form>
+                        <a href="/profile/<?= $user->username ?>" class="menu-item" style="margin-left: 5px">Cancel</a>
                     </div>
-                    <div>
+                    <div style="margin-top: 5px">
                         <?php
                         if (isset($data['data']['uploadErrors'])) {
                             echo $data['data']['uploadErrors'][0];
@@ -129,18 +127,16 @@ if ($isSplitEdit) {
                     </div>
                 <?php } elseif ((!$isSplitEdit && $user->user_id == $data['loggedUser']) || $data['follows'] < Constants::FOLLOWS_MAX) { ?>
                     <form method="post" action="<?= $form['action'] ?>">
-                        <input type="hidden" name="userId" value="<?= $user->user_id ?>">
-                        <input type="hidden" name="username" value="<?= $user->username ?>">
                         <input type="submit" value="<?= $form['label'] ?>" name="action">
                     </form>
                     <?php if ($data['isAdmin'] && $user->user_id != $data['loggedUser']) { ?>
-                        <form method="post">
-                            <input type="submit" value="Edit" name="action">
-                        </form>
-                        <form method="post">
-                            <input type="hidden" name="userId" value="<?= $user->user_id ?>">
-                            <input type="submit" value="Delete" name="action">
-                        </form>
+                        <a href="?action=Edit" class="menu-item">Edit</a>
+                        <a href="?action=Delete" class="menu-item">Delete</a>
+                    <?php }
+                    if ($user->user_id != $data['loggedUser']) { ?>
+                        <div style="padding: 10px">
+                            <a href="/messenger/<?= $user->username ?>" class="menu-item">Send a message</a>
+                        </div>
                 <?php }
                 } ?>
             </div>
@@ -164,7 +160,7 @@ if ($isSplitEdit) {
                                 </div>
                             <?php } elseif ($user->user_id == $data['loggedUser'] || $isAdmin) { ?>
 
-                                <form action="/profile/updateSplit/<?php echo $dayOfWeek[$i] ?>" method="POST">
+                                <form action="/profile/updateSplit/<?= $user->username ?>/<?= $dayOfWeek[$i] ?>" method="POST">
                                     <div class="add-form-description">
                                         <textarea class="description-area" id="description" rows="3" name="description" <?php if (!isset($errors)) echo "style='height: 45vh'"; ?> placeholder="Describe your split"><?php
                                                                                                                                                                                                                         if (isset($inputs['description']) && $i == $today) echo Functions::escape($inputs['description']);
@@ -202,8 +198,6 @@ if ($isSplitEdit) {
                                     <input type="hidden" name="isEdit" value="true">
                                 <?php } ?>
                                 <input type="hidden" name="day" value="<?php echo $dayOfWeek[$i] ?>">
-                                <input type="hidden" name="user_id" value="<?= $user->user_id ?>">
-                                <input type="hidden" name="username" value="<?= $user->username ?>">
                                 <input type="hidden" name="token" value="<?php echo Token::generate('session/weekday_tokens/' . $dayOfWeek[$i]); ?>">
                                 <input type="submit" class="submit-button" value="Save">
                                 </form>
@@ -224,7 +218,7 @@ if ($isSplitEdit) {
         </div>
     </div>
 
-    <?php require_once 'Application/Views/Common/footer.php'; ?>
+    <?php require_once 'Application/Views/Common/footer.php' ?>
 </body>
 
 </html>
