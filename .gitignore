@@ -4,3 +4,4 @@ Application/vendor
 Application/composer.json
 node/package.json
 img/
+node/scss
