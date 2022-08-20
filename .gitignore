@@ -1,6 +1,6 @@
 Application/.env
 node/node_modules
 Application/vendor
-Application/composer.json
-node/package.json
+Application/composer-lock.json
 img/
+node/package-lock.json
