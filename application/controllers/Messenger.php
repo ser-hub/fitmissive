@@ -15,9 +15,9 @@ class Messenger extends Controller
 
         foreach ($chats as $chat) {
             if ($chat->getUserA() != $loggedUser->username) {
-                $chat->setUserAPicture($this->userService->getPicturePathOf($chat->getUserB()));
+                $chat->setUserAPicture($this->userService->getPicturePathOf($chat->getUserA()));
             } else {
-                $chat->setUserBPicture($this->userService->getPicturePathOf($chat->getUserA()));
+                $chat->setUserBPicture($this->userService->getPicturePathOf($chat->getUserB()));
             }
         }
 

@@ -93,11 +93,8 @@ class profile extends Controller
                 $this->data = $data;
             }
         }
-        if(isset($this->data['addErrors'])) {
-            $this->index($username);
-        } else {
-        Redirect::to('/profile/' . $username);
-        }
+            
+        $this->index($username);     
     }
 
     public function updateUser($username)

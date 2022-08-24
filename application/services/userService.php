@@ -2,7 +2,7 @@
 
 namespace Application\Services;
 
-use Application\Repositories\{UserRepository, SplitRepository};
+use Application\Repositories\{UserRepository, SplitRepository, ChatRepository};
 use Application\Utilities\{Config, Constants, Session, Hash};
 
 use \Exception;
@@ -11,6 +11,7 @@ class UserService
 {
     private $splitRepository;
     private $userRepository;
+    private $chatRepository;
     private $sessionName;
     private static $instance;
 
@@ -18,6 +19,7 @@ class UserService
     {
         $this->userRepository = UserRepository::getInstance();
         $this->splitRepository = SplitRepository::getInstance();
+        $this->chatRepository = ChatRepository::getInstance();
 
         $this->sessionName = Config::get('session/session_name');
     }
@@ -55,11 +57,6 @@ class UserService
         return $this->userRepository->find($user);
     }
 
-    public function getLoggedUserRole()
-    {
-        
-    }
-
     public function updateUser($fields = [], $username = null)
     {
         if ($username == null && $this->isUserLoggedIn()) {
@@ -77,7 +74,10 @@ class UserService
     {
         $user = $this->userRepository->find($username);
         if ($user) {
-            if (!$this->splitRepository->deleteUserSplits($user->id) || !$this->userRepository->deleteUser($user->id)) {
+            if (!$this->splitRepository->deleteUserSplits($user->user_id) ||
+                !$this->chatRepository->deleteChatsOf($user->user_id) ||
+                !$this->userRepository->deleteAllFollows($user->user_id) ||
+                !$this->userRepository->deleteUser($user->user_id)) {
                 throw new Exception('Something unexpected happened.');
             }
         }
@@ -144,8 +144,9 @@ class UserService
         $newExt = strtolower(end($fileNameExploded));
         $fileName = Hash::make($username);
 
-        if ($this->getPicturePathOf($username) !== Constants::DEFAULT_IMAGE) {
-            unlink($this->getPicturePathOf($username));
+        $picturePath = $this->getPicturePathOf($username);
+        if ($picturePath !== Constants::DEFAULT_IMAGE) {
+            unlink(substr($picturePath, 1));
         }
 
         $path = $this->getPicturePath($fileName, $newExt);
@@ -157,7 +158,7 @@ class UserService
 
     private function getPicturePath($filename = null, $ext = null)
     {
-        return $filename != null ? Constants::IMAGE_PATH . $filename . '.' . $ext : Constants::DEFAULT_IMAGE;
+        return $filename != null && $ext != null ? Constants::IMAGE_PATH . $filename . '.' . $ext : Constants::DEFAULT_IMAGE;
     }
 
     public function getPicturePathOf($username = null)
@@ -170,7 +171,7 @@ class UserService
         foreach (Constants::ALLOWED_IMAGE_TYPES as $ext) {
             $path = $this->getPicturePath($fileName, $ext);
             if (file_exists(substr($path, 1, strlen($path)- 1))) {
-                return $this->getPicturePath($fileName, $ext);
+                return $path;
             }
         }
 

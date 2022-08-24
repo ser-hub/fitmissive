@@ -58,6 +58,10 @@
 <?php } ?>
     </div>
 </div>
+<?php } else { ?>
+    <span class="prompt">
+        Say hi to <?= $data['receiver'] ?>
+    </span>
 <?php } ?>
 </div>
 <input type="hidden" class="sender" value="<?= $data['senderPic'] ?>">
@@ -69,7 +73,6 @@
 
 <?php include "Application/Socket/chat.php" ?>
 
-</script>
 <?php } ?>
 
 <?php require_once 'Application/Views/Common/footer.php' ?>

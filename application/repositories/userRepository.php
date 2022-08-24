@@ -142,4 +142,9 @@ class UserRepository
     {
         return $this->db->query('DELETE from follows where follower_id = ? AND followed_id = ? ', array($follower, $followed));
     }
+
+    public function deleteAllFollows($userId)
+    {
+        return $this->db->query('DELETE from follows where follower_id = ? OR followed_id = ? ', array($userId, $userId));
+    }
 }

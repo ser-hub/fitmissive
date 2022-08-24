@@ -70,7 +70,7 @@ class Info extends Controller
                 }
             }
         }
-        $this->index();
+        $this->index($slug);
     }
 
     public function delete($id = null)
@@ -85,6 +85,7 @@ class Info extends Controller
 
     public function create()
     {
+        $slug = null;
         if ($this->adminMode && Input::exists()) {
             if (Token::check(Input::get("token"), "session/info_create_token")) {
                 $title = Input::get('title');
@@ -103,7 +104,7 @@ class Info extends Controller
                         'name' => 'Slug',
                         'required' => true,
                         'max' => 45,
-                        '!contains' => ' \\/?%&#@!*()+=,.;:\'"0123456789',
+                        '!contains' => ' \\/?%&#@!*()+=,.;:\'"',
                         'unique' => 'info',
                         'dbColumn' => 'slug'
                     ),
@@ -120,6 +121,7 @@ class Info extends Controller
                         'slug' => $slug,
                         'content' => $content
                     ));
+                    Redirect::to('/info/' . $slug);
                 } else {
                     $this->data['inputs'] = array(
                         'title' => $title,
@@ -130,6 +132,6 @@ class Info extends Controller
                 }
             }
         }
-        $this->index();
+        $this->index($slug);
     }
 }

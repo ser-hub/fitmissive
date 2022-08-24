@@ -95,6 +95,7 @@ body {
 }
 
 .chat-button {
+    padding: 0px 5px;
     display: flex;
     position: relative;
     width: 20vw;
@@ -130,4 +131,12 @@ body {
 .offline {
     font-size: smaller;
     color: #ADB5BD;
+}
+
+.prompt {
+    position: inherit;
+    width: inherit;
+    text-align: center;
+    font-size: large;
+    font-style: italic;
 }

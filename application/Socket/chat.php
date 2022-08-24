@@ -6,7 +6,8 @@
 
     if (socket) {
         var messages = document.querySelector('.messages'),
-            input = document.querySelector('.input');
+            input = document.querySelector('.input'),
+            prompt = document.querySelector('.prompt');
 
         socket.emit('request status', recipient);
 
@@ -18,6 +19,7 @@
                 });
                 if (!/^\s*$/m.test(input.value)) displayMessage(username, input.value);
                 input.value = '';
+                if (prompt) prompt.style.display = 'none';
 
                 e.preventDefault();
             } else {

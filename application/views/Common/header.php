@@ -19,12 +19,11 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
         <meta name="viewport" class="carousel-content">
         <link rel="stylesheet" href="/node/assets/css/bootstrap.css">
     <?php } ?>
-    <?php if ($view === 'profile' || $view === 'search') { ?>
+    <?php if ($view === 'profile' || $view === 'search' || $view === 'info') { ?>
         <link rel="stylesheet" href="/css/home.css" type="text/css">
     <?php } ?>
 
     <?php
-
     if (str_contains($view, '/')) {
         $view = explode('/', $view);
         $view = end($view);

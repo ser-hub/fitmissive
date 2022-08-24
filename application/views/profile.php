@@ -32,7 +32,7 @@ if ($isSplitEdit) {
     <?php if ($isDelete) { ?>
         <span style="margin-bottom:10px">Are you sure you want to delete @<?= $user->username ?>?</span>
         <div>
-            <form action="/profile/delete<?= $user->username ?>" method="post" style="display: inline">
+            <form action="/profile/delete/<?= $user->username ?>" method="post" style="display: inline">
                 <input type="hidden" name="token" value="<?= Token::generate('session/profile_delete_token') ?>">
                 <input type="submit" value="Yes">
             </form>

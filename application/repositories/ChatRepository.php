@@ -92,4 +92,16 @@ class ChatRepository
                 $userId
             ]);
     }
+
+    public function deleteChatsOf($userId)
+    {
+        if (!$this->db->delete('chats', array('user_a', '=', $userId)) || 
+            !$this->db->delete('chats', array('user_b', '=', $userId))) {
+            return false;
+        } else {
+            $this->db->delete('messages', array('user_id', '=', $userId));
+            return true;
+        }
+
+    }
 }

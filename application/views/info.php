@@ -72,7 +72,7 @@ if ($data['inputs'] != null) {
             <?php }
             if (count($data['info']) < Constants::INFO_MAX) { ?>
                 <div class="bottom">
-                    <a href="/info?action=create" class="menu-item">Add info</a>
+                    <a href="/info?action=create" class="menu-item" style="font-weight: bold">+</a>
                 </div>
     <?php }
         } else {
