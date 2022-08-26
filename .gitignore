@@ -2,5 +2,5 @@ Application/.env
 node/node_modules
 Application/vendor
 Application/composer.lock
-img/
+img/profiles/uploads/
 node/package-lock.json
