@@ -1,9 +1,18 @@
 utils = require("./utilities");
 require('dotenv').config({
-    path: '${__dirname}/../Application/.env'
+    path: __dirname + '/../Application/.env'
 });
 
-utils.con.connect(function (err) {
+var mysql = require('mysql2');
+
+var con = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+});
+
+con.connect(function (err) {
     if (err) throw err;
     console.log("Database connected!");
 });
@@ -47,9 +56,9 @@ utils.io.on('connection', (socket) => {
         if (!/^\s*$/m.test(content)) {
             receiver = utils.getOriginSocketId(to);
             if (receiver != null && receiver.receiver != "") {
-                utils.insertMessage(socket.origin, to, content, true);
+                utils.insertMessage(con, socket.origin, to, content, true);
             } else {
-                utils.insertMessage(socket.origin, to, content);
+                utils.insertMessage(con, socket.origin, to, content);
             }
 
             if (receiver != null) {

@@ -1,15 +1,7 @@
 var server = require('http').createServer();
 var io = require('socket.io')(server);
-var mysql = require('mysql');
 
-var con = mysql.createConnection({
-    host: "127.0.0.1",
-    user: "root",
-    password: "",
-    database: "fitmissive"
-});
-
-function insertMessage(sender, recipient, content, seen = false) {
+function insertMessage(con, sender, recipient, content, seen = false) {
     var senderId;
     con.query("SELECT * FROM users WHERE username = ? OR username = ?", [sender, recipient], function (err, result, fields) {
         if (err) throw err;
@@ -55,7 +47,6 @@ module.exports = {
     insertMessage,
     getOriginSocketId,
     getReceiverSocketId,
-    con,
     io,
     server,
 }
