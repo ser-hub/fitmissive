@@ -1,21 +1,5 @@
 var statusTimeout = 0;
 
-function setStatus(status) {
-    var statusNode = document.querySelector('.status');
-    if (statusNode.textContent !== status) {
-        statusNode.textContent = status;
-        console.log(status);
-        statusTimeout = setTimeout(function () {
-            setStatus('');
-        }, 2000);
-    } else {
-        clearTimeout(statusTimeout);
-        statusTimeout = setTimeout(function () {
-            setStatus('');
-        }, 1000);
-    }
-}
-
 function resize() {
     var home = document.getElementById('home');
     home.childNodes.forEach(function (child) {
@@ -34,18 +18,13 @@ function resize() {
     home.appendChild(logo);
 }
 
-function setStatus(status) {
-    var statusNode = document.querySelector('.status');
+function setStatus(status, otherwise) {
+    var statusNode = document.querySelector('.online');
     if (statusNode.textContent !== status) {
         statusNode.textContent = status;
         statusTimeout = setTimeout(function () {
-            setStatus('');
+            statusNode.textContent = otherwise;
         }, 2000);
-    } else {
-        clearTimeout(statusTimeout);
-        statusTimeout = setTimeout(function () {
-            setStatus('');
-        }, 1000);
     }
 }
 

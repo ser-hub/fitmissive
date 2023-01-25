@@ -67,7 +67,6 @@
 <input type="hidden" class="sender" value="<?= $data['senderPic'] ?>">
 <input type="hidden" class="receiver" value="<?= $data['receiverPic'] ?>">
 <input type="hidden" class="username" value="<?= $data['sender'] ?>">
-<div class="status"></div>
 <textarea class="input" name="input"></textarea>
 </div>
 

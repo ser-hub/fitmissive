@@ -13,18 +13,20 @@
 
         input.addEventListener('keydown', function(e) {
             if (e.which === 13 && !e.shiftKey) {
-                socket.emit('chat message', {
-                    content: input.value,
-                    to: recipient
-                });
-                if (!/^\s*$/m.test(input.value)) displayMessage(username, input.value);
+                if (!/^\s*$/m.test(input.value)) {
+                    displayMessage(username, input.value);
+                    socket.emit('chat message', {
+                        content: input.value,
+                        to: recipient
+                    });
+                }
                 input.value = '';
                 if (prompt) prompt.style.display = 'none';
 
                 e.preventDefault();
             } else {
-                socket.emit('status', {
-                    content: username + ' is typing...',
+                socket.emit('chat status', {
+                    content: ' is typing...',
                     to: recipient
                 });
             }
@@ -90,7 +92,7 @@
             content,
             from
         }) {
-            setStatus(content);
+            setStatus(content, 'online');
         });
 
         socket.onAny((event, ...args) => {

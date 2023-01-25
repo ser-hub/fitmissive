@@ -45,7 +45,7 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
                 <div class="items">
                     <form action="/search" style="margin-right:30px">
                         <input type="text" class="search-field" name="search" placeholder="Search users" style="margin: 8px" value="<?php if (isset($data['keyword'])) echo $data['keyword'] ?>">
-                        <input type="submit" class="menu-item" style="<?php if (str_contains(Input::get('url'), 'search')) echo 'background-color: #ADE8F4' ?>" value="Search">
+                        <input type="submit" id="submit" class="menu-item" style="<?php if (str_contains(Input::get('url'), 'search')) echo 'background-color: #ADE8F4' ?>" value="Search">
                     </form>
                     <?php foreach ($menu as $key => $value) { ?>
                         <a href="<?= $value ?>" class="menu-item <?php

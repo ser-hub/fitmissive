@@ -39,7 +39,7 @@ class Search extends Controller
 
             if ($searchResults) {
                 foreach($searchResults['users'] as $user) {
-                    $profilePictures[$user->user_id] = $this->userService->getPicturePathOf($user->user_id);
+                    $profilePictures[$user->user_id] = $this->userService->getPicturePathOf($user->username);
                 }
             }
 

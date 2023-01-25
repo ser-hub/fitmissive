@@ -59,8 +59,10 @@
 }
 
 .selected a {
-    font-size: 16pt;
+    font-size: 20pt;
     font-weight: bolder;
+    color: #2A9D8F;
+    border-bottom: 2px solid #000000;
 }
 
 a {
