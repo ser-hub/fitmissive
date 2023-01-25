@@ -1,6 +1,6 @@
 <?php
 
-use Application\Utilities\{Input, Constants};
+use Application\Utilities\{Input, Constants, Pagination};
 
 $results = $pages = null;
 if ($data['searchResults']) {
@@ -48,45 +48,13 @@ if (Input::keyExists('page') && Input::get('page') > 0) {
     <?php
         }
     }
-    ?>
+    ?> 
     <div class="pagination">
         <?php
-        if ($pages > 10) {
-            for ($i = 1; $i <= Constants::PAGINATION_PAGES_TO_SHOW; $i++) {
-                if ($i == $currentPage) echo "<span class='selected'>" ?>
-                <a href="/search/index?search=<?= $data['keyword'] ?>&page=<?= $i ?>"><?= $i ?></a><?php if ($i != $pages) echo ' | ' ?>
-                <?php if ($i == $currentPage) echo "</span>" ?>
-            <?php    } ?>
-            <?php
-            if ($currentPage > Constants::PAGINATION_PAGES_TO_SHOW + 3) {
-                echo '... |';
-            }
-            for ($i = 0; $i < 5; $i++) {
-                if (($currentPage - 2) + $i > Constants::PAGINATION_PAGES_TO_SHOW && ($currentPage - 2) + $i < $pages - Constants::PAGINATION_PAGES_TO_SHOW) {
-                    if (($currentPage - 2) + $i == $currentPage) echo "<span class='selected'>" ?>
-                    <a href="/search/index?search=<?= $data['keyword'] ?>&page=<?= ($currentPage - 2) + $i ?>"><?= ($currentPage - 2) + $i ?></a><?php if (($currentPage - 2) + $i != $pages) echo ' | ' ?>
-                    <?php if (($currentPage - 2) + $i == $currentPage) echo "</span>" ?>
-            <?php }
-            }
-
-            if ($currentPage < $pages - (Constants::PAGINATION_PAGES_TO_SHOW + 3)) {
-                echo '... |';
-            }
-            ?>
-            <?php for ($i = $pages - Constants::PAGINATION_PAGES_TO_SHOW + 1; $i <= $pages; $i++) {
-                if ($i == $currentPage) echo "<span class='selected'>" ?>
-                <a href="/search/index?search=<?= $data['keyword'] ?>&page=<?= $i ?>"><?= $i ?></a><?php if ($i != $pages) echo ' | ' ?>
-                <?php if ($i == $currentPage) echo "</span>" ?>
-            <?php    } ?>
-            <?php } else {
-            for ($i = 1; $i <= $pages; $i++) {
-                if ($i == $currentPage) echo "<span class='selected'>"; ?>
-                <a href="/search/index?search=<?= $data['keyword'] ?>&page=<?= $i ?>"><?= $i ?></a>
-                <?php if ($i == $currentPage) echo "</span>"; ?>
-                <?php if ($i != $pages) echo ' | ' ?>
-        <?php
-            }
-        } ?>
+            $pagination = new Pagination($pages, Constants::PAGINATION_PAGES_TO_SHOW);
+            $pagination->setLink('/search/index?search='.$data['keyword']);
+            $pagination->show($currentPage);
+        ?>
     </div>
 </div>
 <?php require_once 'Application/Views/Common/footer.php' ?>
