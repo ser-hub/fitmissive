@@ -62,7 +62,9 @@ use Application\Utilities\{Token, Session, Functions};
                     <input type="submit" name="submitLogin" value="Login">
                 </div>
                 <div class="row row-btn">
-                    Forgot your password? <a href="/index/forgotPassword">Click here to reset it.</a>
+                    <legend>
+                        Forgot your password? <a href="/index/forgotPassword">Click here to reset it.</a>
+                    </legend>
                 </div>
                 <?php
                 $errorsLabel = 'LogErrors';
