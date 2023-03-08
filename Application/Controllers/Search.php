@@ -3,7 +3,7 @@
 namespace Application\Controllers;
 
 use Application\Core\Controller;
-use Application\Utilities\{Input, Redirect, Session, Constants};
+use Application\Utilities\{Input, Redirect, Session, Constants, Token};
 
 class Search extends Controller
 {
@@ -43,12 +43,12 @@ class Search extends Controller
                 }
             }
 
-            $this->view('search', array(
+            $this->view('search', [
                 'keyword' => $keyword,
                 'searchResults' => $searchResults,
                 'profilePictures' => $profilePictures,
                 'follows' => $this->userService->getFollowsArrayOf($this->loggedUser),
-            ));
+            ]);
         }
         else {
             Redirect::to('/home');
@@ -57,14 +57,14 @@ class Search extends Controller
 
     public function follow()
     {
-        if (Input::exists()) {
+        if (Input::exists() && Token::check(Input::get('token'), 'session/follow_token')) {
             if (Input::get('action') == 'Follow') {
                 $this->userService->follow($this->loggedUser, Input::get('followed'));
             }
             else if (Input::get('action') == 'Unfollow') {
                 $this->userService->unfollow($this->loggedUser, Input::get('followed'));
             }
+            echo Token::generate('session/follow_token');
         }
-        $this->index();
     }
 }
