@@ -9,6 +9,8 @@ $splits = $errors = $inputs = $edit = null;
 $isEdit = Input::keyExists('edit');
 $followedSplits = $data['followedSplits'];
 
+$ratingToken = Token::generate('session/rating_token');
+
 if (isset($data['splits'])) $splits = $data['splits'];
 if (isset($data['data']['updateErrors'])) $errors = $data['data']['updateErrors'];
 if (isset($data['data']['updateInput'])) $inputs = $data['data']['updateInput'];
@@ -96,27 +98,58 @@ if ($isEdit) {
         </button>
     </div>
 
+    <hr style="margin-top:5vh">
+
     <?php
-    $i = 0;
-    foreach ($followedSplits as $split) {
+    $currentCarousel = 0;
+    foreach ($followedSplits as $user_id => $split) {
     ?>
-        <div id="FollowedSplitCarousel<?= $i++ ?>" class="carousel slide" style="margin-top: 5vh">
+        <div id="FollowedSplitCarousel<?= $currentCarousel ?>" class="carousel slide" data-bs-ride="false">
+            <div class="carousel-indicators">
+                <?php for ($i = 0; $i < 7; $i++) { ?>
+                    <button data-bs-target="#FollowedSplitCarousel<?= $currentCarousel ?>" data-bs-slide-to="<?php echo $i ?>" <?= $i == $today ? "class='active' aria-current='true'" : '' ?> aria-label="<?php echo $dayOfWeek[$i] ?> slide"></button>
+                <?php } ?>
+            </div>
             <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div class="carousel-content">
-                        <div class="scroller">
-                            <div class="element"><?= $split->description ?></div>
+                <?php for ($i = 0; $i < 7; $i++) { ?>
+                    <div class="carousel-item <?= $i == $today ? 'active' : '' ?>">
+                        <div class="carousel-content">
+                            <div class="scroller">
+                                <div class="element"><?= isset($split[$dayOfWeek[$i]]->description) ? $split[$dayOfWeek[$i]]->description : "" ?></div>
+                            </div>
+                        </div>
+                        <div class="carousel-caption d-none d-md-block">
+                            <h3><?= $user_id . '\'s ' . $dayOfWeek[$i] ?></h3>
+                            <?= isset($split[$dayOfWeek[$i]]->title) ? $splits[$dayOfWeek[$i]]->title : "" ?>
                         </div>
                     </div>
-                    <div class="carousel-caption d-none d-md-block">
-                        <h3><?= $split->user_id . '\'s ' . $dayOfWeek[$today] ?></h3>
-                        <?= $split->title ?>
-                    </div>
-                </div>
+                <?php } ?>
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#FollowedSplitCarousel<?= $currentCarousel ?>" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#FollowedSplitCarousel<?= $currentCarousel ?>" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-    <?php } ?>
+
+        <div class="ratings-wrapper">
+            <?php
+            $username = $split['username'];
+            $rating = $split['rating'];
+            $likes = $split['ratings']['likes'];
+            $dislikes = $split['ratings']['dislikes'];
+            require 'Application/Views/Common/rating-section.php'
+            ?>
+        </div>
+    <?php
+        $currentCarousel++;
+    }
+    ?>
 </div>
 
+<script src='/Application/js/rateButtons.js'></script>
 <script type="module" src="/node/assets/js/bootstrap.js"></script>
 <?php require_once 'Application/Views/Common/footer.php' ?>

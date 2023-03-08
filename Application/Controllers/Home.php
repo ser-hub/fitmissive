@@ -24,22 +24,18 @@ class Home extends Controller
             $this->userService->getFollowsArrayOf($this->loggedUser));
 
         if (!empty($followedSplits)) {
-            foreach($followedSplits as $split) {
-                $user = $this->userService->getUser($split->user_id);
-
-                if (isset($user->fullname)) {
-                    $split->user_id = $user->fullname;
-                } else {
-                    $split->user_id = '@' . $user->username;
-                }
+            foreach($followedSplits as &$split) {
+                $split['ratings'] = $this->splitService->getRatingsCountOf($split['user_id']);
+                $split['rating'] = $this->splitService->getRating($this->loggedUser, $split['user_id']);
+                unset($split['user_id']);
             }
         }
 
-        $this->view('home/home', array(
+        $this->view('home/home', [
             'splits' => $this->splitService->splitsOf($this->loggedUser),
             'followedSplits' => $followedSplits,
             'data' => $this->data
-        ));
+        ]);
     }
 
     public function update($day)

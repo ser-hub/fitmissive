@@ -36,17 +36,20 @@ class profile extends Controller
         
         $loggedUserFollowsArray = $this->userService->getFollowsArrayOf($this->loggedUser);
 
-        $this->view('profile', array(
+        $this->view('profile', [
             'isAdmin' => $isAdmin,
             'user' => $user,
+            'isMyProfile' => $this->loggedUser == $user->user_id,
             'picturePath' => $this->userService->getPicturePathOf($user->username),
             'data' => $this->data,
             'splits' => $this->splitService->splitsOf($user->user_id),
-            'follows' => $this->userService->getFollowsCountOf($user->user_id),
+            'follows' => $this->userService->getFollowsCountOf($user->user_id), //unify
             'followers' => $this->userService->getFollowersCountOf($user->user_id),
+            'ratings' => $this->splitService->getRatingsCountOf($user->user_id),
+            'rating' => $this->splitService->getRating($this->loggedUser, $user->user_id),
             'isFollowing' => $loggedUserFollowsArray ?
                 in_array($user->user_id, $this->userService->getFollowsArrayOf($this->loggedUser)) : false
-        ));
+        ]);
     }
 
     public function updateSplit($username, $day)
@@ -101,47 +104,56 @@ class profile extends Controller
     {
         if (Input::exists()) {
             if (Token::check(Input::get('token'), 'session/profile_edit_token')) {
-                $fullname = Input::get('fullname');
-                $description = Input::get('description');
                 $data = [];
 
-                if (strlen($fullname) > 32) {
-                    $data['uploadErrors'] = 'Name is too long';
-                } elseif (strlen($description) > 800) {
-                    $data['uploadErrors'] = 'Description is too long';
-                } else {
+                $validator = new Validator();
+                $validator->check($_POST, [
+                    'fullname' => [
+                        'name' => 'fullname',
+                        '!contains' => '\\/?%&#@!*()+=,;:\'"',
+                        'min' => 2,
+                        'max' => 32,
+                    ],
+                    'description' => [
+                        'name' => 'desciption',
+                        'max' => 500,
+                    ]
+
+                ]);
+                if ($validator->passed()) {
                     $this->userService->updateUser(array(
-                        'fullname' => $fullname,
-                        'description' => $description,
+                        'fullname' => Input::get('fullname'),
+                        'description' => Input::get('description'),
                         'updated_at' => date('Y-m-d H:i:s'),
                     ), $username);
+                } else {
+                    $data['uploadErrors'] = $validator->errors();
                 }
 
                 if (Input::keyExists('profilePic') && Input::get('profilePic')['name'] != '') {
 
                     $validator = new Validator();
-                    $validator->checkFile(Input::get('profilePic'), array(
+                    $validator->checkFile(Input::get('profilePic'), [
                         'allowedTypes' => Constants::ALLOWED_IMAGE_TYPES,
                         'maxSize' => 5242880,
-                        'illegalSymbols' => array(
+                        'illegalSymbols' => [
                             '.php',
-                        )
-                    ));
+                        ]
+                    ]);
 
                     if ($validator->passed()) {
                         if (!$this->userService->savePictureOf(
                             $username, 
                             Input::get('profilePic'))) {
-                            $data['uploadErrors'] = array('Error saving the file.');
+                            $data['uploadErrors'] = ['Error saving the file.'];
                         }
 
                     } else {
                         $data['uploadErrors'] = $validator->errors();
                         $data['edit'] = true;
                     } 
-                
-                $this->data = $data;
                 }
+                $this->data = $data;
             }
         }
         if(isset($this->data['uploadErrors'])) {
@@ -151,17 +163,38 @@ class profile extends Controller
         }
     }
 
-    public function follow($username)
-    {
-        if (Input::exists()) {
-            if (Input::get('action') == 'Follow') {
-                $this->userService->follow($this->loggedUser, $username);
-            }
-            else if (Input::get('action') == 'Unfollow') {
-                $this->userService->unfollow($this->loggedUser, $username);
+    public function rate($username) {
+        if (Input::exists() && Token::check(Input::get('token'), 'session/rating_token')) {
+            if (Input::keyExists('rating')) {
+                $response = ['token' => Token::generate('session/rating_token')];
+                $user = $this->userService->getUser($username);
+                if (!$user) {
+                    $response['result'] = 'Error';
+                    return;
+                }
+
+                if ($this->splitService->getRating($this->loggedUser, $user->user_id) === null) {
+                    if ($this->splitService->rate($this->loggedUser, $username, Input::get('rating'))) {
+                        $response['result'] = 'Rated';
+                    } else {
+                        $response['result'] = 'Error';
+                    }
+                }
+                else if ($this->splitService->getRating($this->loggedUser, $user->user_id) != Input::get('rating')){
+                    if (!$this->splitService->updateRating($this->loggedUser, $user->user_id, Input::get('rating'))) {
+                        $response['result'] = 'Updated';
+                    } else {
+                        $response['result'] = 'Error';
+                    }
+                }
+                else if ($this->splitService->getRating($this->loggedUser, $user->user_id) === Input::get('rating')) {
+                    return;
+                } else {
+                    $response['result'] = 'Error';
+                }
+                echo json_encode($response);
             }
         }
-        $this->index($username);
     }
 
     public function delete($username)

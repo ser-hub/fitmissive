@@ -61,13 +61,34 @@ class SplitRepository
         return $splits;
     }
 
+    public function getAllRatingsOf($user_id) {
+        return $this->db->action('SELECT *', 'ratings', [
+            'target_id', '=', $user_id
+        ])->results();
+    }
+
+    public function insertRating($user_id, $rated_id, $rating) {
+        return $this->db->insert('ratings', [
+            'user_id' => $user_id,
+            'target_id' => $rated_id,
+            'rating' => $rating
+        ]);
+    }
+
+    public function updateRating($rating_id, $rating) {
+        $this->db->update('ratings', [
+            'field' => 'rating_id',
+            'value' => $rating_id
+        ], ['rating' => $rating]);
+    }
+
     public function insertSplit($user_id, $day, $data = [])
     {
-        return $this->db->insert($this->dayTables[$day], array(
+        return $this->db->insert($this->dayTables[$day], [
             'user_id' => $user_id,
             'title' => $data['title'],
             'description' => $data['description']
-        ));
+        ]);
     }
 
     public function updateSplit($day, $id, $data = [])
