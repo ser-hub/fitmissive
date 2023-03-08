@@ -1,6 +1,19 @@
 .carousel-area {
-    width: 70vw;
-    left: 30vw;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0px;
+}
+
+.carousel {
+    margin: 0px;
+    box-shadow: none;
+}
+
+.profile-content {
+    display: flex;
+    align-items: center;
 }
 
 .carousel-content {
@@ -8,23 +21,21 @@
     background-color: #ADB5BD /*#C5C3C6*/;
     justify-content: center;
     height: 70vh;
-    width: 70vw;
+    padding: 0vh 5vw;
 }
 
 .profile-data {
+    width: 20vw;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    height: 70vh;
-    width: 30vw;
-    top: 15vh;
+    height: fit-content;
 }
 
 .profile-data 
 input[type=submit] {
-    background-color: #ADB5BD;
+    background-color: lightgray;
+    border-radius: 10px 0px 0px 10px;
+    padding: 6px 12px;
 }
 
 .profile-data 
@@ -32,24 +43,49 @@ input[type=text],
 .profile-data 
 textarea {
     border: 2px #2A9D8F solid;
+    border-radius: 5px;
     resize: none;
 }
 
 .profile-data 
 input[type=submit]:hover {
-    background-color: #ADE8F4;
+    background-color: #ADB5BD;
 }
 
 .header {
+    width: inherit;
+    padding-left: 10px;
     display: flex;
-    flex-direction: row;
-    margin-top: 10px;
+    align-items: center;
+}
+
+.header a {
+    margin: 10px 5px;
+    border-left: 2px solid gray;
+    padding: 20px 20px 20px 6px;
+    text-decoration: none;
+    color: black;
+}
+
+.header a:hover {
+    color: white;
+    background-color: gray;
+    border-radius: 0px 10px 10px 0px;
+}
+
+.follows {
+    font-family: 'Font Awesome 6 Free';
+    margin-left: 1rem;
+    margin-top: 1rem;
+    font-size: 9pt;
 }
 
 .title {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow-wrap: anywhere;
+    margin-right: 10px;
 }
 
 .header span{
@@ -58,27 +94,31 @@ input[type=submit]:hover {
 }
 
 .body {
+    background-color: lightgray;
     display: flex;
-    flex-direction: row;
-    text-align: center;
+    width: inherit;
     margin-top: 10px;
 }
 
 .description-section {
-    height: auto;
-    margin: 15px 10px;
-    overflow-y: auto;
+    width: inherit;
+    display: flex;
+    padding: 15px 10px;
 }
 
 .description {
-    overflow-wrap: anywhere;
+    padding: 5px 10px;
+    width: inherit;
+    max-height: 30vh;
+    overflow-y: auto;
+    overflow-wrap: anywhere; 
+    white-space: pre-line;
 }
 
 .footer {
     display: flex;
     align-items: baseline;
     justify-content: right;
-    width: 25vw;
 }
 
 textarea {
@@ -88,12 +128,10 @@ textarea {
 
 input[type=file] {
     padding: 0px;
-    cursor: pointer;
-    margin-right: auto;
 }
 
 input[type=file]::-webkit-file-upload-button {
-    background-color: #ADB5BD;
+    background-color: lightgray;
     border: none;
     border-radius: 10px;
     padding: 5px 12px;
@@ -101,7 +139,7 @@ input[type=file]::-webkit-file-upload-button {
 }
 
 input[type=file]::-webkit-file-upload-button:hover {
-    background-color: #ADE8F4;
+    background-color: #ADB5BD;
 }
 
 img {
@@ -117,18 +155,77 @@ h4 {
     margin-bottom: 0;
 }
 
-.description-section::-webkit-scrollbar {
-    display: none;
+.ratings-wrapper {
+    margin: 0px;
 }
 
-.bottom {
-    text-align: center;
+.cancel-btn {
+    margin: 5px 5px 5px 0px;
+    background-color: lightgray;
+    border-radius: 0px 10px 10px 0px;
+    border-left: 3px solid white;
+    height: fit-content;
+    padding: 6px 12px;
+    text-decoration: none;
+    color: black;
 }
 
-.bottom form {
-    display: inline;
-}
-
-.bottom a {
+.cancel-btn:hover {
+    color: black;
     background-color: #ADB5BD;
+}
+
+.profile-data-bottom {
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    margin: 10px auto;
+    border-radius: 50px;
+    border: 4px solid #01776988;
+    background-color: #01776988;
+}
+
+.send-msg-btn {
+    text-decoration: none;
+}
+
+.btn-default {
+    display: flex;
+    align-items: center;
+    margin-left: 0px;
+    border-radius: 0px 50px 50px 0px;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-left {
+    border-radius: 50px 0px 0px 50px;
+    margin-right: 3px;
+}
+
+.btn-default:hover {
+    color: white;
+    text-decoration: none;
+}
+
+.delete-btn {
+    display: block;
+    width: fit-content;
+    margin: auto;
+    text-decoration: none;
+    border-radius: 50px;
+    padding: 10px;
+}
+
+.delete-action input[type=submit],
+.delete-action input[type=submit]:hover {
+    color: white;
+    background-color: transparent;
+    border-radius: 0px;
+    padding: 0px;
+}
+
+.delete-action form {
+    margin-left: 10px;
+    border-radius: 50px 0px 0px 50px;
 }

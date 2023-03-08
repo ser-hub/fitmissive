@@ -53,31 +53,32 @@ if ($data['inputs'] != null) {
             <a href="/info" class="menu-item" style="margin-top: 10px">Cancel</a>
         </form>
         <?php } else {
-        if (isset($data['content']) && strlen($data['content'])) { ?>
-            <span class="info-text">
-                <?= $data['content'] ?>
-            </span>
-            <?php if ($data['adminMode']) { ?>
+             if ($data['adminMode']) { ?>
                 <div class='top'>
                     <a href="/info" class="menu-item">Info panel</a>
                 </div>
-                <div class='bottom'>
-                    <a href="/info/<?= $slug ?>?action=edit" class="menu-item" style="margin-right: 10px">Edit</a>
-                    <a href="/info/<?= $slug ?>?action=delete" class="menu-item">Delete</a>
-                </div>
-            <?php }
-        } elseif ($data['adminMode']) {
+                <?php } 
+        if (isset($data['content']) && strlen($data['content'])) { ?>
+            <span class="info-text"><?=trim($data['content'])?></span>
+        <?php }
+         elseif ($data['adminMode']) {
+            echo "<div class='infos-menu'>";
             foreach ($data['info'] as $info) { ?>
                 <a href="/info/<?= $info->slug ?>"><?= $info->title ?></a><br>
             <?php }
             if (count($data['info']) < Constants::INFO_MAX) { ?>
-                <div class="bottom">
-                    <a href="/info?action=create" class="menu-item" style="font-weight: bold">+</a>
-                </div>
+                    <a href="/info?action=create">+</a>
     <?php }
+    echo '</div>';
         } else {
             echo 'No info found';
         }
+        if ($data['adminMode']) { ?>
+            <div class='bottom'>
+                <a href="/info/<?= $slug ?>?action=edit" style="border-right: 2px solid">Edit</a>
+                <a href="/info/<?= $slug ?>?action=delete">Delete</a>
+            </div>
+        <?php }
     } ?>
 </div>
 <?php require_once 'Application/Views/Common/footer.php' ?>

@@ -1,7 +1,4 @@
 <?php
-
-use Application\Utilities\Input;
-
 $isLoggedIn = isset($data['loggedUser']);
 if ($isLoggedIn) {
     $menu = $data['menu'];
@@ -31,33 +28,26 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
 
     ?>
 
-    <link rel="stylesheet" href="/css/common.css" type="text/css">
-    <link rel="stylesheet" href="/css/<?= $view ?>.css" type="text/css">
+    <link href="/node/node_modules/@fortawesome/fontawesome-free/css/fontawesome.css" rel="stylesheet">
+    <link href="/node/node_modules/@fortawesome/fontawesome-free/css/regular.css" rel="stylesheet">
+    <link href="/node/node_modules/@fortawesome/fontawesome-free/css/solid.css" rel="stylesheet">
+
+    <link href="/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/css/<?= $view ?>.css" rel="stylesheet" type="text/css">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 
 <body>
-
-    <header class="header-container" style="<?php if (!$isLoggedIn) echo 'justify-content: center' ?>">
-        <a href="/home" id="home"></a>
-        <?php if ($isLoggedIn) { ?>
-            <div class="menu">
-                <div class="items">
-                    <form action="/search" style="margin-right:30px">
-                        <input type="text" class="search-field" name="search" placeholder="Search users" style="margin: 8px" value="<?php if (isset($data['keyword'])) echo $data['keyword'] ?>">
-                        <input type="submit" id="submit" class="menu-item" style="<?php if (str_contains(Input::get('url'), 'search')) echo 'background-color: #ADE8F4' ?>" value="Search">
+    <div class="main-content">
+        <header class="header-container">
+            <a href="/home" id="home"></a>
+            <div class="hint"><i>Share your workouts</i></div>
+            <?php if ($isLoggedIn) { ?>
+                <div class="menu">
+                    <form action="/search" class="search-form">
+                        <input type="text" class="search-field" name="search" placeholder="Search users" value="<?= isset($data['keyword']) ? $data['keyword'] : "" ?>">
+                        <input type="submit" id="submit" value="Search">
                     </form>
-                    <?php foreach ($menu as $key => $value) { ?>
-                        <a href="<?= $value ?>" class="menu-item <?php
-                                                                    if (str_contains('/' . Input::get('url'), $value)) echo 'menu-selected ';
-                                                                    if ($value == '/messenger' && $unseenMessages) echo 'notification'
-                                                                    ?>" style="margin-right: 10px"><?= $key ?></a>
-                    <?php } ?>
                 </div>
-            </div>
-        <?php } ?>
-    </header>
-
-    <script src="/node/node_modules/socket.io/client-dist/socket.io.js"></script>
-    <script src="/Application/Socket/utils.js"></script>
-    <?php include "Application/Socket/connect.php" ?>
+            <?php } ?>
+        </header>

@@ -1,37 +1,37 @@
 .hint {
-    position: absolute;
-    left: 0vw;
-    top: 11vh;
-    width: 100vw;
     text-align: center;
 }
 
-.reg-form {
+.index-content {
+    height: 80vh;
     display: flex;
-    text-align: left;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    position: absolute;
-    left: 0vh;
-    top: 15vh;
-    width: 50vw;
-    height: 70vh;
-    background-color: transparent;
-    border-width: 0px 3px 0px 0px;
-    border-style: solid;
-    border-color: black;
 }
 
+.forms {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    background-image: url("../img/pattern-experimental-4.png");
+}
+
+.reg-form,
 .login-form {
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    top: 10vh;
-    left: 50vw;
-    width: 50vw;
-    height: 80vh;
-    background-color: transparent;
+    padding: 1rem;
+    margin: auto;
+    box-shadow: 0px 0px 4px;
+}
+
+.reg-section,
+.login-section {
+    display: flex;
+    width: 100%;
+    padding: 120px 0px;
 }
 
 input[type=text],
@@ -51,8 +51,6 @@ input[type=submit] {
     padding: 10px 30px;
     border-radius: 10px;
     border-width: 0px;
-    margin-top: 10px;
-    margin-bottom: 10px;
     background-color: #2A9D8F;
 }
 
@@ -65,9 +63,17 @@ input[type=submit] {
     font-style: italic;
 }
 
-.row-custom {
-    display: flex;
-    width: inherit;
-    align-items: center;
+.row-btn {
     justify-content: center;
+    padding: 10px 0px;
+}
+
+.error-section {
+    padding: 0px;
+    margin: auto;
+}
+
+.row-errors {
+    background-color: #EDF2F4;
+    border-top: 2px solid;
 }
