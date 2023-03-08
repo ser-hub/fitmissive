@@ -119,7 +119,7 @@ class DB
         return false;
     }
 
-    public function update($table, $id = array(), $fields = [])
+    public function update($table, $id = [], $fields = [])
     {
         $set = '';
         $x = 1;

@@ -41,13 +41,13 @@ class Info extends Controller
             }
         }
 
-        $this->view('info', array(
+        $this->view('info', [
             'title' => $data['title'],
             'content' => $data['content'],
             'adminMode' => $this->adminMode,
             'errors' => $this->data['errors'],
             'inputs' => $this->data['inputs']
-        ));
+        ]);
     }
 
     public function update($slug = null)

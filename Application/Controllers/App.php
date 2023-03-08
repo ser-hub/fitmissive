@@ -36,7 +36,7 @@ class App
         try {
             call_user_func_array([$this->controller, $this->method], $this->params);
         } catch (Error $e) {
-            echo '<i>Something unexpected happened.</i>';
+            echo '<i>Something unexpected happened.</i>' . '<br><b>' . $e . '</b>';
         }
     }
 

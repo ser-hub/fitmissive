@@ -28,9 +28,11 @@ class Pagination
         if (!$longFormat) $this->pagesToShow = $this->totalPages;
 
         for ($i = 1; $i <= $this->pagesToShow; $i++) {
-            if ($i == $currentPage) echo "<span class='" . $this->selectedClass . "'>";
-            echo '<a href="' . $this->link . '&page=' . $i . '">' . $i . '</a>';
-            if ($i == $currentPage) echo "</span>";
+            if ($i == $currentPage) {
+                echo '<a class="' . $this->selectedClass . '" href="' . $this->link . '&page=' . $i . '">' . $i . '</a>';
+            } else {
+                echo '<a href="' . $this->link . '&page=' . $i . '">' . $i . '</a>';
+            }
             if ($i != $this->totalPages) echo ' ' . $this->pageDelimiter . ' ';
         }
 
@@ -41,9 +43,11 @@ class Pagination
 
             for ($i = 0; $i < 5; $i++) {
                 if (($currentPage - 2) + $i > $this->pagesToShow && ($currentPage - 2) + $i < $this->totalPages - $this->pagesToShow) {
-                    if ($i == 2) echo "<span class='" . $this->selectedClass . "'>";
-                    echo '<a href="' . $this->link . '&page=' . ($currentPage - 2) + $i . '">' . ($currentPage - 2) + $i . '</a>';
-                    if ($i == 2) echo "</span>";
+                    if ($i == 2) {
+                        echo '<a class="' . $this->selectedClass . '" href="' . $this->link . '&page=' . ($currentPage - 2) + $i . '">' . ($currentPage - 2) + $i . '</a>';
+                    } else {
+                        echo '<a href="' . $this->link . '&page=' . ($currentPage - 2) + $i . '">' . ($currentPage - 2) + $i . '</a>';
+                    }
                     if (($currentPage - 2) + $i != $this->totalPages) echo ' ' . $this->pageDelimiter . ' ';
                 }
             }
@@ -53,9 +57,11 @@ class Pagination
             }
 
             for ($i = $this->totalPages - $this->pagesToShow + 1; $i <= $this->totalPages; $i++) {
-                if ($i == $currentPage) echo "<span class='" . $this->selectedClass . "'>";
-                echo '<a href="' . $this->link . '&page=' . $i . '">' . $i . '</a>';
-                if ($i == $currentPage) echo "</span>";
+                if ($i == $currentPage) {
+                    echo '<a class="' . $this->selectedClass . '" href="' . $this->link . '&page=' . $i . '">' . $i . '</a>';
+                } else {
+                    echo '<a href="' . $this->link . '&page=' . $i . '">' . $i . '</a>';
+                }
                 if ($i != $this->totalPages) echo ' ' . $this->pageDelimiter . ' ';
             }
         }

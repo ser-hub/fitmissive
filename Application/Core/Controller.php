@@ -5,7 +5,7 @@ namespace Application\Core;
 use Application\Utilities\Redirect;
 use Application\Services\{UserService, InfoService, ChatService};
 
-class Controller
+abstract class Controller
 {
     protected $loggedUser;
     protected $userService;
@@ -28,6 +28,8 @@ class Controller
         $this->loggedUser = $this->loggedUser->user_id;
     }
 
+    abstract public function index();
+
     protected function model($model)
     {
         require_once 'Application/Models/' . $model . '.php';
@@ -40,9 +42,9 @@ class Controller
             $data['loggedUser'] = $this->loggedUser;
             $data['loggedUsername'] = $this->loggedUsername;
             $data['menu'] = [
-                'Messenger' => '/messenger', 
-                'My profile' => '/profile/' . $this->loggedUsername,
-                'Sign out' => '/home/logout'
+                'paper-plane' => '/messenger', 
+                'user' => '/profile/' . $this->loggedUsername,
+                'circle-xmark' => '/home/logout'
             ];
             $data['unseenMessages'] = $this->chatService->unseenMessages($this->loggedUser);
         }

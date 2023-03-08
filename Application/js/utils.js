@@ -8,7 +8,7 @@ function resize() {
     logo = document.createElement('img');
     logo.height = 60;
     logo.alt = 'fitmissive-logo';
-    if (window.innerWidth < 1000) {
+    if (window.innerWidth < 1200) {
         logo.src = '/img/profiles/default.png';
         logo.width = 49;
     } else {
@@ -68,3 +68,5 @@ function displayMessage(author, msg) {
     messages.scrollTo(0, messages.scrollHeight);
 }
 
+window.addEventListener('resize', resize);
+window.addEventListener('load', resize);

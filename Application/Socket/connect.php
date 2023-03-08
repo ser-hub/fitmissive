@@ -1,7 +1,4 @@
 <script>
-    window.addEventListener('resize', resize);
-    window.addEventListener('load', resize);
-
     var recipient = <?php
                     if (isset($data['receiver'])) {
                         echo json_encode($data['receiver']);

@@ -52,13 +52,13 @@ class Messenger extends Controller
             }
         }
 
-        $this->view('messenger', array(
+        $this->view('messenger', [
             'sender' => $loggedUser->username,
             'receiver' => $username,
             'chats' => $chats,
             'messages' => $messages,
             'senderPic' => $this->userService->getPicturePathOf($loggedUser->username),
             'receiverPic' => $this->userService->getPicturePathOf($username)
-        ));
+        ]);
     }
 }
