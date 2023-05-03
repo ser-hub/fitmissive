@@ -1,0 +1,52 @@
+body {
+    background-image:
+        radial-gradient(
+            circle, 
+            transparent .5rem, 
+            var(--bg-color) .5rem
+        ),
+        linear-gradient(
+            var(--rare-color) 0.2rem, 
+            transparent 0.2rem
+        ),
+        linear-gradient(
+            90deg, 
+            var(--rare-color) 0.2rem, 
+            transparent 0.2rem
+        );
+    background-size: 4rem 4rem;
+    background-position: 4.6rem 4.6rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+    -webkit-animation: Animation 10s cubic-bezier(0, 0, 0.2, 1) infinite;
+    -moz-animation: Animation 10s cubic-bezier(0, 0, 0.2, 1) infinite;
+    animation: Animation 10s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@-webkit-keyframes Animation {
+    0% {
+        background-position: 4.6rem 4.6rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+    }
+
+    100% {
+        background-position: 8.6rem 4.6rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+    }
+}
+
+@-moz-keyframes Animation {
+    0% {
+        background-position: 4.6rem 4.6rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+    }
+
+    100% {
+        background-position: 8.6rem 4.6rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+    }
+}
+
+@keyframes Animation { 
+    0% {
+        background-position: 4.6rem 4.6rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+    }
+
+    100% {
+        background-position: 8.6rem 4.6rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+    }
+}

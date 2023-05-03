@@ -1,0 +1,52 @@
+body {
+    background-image: radial-gradient(
+      circle at 100% 50%,
+      transparent .5rem,
+      var(--main-color) .5rem,
+      var(--main-color) .75rem,
+      transparent .75rem
+    ),
+    radial-gradient(
+      circle at 0% 50%,
+      transparent .5rem,
+      var(--main-color) .5rem,
+      var(--main-color) .75rem,
+      transparent .75rem
+    );
+    background-size: 4rem 4rem, 4rem 4rem;
+    background-position: 1rem .75rem, 1rem .75rem;
+
+    -webkit-animation: Animation 10s ease-in-out infinite;
+    -moz-animation: Animation 10s ease-in-out infinite;
+    animation: Animation 10s ease-in-out infinite;
+}
+
+@-webkit-keyframes Animation {
+    0% {
+        background-position: 1rem .75rem, 1rem .75rem;
+    }
+
+    100% {
+        background-position: 5rem .75rem, 5rem .75rem;
+    }
+}
+
+@-moz-keyframes Animation {
+    0% {
+        background-position: 1rem .75rem, 1rem .75rem;
+    }
+
+    100% {
+        background-position: 5rem .75rem, 5rem .75rem;
+    }
+}
+
+@keyframes Animation { 
+    0% {
+        background-position: 1rem .75rem, 1rem .75rem;
+    }
+
+    100% {
+        background-position: 5rem .75rem, 5rem .75rem;
+    }
+}
