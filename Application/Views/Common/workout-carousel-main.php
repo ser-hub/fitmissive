@@ -38,9 +38,3 @@ if (isset($data['splits'])) $splits = $data['splits'];
         <span class="visually-hidden">Следваща</span>
     </button>
 </div>
-
-<?php if ($view == 'home') { ?>
-    <script type="module" src='/Application/js/wm-setup-home.js'></script>
-<?php } elseif ($view == 'profile') { 
-    include 'Application/js/wm-setup-profile.php';
-} ?>

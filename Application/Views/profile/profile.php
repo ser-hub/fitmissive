@@ -1,27 +1,26 @@
 <?php
 
-use Application\Utilities\{Token, Functions, Input, Constants};
+    use Application\Utilities\{Token, Functions, Input, Constants};
 
-$today = date('N');
-$today--;
-$file = null;
-$isProfileEdit = (Input::keyExists('action') && Input::get('action') == 'Edit') || isset($data['data']['edit']);
-$isDelete = Input::keyExists('action') && Input::get('action') == 'Delete';
-$user = $data['user'];
-$isAdmin = $data['isAdmin'];
-$username = $user->username;
-$rating = $data['rating'];
-$likes = $data['ratings']['likes'];
-$dislikes = $data['ratings']['dislikes'];
-$ratingToken = Token::generate('session/rating_token');
-$followToken = Token::generate('session/follow_token');
-$colorToken = Token::generate('session/color_token');
+    $today = date('N');
+    $today--;
+    $file = null;
+    $isProfileEdit = (Input::keyExists('action') && Input::get('action') == 'Edit') || isset($data['data']['edit']);
+    $isDelete = Input::keyExists('action') && Input::get('action') == 'Delete';
+    $user = $data['user'];
+    $isAdmin = $data['isAdmin'];
+    $username = $user->username;
+    $rating = $data['rating'];
+    $likes = $data['ratings']['likes'];
+    $dislikes = $data['ratings']['dislikes'];
+    $ratingToken = Token::generate('session/rating_token');
+    $followToken = Token::generate('session/follow_token');
+    $colorToken = Token::generate('session/color_token');
 
-if ($user->description) $user->description = Functions::escape($user->description);
-if (isset($data['data']['tmp_name'])) $file = $data['data']['tmp_name'];
+    if ($user->description) $user->description = Functions::escape($user->description);
+    if (isset($data['data']['tmp_name'])) $file = $data['data']['tmp_name'];
 ?>
 
-<?php require_once 'Application/Views/Common/header.php' ?>
 
 <div class="profile-content">
     <div class="profile-data">
@@ -114,7 +113,10 @@ if (isset($data['data']['tmp_name'])) $file = $data['data']['tmp_name'];
 
     <?php if (!$isProfileEdit) { ?>
         <div class="carousel-area">
-            <?php require 'Application/Views/Common/workout-carousel-main.php' ?>
+            <?php 
+                require 'Application/Views/Common/workout-carousel-main.php';
+                require 'wm-setup-profile.php'; 
+            ?>
             <div class="carousel-bottom">
                 <?php require_once 'Application/Views/Common/rating-section.php' ?>
                 <div class="colors" data-token="<?= $colorToken ?>">
@@ -127,10 +129,9 @@ if (isset($data['data']['tmp_name'])) $file = $data['data']['tmp_name'];
     <?php } ?>
 </div>
 <?php
-if (!$data['isMyProfile']) echo "<script src='/Application/js/rateButtons.js'></script>";
+if (!$data['isMyProfile']) echo "<script src='/Application/Views/js/rateButtons.js'></script>";
 ?>
 
-<script src='/Application/js/followButtons.js'></script>
-<script src='/Application/js/colorButtons.js'></script>
+<script src='/Application/Views/js/followButtons.js'></script>
+<script src='/Application/Views/profile/colorButtons.js'></script>
 <script type="module" src="/node/assets/js/bootstrap.js"></script>
-<?php require_once 'Application/Views/Common/footer.php' ?>

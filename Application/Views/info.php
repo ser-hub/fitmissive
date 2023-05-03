@@ -14,7 +14,6 @@
     }
 ?>
 
-<?php require_once 'Application/Views/Common/header.php' ?>
 <div class="info-grid">
     <div class="info-area">
         <?php if (Input::keyExists('action') && Input::get('action') == 'edit') { ?>
@@ -83,4 +82,3 @@
         } ?>
     </div>
 </div>
-<?php require_once 'Application/Views/Common/footer.php' ?>

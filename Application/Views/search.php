@@ -15,7 +15,6 @@
     $followToken = Token::generate('session/follow_token');
 ?>
 
-<?php require_once 'Application/Views/Common/header.php' ?>
 <div class="search-content">
     <div class="search-results">
         <?php if (!$results) { ?>
@@ -58,5 +57,4 @@
         <?php } ?>
     </div>
 </div>
-<script src='/Application/js/followButtons.js'></script>
-<?php require_once 'Application/Views/Common/footer.php' ?>
+<script src='/Application/Views/js/followButtons.js'></script>

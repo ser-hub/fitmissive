@@ -41,11 +41,6 @@ abstract class Controller
         if ($this->loggedUser) {
             $data['loggedUser'] = $this->loggedUser;
             $data['loggedUsername'] = $this->loggedUsername;
-            $data['menu'] = [
-                'paper-plane' => '/messenger', 
-                'user' => '/profile/' . $this->loggedUsername,
-                'circle-xmark' => '/home/logout'
-            ];
             $data['unseenMessages'] = $this->chatService->unseenMessages($this->loggedUser);
         }
 
@@ -55,6 +50,8 @@ abstract class Controller
         
         $data['info'] = [];
         $data['info'] = $this->infoService->getAllInfo();
+        require_once 'Application/Views/Common/header.php';
         require_once 'Application/Views/' . $view . '.php';
+        require_once 'Application/Views/Common/footer.php';
     }
 }

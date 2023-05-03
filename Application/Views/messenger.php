@@ -1,4 +1,3 @@
-<?php require_once 'Application/Views/Common/header.php' ?>
 <div class="messenger-content">
     <div class="user-chats">
         <?php foreach ($data['chats'] as $chat) { ?>
@@ -80,8 +79,7 @@
 
 </div>
 
-<?php include "Application/Socket/chat.php" ?>
+<?php include "Application/Views/Socket/chat.php" ?>
 
 <?php } ?>
 </div>
-<?php require_once 'Application/Views/Common/footer.php' ?>

@@ -2,7 +2,6 @@
 
 use Application\Utilities\Input;
 
-$isLoggedIn = isset($data['loggedUser']);
 ?>
 <footer class="footer-container">
     <div class="infos">
@@ -19,7 +18,7 @@ $isLoggedIn = isset($data['loggedUser']);
     </div>
 </footer>
 </div>
-<?php if ($isLoggedIn) { ?>
+<?php if (isset($data['loggedUser'])) { ?>
     <div class="side-bar">
         <a href="/home" class="home-btn <?= str_contains(Input::get('url'), 'home') ? " menu-selected" : "" ?>">
             <i class="fa-<?= str_contains(Input::get('url'), 'home') ? "solid" : "regular" ?> fa-flag fa-xl"></i>
@@ -43,8 +42,8 @@ $isLoggedIn = isset($data['loggedUser']);
     </div>
 <?php } ?>
 <script src="/node/node_modules/socket.io/client-dist/socket.io.js"></script>
-<script src="/Application/js/utils.js"></script>
-<?php include "Application/Socket/connect.php" ?>
+<script src="/Application/Views/js/utils.js"></script>
+<?php include "Application/Views/Socket/connect.php" ?>
 </body>
 
 </html>

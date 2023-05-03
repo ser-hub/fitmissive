@@ -38,7 +38,7 @@ class Profile extends Controller
         
         $loggedUserFollowsArray = $this->userService->getFollowsArrayOf($this->loggedUser);
 
-        $this->view('profile', [
+        $this->view('profile/profile', [
             'isAdmin' => $isAdmin,
             'user' => $user,
             'isMyProfile' => $this->loggedUser == $user->user_id,

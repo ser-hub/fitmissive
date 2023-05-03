@@ -6,6 +6,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+date_default_timezone_set('Europe/Sofia');
+
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
@@ -35,7 +37,8 @@ $GLOBALS['config'] = [
         'info_create_token' => 'token6',
         'info_delete_token' => 'token7',
         'rating_token' => 'token8',
-        'follow_token' => 'token9'
+        'follow_token' => 'token9',
+        'color_token' => 'token10'
     ]
 ];
 

@@ -1,8 +1,4 @@
 <?php
-$isLoggedIn = isset($data['loggedUser']);
-if ($isLoggedIn) {
-    $menu = $data['menu'];
-}
 $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : false;
 ?>
 
@@ -13,11 +9,11 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
     <title>Fitmissive</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <?php if ($view == 'profile' || $view == 'home/home') { ?>
+    <?php if ($view == 'profile/profile' || $view == 'home/home') { ?>
         <meta name="viewport" class="carousel-content">
         <link rel="stylesheet" href="/node/assets/css/bootstrap.css">
     <?php } 
-        if ($view == 'profile' || $view == 'search' || $view == 'info') { ?>
+        if ($view == 'profile/profile' || $view == 'search' || $view == 'info') { ?>
         <link rel="stylesheet" href="/css/home.css" type="text/css">
     <?php } 
         if ($view == 'home/index') { 
@@ -30,9 +26,10 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
         <?php } ?>
 
     <?php
+    $stylesheet = $view;
     if (str_contains($view, '/')) {
-        $view = explode('/', $view);
-        $view = end($view);
+        $stylesheet = explode('/', $view);
+        $stylesheet = end($stylesheet);
     }
 
     ?>
@@ -43,8 +40,8 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
 
     <link href="/css/common.css" rel="stylesheet" type="text/css">
     <link href="/css/colors/colors.css" rel="stylesheet" type="text/css">
-    <link href="/css/<?= $view ?>.css" rel="stylesheet" type="text/css">
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link href="/css/<?= $stylesheet ?>.css" rel="stylesheet" type="text/css">
+    <link href="data:;base64,iVBORw0KGgo=" rel="icon">
 </head>
 
 <body>
@@ -52,7 +49,7 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
         <header class="header-container">
             <a href="/home" id="home"></a>
             <div class="hint"><i>Сподели своята тренировка</i></div>
-            <?php if ($isLoggedIn) { ?>
+            <?php if (isset($data['loggedUser'])) { ?>
                 <div class="menu">
                     <form action="/search" class="search-form">
                         <input type="text" class="search-field" name="search" placeholder="Потърси някого" value="<?= isset($data['keyword']) ? $data['keyword'] : "" ?>">

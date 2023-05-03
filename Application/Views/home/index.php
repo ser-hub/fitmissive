@@ -2,8 +2,6 @@
     use Application\Utilities\{Token, Session, Functions};
 ?>
 
-<?php require_once 'Application/Views/Common/header.php' ?>
-
 <div class="index-content">
     <div class="forms">
         <div class="reg-form">
@@ -84,4 +82,3 @@
         `
     };
 </script>
-<?php require_once 'Application/Views/Common/footer.php' ?>

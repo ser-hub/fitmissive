@@ -14,7 +14,7 @@ class App
     {
         $url = $this->parseUrl();
 
-        if ($url[0] == 'app') {
+        if ($url && $url[0] == 'app') {
             $url[0] = 'index';
         }
 
