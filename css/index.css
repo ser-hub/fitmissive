@@ -3,7 +3,7 @@
 }
 
 .index-content {
-    height: 80vh;
+    height: var(--content-height);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -13,7 +13,6 @@
     display: flex;
     justify-content: center;
     height: 100%;
-    background-image: url("../img/pattern-experimental-4.png");
 }
 
 .reg-form,
@@ -37,7 +36,7 @@
 input[type=text],
 input[type=password] {
     border-radius: 7px;
-    border-color: #2A9D8F;
+    border-color: var(--secondary-color);
     padding: 6px 10px;
     margin: 5px;
     width: 200px;
@@ -46,16 +45,16 @@ input[type=password] {
 
 input[type=submit] {
     font-size: 12pt;
-    font-family: Candara;
     font-style: italic;
     padding: 10px 30px;
     border-radius: 10px;
     border-width: 0px;
-    background-color: #2A9D8F;
+    background-color: var(--secondary-color);
     color: white
 }
 
 input[type=submit]:hover {
+    background-color: var(--main-color);
     padding: 10px 35px;
 }
 
@@ -74,7 +73,7 @@ input[type=submit]:hover {
 }
 
 .row legend {
-    color: #017769;
+    color: var(--secondary-color);
 }
 
 .error-section {
@@ -85,4 +84,34 @@ input[type=submit]:hover {
 .row-errors {
     background-color: #EDF2F4;
     border-top: 2px solid;
+}
+
+@media (max-width: 992px) {
+    .forms {
+        flex-direction: column;
+    }
+
+    .reg-form,
+    .login-form {
+        padding: 0.8rem 0.5rem;
+    }
+
+    .row {
+        margin: 0px;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-container {
+        top: 90svh;
+    }
+
+    input[type=text],
+    input[type=password] {
+        width: 150px;
+    }
+
+    body {
+        font-size: 0.85rem;
+    }
 }

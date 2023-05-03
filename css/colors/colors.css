@@ -1,0 +1,22 @@
+:root {
+    --bg-color: #dee2e6;
+    --main-color: #227697;
+    --secondary-color: #2C3333;
+    --rare-color: #6c757d;
+    --extra-color3: #c2e2ea;
+    --extra-color2: #a7d5e1;
+    --extra-color1: #8dc8d8;
+    --pattern-color1: #2276976e;
+    --pattern-color2: #6c757d6e;
+    --main-color-weak: #227697c2;
+}
+
+/* CONF 1
+    --bg-color: #57C5B66D;
+    --main-color: #227697;
+    --secondary-color: #159895;
+    --rare-color: #002B5B;
+    --extra-color3: #F6F7D4;
+    --extra-color2: #D2F6C5;
+    --extra-color1: #99F3BD;
+*/

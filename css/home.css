@@ -1,7 +1,3 @@
-input[type=submit] {
-    background-color: white;
-}
-
 input,
 textarea {
     border: none;
@@ -9,14 +5,35 @@ textarea {
 }
 
 .carousel-area {
-    padding: 0px 5vw;
-    height: 80vh;
-    overflow-y: auto;
+    height: var(--content-height);
+    display: flex;
+    justify-content: center;
+}
+
+.feed-wrapper {
+    width: 70%;
+    display: flex;
+    padding: 16px;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border-right: 1px solid var(--rare-color);
+    border-left: 1px solid var(--rare-color);
+    overflow: auto;
+    gap: 2rem;
+}
+
+.feed-wrapper::-webkit-scrollbar {
+    display: none;
 }
 
 .carousel {
-    margin-top: 5vh;
-    box-shadow: 0px 0px 7px;
+    width: 100%;
+}
+
+.carousel-inner {
+    box-shadow: 0px 0px 4px var(--rare-color);
+    background-color: var(--rare-color);
 }
 
 .carousel-area::-webkit-scrollbar {
@@ -25,35 +42,170 @@ textarea {
 
 .carousel-content {
     display: flex;
-    background-color: #ADB5BD /*#C5C3C6*/; /* change background here */
+    color: var(--bg-color);
     justify-content: center;
     height: 70vh;
 }
 
-.element {
+.workout-container {
+    width: 100%;
+    box-shadow: 0px 1px 2px;
+    background-color: #FFFFFF99;
+    border-radius: 10px;
+    display: grid;
+}
+
+.carousel-indicators {
+    margin-bottom: .8rem;
+}
+
+.sentences {
+    border-radius: 10px 10px 0px 0px;
+}
+
+.sentence {
+    padding: 0.3rem 0.5rem;
+}
+
+.controls {
+    display: grid;
+}
+
+.edit-mode {
+    grid-template-columns: .1fr;
+}
+
+.plus,
+.save,
+.edit,
+.cancel {
+    padding: .5rem;
+    border: 0px;
+    border-top: 1px solid gray;
     text-align: center;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+}
+
+.plus {
+    border-right: 1px solid gray;
+    grid-column: 2;
+}
+
+.save {
+    border-radius: 0px 0px 10px 0px;
+    grid-column: 3;
+}
+
+.edit {
+    border-radius: 0px 0px 10px 10px;
+}
+
+.cancel {
+    color: gray;
+    border-right: 1px solid gray;
+    border-radius: 0px 0px 0px 10px;
+}
+
+.inline-pill {
+    display: inline-block;
+    box-shadow: 1px 1px 0px;
+    border-radius: 99px;
+    border: 0;
+    padding: 5px 10px;
+    margin: 5px 0;
+}
+
+.inline-pill:focus {
+    border: 1px solid;
+}
+
+.sets {
+    background-color: var(--extra-color2);
+}
+
+.reps {
+    background-color: var(--extra-color2);
+    margin: 0 .2rem 0 0;
+}
+
+.metric {
+    background-color: var(--extra-color2);
+    margin-right: .2rem;
+}
+
+.sentence-comment {
+    background-color: white;
+    margin-left: 5px;
+}
+
+.sentence-comment:focus {
+    opacity: 100%;
+    outline: none;
+}
+
+.exercise,
+.category {
+    background-color: var(--extra-color3);
+}
+
+.category {
+    margin-right: 5px;
+}
+
+.rest-div {
+    text-align: center;
+    padding: 0.65rem;
+    margin-top: 5px;
+    font-style: italic;
+    font-size: 12pt;
+}
+
+select:focus {
+    outline: none;
+}
+
+.xmark {
+    opacity: 70%;
+    padding: 6px 10px;
+    border: 0px;
+    box-shadow: 1px 1px 0px;
+    border-radius: 99px;
+    margin-left: .5rem;
+    margin-top: 6px;
+}
+
+.xmark:hover {
+    opacity: 100%;
+    box-shadow: 1px 2px 0px;
+    color: #F00000;
+}
+
+.workout-edit-errors {
+    text-align: center;
+    color: gray;
+}
+
+.show {
+    display: block;
 }
 
 .scroller {
-    width: 50vw;
-    height: 40vh;
-    margin-top: 50px;
-    position: relative;
+    display: flex;
     justify-content: center;
-    overflow-y: auto;
     align-items: center;
+    color: black;
+    width: 80%;
+    max-height: 85%;
+    padding: 10px 0;
+    overflow-y: auto;
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+    width: 10%;
 }
 
 .scroller::-webkit-scrollbar {
     display: none;
-}
-
-.add-form-description {
-    margin-top: 50px;
-    width: 50vw;
-    height: 45vh;
 }
 
 .description-area {
@@ -62,18 +214,55 @@ textarea {
     resize: none;
 }
 
-.error-section {
-    background-color: #EDF2F4;
-    padding: 5px 15px;
-    text-align: center;
-    border-radius: 15px;
-    font-style: italic;
-    height: fit-content;
-    width: fit-content;
+.followed-split {
+    width: 100%;
 }
 
-.ratings-wrapper {
-    display: flex; 
-    justify-content: left; 
-    margin-bottom:5vh;
+.carousel-bottom {
+    border-radius: 10px;
+    display: flex;
+    width: 100%;
+    margin-top: 0.3rem;
+    padding: 2px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.hr {
+    border-top: 1px solid;
+    width: 95%;
+}
+
+@media (max-width: 992px) {
+    .feed-wrapper {
+        width: 80%;
+    }
+}
+
+@media (max-width: 600px) {
+    .feed-wrapper {
+        width: 100%;
+    }
+    
+    .scroller {
+        height: 33vh;
+        margin-top: 30px;
+    }
+
+    .carousel-inner,
+    .carousel {
+        width: 100%;
+        height: 50vh;
+    }
+
+    .carousel-caption {
+        bottom: 23svh;
+    }
+}
+
+@media (max-height: 600) {
+    .scroller {
+        height: 25vh;
+        margin-top: 5px;
+    }
 }
