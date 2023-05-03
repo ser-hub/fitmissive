@@ -23,9 +23,9 @@ abstract class Controller
             Redirect::to('/index');
         }
 
-        $this->loggedUser = $this->userService->getLoggedUser();
-        $this->loggedUsername = $this->loggedUser->username;
-        $this->loggedUser = $this->loggedUser->user_id;
+        $loggedUserData = $this->userService->getLoggedUser(); // look into this
+        $this->loggedUsername = $loggedUserData->username;
+        $this->loggedUser = $loggedUserData->user_id;
     }
 
     abstract public function index();

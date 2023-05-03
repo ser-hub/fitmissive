@@ -9,6 +9,8 @@ class ChatRepository
 {
     private static $instance = null;
     private $db;
+    private const CHATS_TABLE = "chats";
+    private const MESSAGES_TABLE = "messages";
 
     private function __construct()
     {
@@ -25,7 +27,7 @@ class ChatRepository
     }
 
     public function startChat($userA, $userB) {
-        $chats = $this->db->query('SELECT * FROM chats');
+        $chats = $this->db->query('SELECT * FROM ' . self::CHATS_TABLE);
 
         if ($chats->results()) {
             foreach ($chats->results() as $chat) {
@@ -35,7 +37,7 @@ class ChatRepository
             }
         }
 
-        return $this->db->insert('chats', [
+        return $this->db->insert(self::CHATS_TABLE, [
             'user_a' => $userA,
             'user_b' => $userB,
             'started_at' => date('Y-m-d H:i:s')
@@ -43,7 +45,7 @@ class ChatRepository
     }
 
     public function getChats($userId = null, $top = 0) {
-        $sql = "SELECT * FROM chats WHERE user_a = ? OR user_b = ? ORDER BY started_at DESC";
+        $sql = "SELECT * FROM " . self::CHATS_TABLE . " WHERE user_a = ? OR user_b = ? ORDER BY started_at DESC";
         if ($top > 0) {
             $sql .= " LIMIT " . $top;
         }
@@ -69,7 +71,7 @@ class ChatRepository
     }
 
     public function getMessages($chatId) {
-        $messages = $this->db->get('messages', array(
+        $messages = $this->db->get(self::MESSAGES_TABLE, array(
             'chat_id',
             '=',
             $chatId
@@ -85,7 +87,7 @@ class ChatRepository
     public function seenAllMessages($chatId, $userId)
     {
         return $this->db->query(
-            'UPDATE messages SET seen = ? WHERE chat_id = ? AND user_id = ? AND seen is NULL',
+            'UPDATE ' . self::MESSAGES_TABLE . ' SET seen = ? WHERE chat_id = ? AND user_id = ? AND seen is NULL',
             [
                 date('Y-m-d H:i:s'),
                 $chatId,
@@ -95,11 +97,11 @@ class ChatRepository
 
     public function deleteChatsOf($userId)
     {
-        if (!$this->db->delete('chats', array('user_a', '=', $userId)) || 
-            !$this->db->delete('chats', array('user_b', '=', $userId))) {
+        if (!$this->db->delete(self::CHATS_TABLE, array('user_a', '=', $userId)) || 
+            !$this->db->delete(self::CHATS_TABLE, array('user_b', '=', $userId))) {
             return false;
         } else {
-            $this->db->delete('messages', array('user_id', '=', $userId));
+            $this->db->delete(self::MESSAGES_TABLE, array('user_id', '=', $userId));
             return true;
         }
 

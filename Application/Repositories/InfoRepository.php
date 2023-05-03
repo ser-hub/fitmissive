@@ -8,6 +8,7 @@ class InfoRepository
 {
     private static $instance = null;
     private $db;
+    private const INFO_TABLE = "info";
 
     private function __construct()
     {
@@ -25,7 +26,7 @@ class InfoRepository
 
     public function getAll()
     {
-        $data = $this->db->query('SELECT * FROM info');
+        $data = $this->db->query('SELECT * FROM ' . self::INFO_TABLE);
 
         if ($data->count()) {
             return $data->results();
@@ -34,21 +35,21 @@ class InfoRepository
 
     public function add($info)
     {
-        $fields = array(
+        $fields = [
             'title' => $info['title'],
             'slug' => $info['slug'],
             'content' => $info['content'],
-            'created_at' => date('Y-m-d H:i:s'),
-        );
+            'created_at' => date('Y-m-d H:i:s')
+        ];
 
-        return $this->db->insert('info', $fields);
+        return $this->db->insert(self::INFO_TABLE, $fields);
     }
 
     public function find($info = null)
     {
         if ($info) {
             $field = (is_numeric($info)) ? 'info_id' : 'slug';
-            $data = $this->db->get('info', array($field, '=', $info));
+            $data = $this->db->get(self::INFO_TABLE, [$field, '=', $info]);
 
             if ($data->count()) {
                 return $data->first();
@@ -59,14 +60,14 @@ class InfoRepository
 
     public function update($title, $fields)
     {
-        return $this->db->update('info', array(
+        return $this->db->update(self::INFO_TABLE, [
             'field' => 'title',
             'value' => $title
-        ), $fields);
+        ], $fields);
     }
 
     public function delete($id)
     {
-        $this->db->delete('info', array('info_id', '=', $id));
+        $this->db->delete(self::INFO_TABLE, ['info_id', '=', $id]);
     }
 }

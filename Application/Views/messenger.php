@@ -29,10 +29,9 @@
     <?php if (isset($data['receiver'])) { ?>
         <div class="chat-window">
             <div class="chat-header">
-                <img src="<?= $data['receiverPic']?>" class="profile-pic" 
-                    height="40" width="40" alt="profile picture"
-                    style="margin-right: 10px">
+                <img src="<?= $data['receiverPic'] ?>" class="profile-pic" height="40" width="40" alt="profile picture" style="margin-right: 10px">
                 <?= $data['receiver'] ?>
+                <a href="/profile/<?= $receiver ?>" class="messenger-profile-btn">Виж профила</a>
             </div>
             <div class="messages">
                 <?php if (!empty($data['messages'])) { ?>
@@ -66,14 +65,19 @@
     </div>
 <?php } else { ?>
     <div class="prompt">
-        Say hi to <?= $data['receiver'] ?>
+        Кажи здрасти на <?= $data['receiver'] ?>
     </div>
 <?php } ?>
 </div>
 <input type="hidden" class="sender" value="<?= $data['senderPic'] ?>">
 <input type="hidden" class="receiver" value="<?= $data['receiverPic'] ?>">
 <input type="hidden" class="username" value="<?= $data['sender'] ?>">
-<input type="text" class="message-box" name="input" spellcheck="false">
+
+<div class="message-box">
+    <input type="text" class="message-field" name="input" spellcheck="false" placeholder="Aa...">
+    <button class="message-send-btn" onclick="emitMessage(document.querySelector('.message-field'), socket)">Изпращане</button>
+</div>
+
 </div>
 
 <?php include "Application/Socket/chat.php" ?>

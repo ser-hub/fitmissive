@@ -1,25 +1,73 @@
 <script>
+    let messages = document.querySelector('.messages');
+
     window.addEventListener('load', function() {
-        var messages = document.querySelector('.messages');
         messages.scrollTo(0, messages.scrollHeight);
     });
 
+
+    function setStatus(status, otherwise) {
+        var statusNode = document.querySelector('.online');
+        if (statusNode.textContent !== status) {
+            statusNode.textContent = status;
+            statusTimeout = setTimeout(function() {
+                statusNode.textContent = otherwise;
+            }, 2000);
+        }
+    }
+
+    let lastAuthor = '';
+
+    function displayMessage(author, msg) {
+        if (author !== lastAuthor) {
+            var chatItem = document.createElement('div');
+            chatItem.className = 'chat-item';
+            chatItem.style = 'margin-left: auto'
+
+            var authorDiv = document.createElement('div');
+            authorDiv.style = 'margin-right: 10px;';
+            chatItem.appendChild(authorDiv);
+
+            var profilePic = document.createElement('img');
+            if (author == username) {
+                profilePic.src = document.querySelector('.sender').value;
+            } else {
+                profilePic.src = document.querySelector('.receiver').value;
+            }
+            profilePic.classList.add('profile-pic')
+            profilePic.width = profilePic.height = '30';
+            profilePic.alt = 'profile picture';
+            authorDiv.appendChild(profilePic);
+
+            textsDiv = document.createElement('div');
+            chatItem.appendChild(textsDiv);
+            var authorText = document.createElement('div');
+            authorText.textContent = author
+            authorText.className = 'author';
+            textsDiv.appendChild(authorText);
+
+            lastAuthor = author;
+            messages.appendChild(chatItem);
+        }
+
+        var text = document.createElement('div');
+        text.className = 'message';
+        text.textContent = msg;
+        textsDiv.appendChild(text);
+
+        messages.scrollTo(0, messages.scrollHeight);
+    }
+
     if (socket) {
-        var messages = document.querySelector('.messages'),
-            input = document.querySelector('.input'),
+            input = document.querySelector('.message-field'),
             prompt = document.querySelector('.prompt');
 
         socket.emit('request status', recipient);
 
         input.addEventListener('keydown', function(e) {
             if (e.which === 13 && !e.shiftKey) {
-                if (!/^\s*$/m.test(input.value)) {
-                    displayMessage(username, input.value);
-                    socket.emit('chat message', {
-                        content: input.value,
-                        to: recipient
-                    });
-                }
+                console.log(input.value)
+                emitMessage(input, socket)
                 input.value = '';
                 if (prompt) prompt.style.display = 'none';
 
@@ -100,13 +148,14 @@
         });
     }
 
-    var chats = document.querySelector('.user-chats');
-    var selectedChat = document.querySelector('.user-chats .selected').textContent;
 
-    function scroll(item, index, arr) {
-        if (item.textContent.trim() == selectedChat.trim() && index > 16) {
-            item.scrollIntoView();
+    function emitMessage(inputField, socket) {
+        if (!/^\s*$/m.test(inputField.value)) {
+            displayMessage(username, inputField.value);
+            socket.emit('chat message', {
+                content: inputField.value,
+                to: recipient
+            });
         }
     }
-    chats.childNodes.forEach(scroll);
 </script>

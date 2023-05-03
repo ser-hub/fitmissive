@@ -8,20 +8,20 @@ class SplitRepository
 {
     private static $instance = null;
     private $db;
-    private $dayTables = [];
+    private const DAYS_TABLES = [
+        'Monday' => 'mondays',
+        'Tuesday' => 'tuesdays',
+        'Wednesday' => 'wednesdays',
+        'Thursday' => 'thursdays',
+        'Friday' => 'fridays',
+        'Saturday' => 'saturdays',
+        'Sunday' => 'sundays'
+    ];
+    private const RATINGS_TABLE = "ratings";
 
     private function __construct()
     {
         $this->db = DB::getInstance();
-        $this->dayTables = [
-            'Monday' => 'mondays',
-            'Tuesday' => 'tuesdays',
-            'Wednesday' => 'wednesdays',
-            'Thursday' => 'thursdays',
-            'Friday' => 'fridays',
-            'Saturday' => 'saturdays',
-            'Sunday' => 'sundays'
-        ];
     }
 
     public static function getInstance()
@@ -33,14 +33,9 @@ class SplitRepository
         return self::$instance;
     }
 
-    public function getAllSplits()
-    {
-        return $this->db->query("SELECT * FROM splits");
-    }
-
     public function getSplitId($user_id, $day)
     {
-        $day = $this->dayTables[$day];
+        $day = self::DAYS_TABLES[$day];
         $day = substr($day, 0, strlen($day) - 1);
         $property = $day . '_id';
         return $this->db->action(
@@ -54,37 +49,16 @@ class SplitRepository
     {
         $splits = [];
 
-        foreach ($this->dayTables as $day => $table) {
+        foreach (self::DAYS_TABLES as $day => $table) {
             $splits[$day] = $this->db->get($table, array('user_id', '=', $user_id))->first();
         }
 
         return $splits;
     }
 
-    public function getAllRatingsOf($user_id) {
-        return $this->db->action('SELECT *', 'ratings', [
-            'target_id', '=', $user_id
-        ])->results();
-    }
-
-    public function insertRating($user_id, $rated_id, $rating) {
-        return $this->db->insert('ratings', [
-            'user_id' => $user_id,
-            'target_id' => $rated_id,
-            'rating' => $rating
-        ]);
-    }
-
-    public function updateRating($rating_id, $rating) {
-        $this->db->update('ratings', [
-            'field' => 'rating_id',
-            'value' => $rating_id
-        ], ['rating' => $rating]);
-    }
-
     public function insertSplit($user_id, $day, $data = [])
     {
-        return $this->db->insert($this->dayTables[$day], [
+        return $this->db->insert(self::DAYS_TABLES[$day], [
             'user_id' => $user_id,
             'title' => $data['title'],
             'description' => $data['description']
@@ -93,25 +67,43 @@ class SplitRepository
 
     public function updateSplit($day, $id, $data = [])
     {
-        $day = $this->dayTables[$day];
+        $day = self::DAYS_TABLES[$day];
 
-        return $this->db->update($day, array(
+        return $this->db->update($day, [
             'field' => substr($day, 0, strlen($day) - 1) . '_id',
             'value' => $id
-        ), array(
-            'title' => $data['title'],
-            'description' => $data['description']
-        ));
+        ], $data);
     }
 
     public function deleteUserSplits($userId)
     {
         $result = null;
 
-        foreach ($this->dayTables as $table) {
+        foreach (self::DAYS_TABLES as $table) {
             $result = $this->db->delete($table, array('user_id', '=', $userId));
         }
 
         return $result;
+    }
+
+    public function getAllRatingsOf($user_id) {
+        return $this->db->action('SELECT *', self::RATINGS_TABLE, [
+            'target_id', '=', $user_id
+        ])->results();
+    }
+
+    public function insertRating($user_id, $rated_id, $rating) {
+        return $this->db->insert(self::RATINGS_TABLE, [
+            'user_id' => $user_id,
+            'target_id' => $rated_id,
+            'rating' => $rating
+        ]);
+    }
+
+    public function updateRating($rating_id, $rating) {
+        $this->db->update(self::RATINGS_TABLE, [
+            'field' => 'rating_id',
+            'value' => $rating_id
+        ], ['rating' => $rating]);
     }
 }

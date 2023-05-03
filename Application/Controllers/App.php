@@ -14,6 +14,10 @@ class App
     {
         $url = $this->parseUrl();
 
+        if ($url[0] == 'app') {
+            $url[0] = 'index';
+        }
+
         if (isset($url[0])) {
             if (file_exists(__DIR__ . '/' . $url[0] . '.php')) {
                 $this->controller = $url[0];
