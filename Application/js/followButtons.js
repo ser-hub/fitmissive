@@ -20,10 +20,10 @@ if (searchResults) {
 
 function changeFollowState(element) {
     if (element) {
-        if (element.innerText == 'Follow') {
-            element.innerText = 'Unfollow'
+        if (element.innerText == 'Последвай') {
+            element.innerText = 'Отпоследвай'
         } else {
-            element.innerText = 'Follow'
+            element.innerText = 'Последвай'
         }
     }
 }
