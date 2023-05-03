@@ -2,18 +2,20 @@
 namespace Application\Controllers;
 
 use Application\Core\Controller;
-use Application\Services\SplitService;
+use Application\Services\{SplitService, ColorService};
 use Application\Utilities\{Constants, Input, Token, Validator, Redirect};
 
-class profile extends Controller
+class Profile extends Controller
 {
     private $loggedUserRole;
     private $splitService;
+    private $colorService;
     private $data;
 
     public function __construct()
     {
         $this->splitService = SplitService::getInstance();
+        $this->colorService = ColorService::getInstance();
 
         parent::__construct();
         $this->loggedUserRole = $this->userService->getLoggedUser()->role_name;
@@ -42,62 +44,16 @@ class profile extends Controller
             'isMyProfile' => $this->loggedUser == $user->user_id,
             'picturePath' => $this->userService->getPicturePathOf($user->username),
             'data' => $this->data,
+            'color' => $this->userService->getUserColor($user->username),
+            'colors' => $this->colorService->getAllColorsHex(),
             'splits' => $this->splitService->splitsOf($user->user_id),
-            'follows' => $this->userService->getFollowsCountOf($user->user_id), //unify
+            'follows' => $this->userService->getFollowsCountOf($user->user_id), 
             'followers' => $this->userService->getFollowersCountOf($user->user_id),
             'ratings' => $this->splitService->getRatingsCountOf($user->user_id),
             'rating' => $this->splitService->getRating($this->loggedUser, $user->user_id),
             'isFollowing' => $loggedUserFollowsArray ?
                 in_array($user->user_id, $this->userService->getFollowsArrayOf($this->loggedUser)) : false
         ]);
-    }
-
-    public function updateSplit($username, $day)
-    {
-        if (Input::exists()) {
-            if (Token::check(Input::get('token'), 'session/weekday_tokens/' . $day)) {
-                $data = [];
-
-                if (!empty($_POST)) {
-                    $data['addInput'] = $_POST;
-                }
-                $data['addInput']['day'] = $day;
-
-                $validator = new Validator();
-                $validator->check($_POST, array(
-                    'title' => array(
-                        'name' => 'Title',
-                        'required' => true,
-                        'max' => 45
-                    ),
-                    'description' => array(
-                        'name' => 'Description',
-                        'required' => true,
-                        'max' => 800
-                    )
-                ));
-
-                if ($validator->passed()) {
-                    if (Input::keyExists('isEdit')) {
-                        $this->splitService->updateSplit($day, $username, array(
-                            'title' => Input::get('title'),
-                            'description' => trim(Input::get('description'))
-                        ));
-                    } else {
-                        $this->splitService->addSplit($username, $day, array(
-                            'title' => Input::get('title'),
-                            'description' => trim(Input::get('description'))
-                        ));
-                    }
-                } else {
-                    $data['addErrors'] = $validator->errors();
-                }
-                
-                $this->data = $data;
-            }
-        }
-            
-        $this->index($username);     
     }
 
     public function updateUser($username)
@@ -117,6 +73,14 @@ class profile extends Controller
                     'description' => [
                         'name' => 'desciption',
                         'max' => 500,
+                    ],
+                    'email' => [
+                        'name' => 'Email',
+                        'required' => true,
+                        'email' => true,
+                        'unique' => 'users',
+                        'dbColumn' => 'email',
+                        'max' => 255
                     ]
 
                 ]);
@@ -124,6 +88,7 @@ class profile extends Controller
                     $this->userService->updateUser(array(
                         'fullname' => Input::get('fullname'),
                         'description' => Input::get('description'),
+                        'email' => Input::get('email'),
                         'updated_at' => date('Y-m-d H:i:s'),
                     ), $username);
                 } else {
@@ -163,7 +128,7 @@ class profile extends Controller
         }
     }
 
-    public function rate($username) {
+    public function rate($username = null) {
         if (Input::exists() && Token::check(Input::get('token'), 'session/rating_token')) {
             if (Input::keyExists('rating')) {
                 $response = ['token' => Token::generate('session/rating_token')];
@@ -193,8 +158,29 @@ class profile extends Controller
                     $response['result'] = 'Error';
                 }
                 echo json_encode($response);
+                return;
             }
         }
+        Redirect::to('/home');
+    }
+
+    public function updateColor() {
+        if (Input::exists() && Token::check(Input::get('token'), 'session/color_token')) {
+            if (Input::keyExists('value')) {
+                $result = false;
+                $colorId = $this->colorService->getColorId(Input::get('value'));
+                if ($colorId) {
+                    $this->userService->setLoggedUserColor($colorId);
+                    $result = true;
+                }
+                echo json_encode([
+                    'token' => Token::generate('session/color_token'),
+                    'result' => $result
+                ]);
+                return;
+            }
+        }
+        Redirect::to('/home');
     }
 
     public function delete($username)

@@ -25,9 +25,18 @@ class SplitService
         return self::$instance;
     }
 
-    public function splitsOf($user_id)
+    public function splitsOf($user_id, $api_mode = null)
     {
-        return $this->splitRepository->getUserSplits($user_id);
+        if ($api_mode) {
+            $raw_splits = $this->splitRepository->getUserSplits($user_id);
+            $splitsData = [];
+            foreach ($raw_splits as $key => $value) {
+                $splitsData[$key] = $value->description;
+            }
+            return $splitsData;
+        } else {
+            return $this->splitRepository->getUserSplits($user_id);
+        }
     }
 
     public function getRandomisedFollowedSplitsOf($follows = [])
@@ -60,12 +69,13 @@ class SplitService
         return $allSplits;
     }
 
-    public function getRatingsCountOf($target_id) {
+    public function getRatingsCountOf($target_id)
+    {
         $data = $this->splitRepository->getAllRatingsOf($target_id);
 
         $likesCount = 0;
         $dislikesCount = 0;
-        
+
         if ($data) {
             foreach ($data as $rating) {
                 if ($rating->rating) $likesCount++;
@@ -75,7 +85,8 @@ class SplitService
         return ['likes' => $likesCount, 'dislikes' => $dislikesCount];
     }
 
-    public function getRating($user_id, $target_id) {
+    public function getRating($user_id, $target_id)
+    {
         if ($user_id == $target_id) return null;
 
         $data = $this->splitRepository->getAllRatingsOf($target_id);
@@ -89,13 +100,14 @@ class SplitService
         return null;
     }
 
-    public function updateRating($user_id, $target_id) {
+    public function updateRating($user_id, $target_id)
+    {
         $data = $this->splitRepository->getAllRatingsOf($target_id);
 
         if ($data) {
             foreach ($data as $rating) {
                 if ($rating->user_id == $user_id) {
-                    if ($rating->rating == 0) 
+                    if ($rating->rating == 0)
                         return $this->splitRepository->updateRating($rating->rating_id, 1);
                     else
                         return $this->splitRepository->updateRating($rating->rating_id, 0);
@@ -104,7 +116,8 @@ class SplitService
         }
     }
 
-    public function rate($user_id, $rated, $rating) {
+    public function rate($user_id, $rated, $rating)
+    {
         return $this->splitRepository->insertRating(
             $user_id,
             $this->userRepository->find($rated)->user_id,
@@ -112,21 +125,27 @@ class SplitService
         );
     }
 
-    public function addSplit($username, $day, $data = [])
+    public function addSplit($day, $username, $title, $sentences)
     {
         return $this->splitRepository->insertSplit(
-            $this->userRepository->find($username)->user_id, 
-            $day, 
-            $data
+            $this->userRepository->find($username)->user_id,
+            $day, [
+                'title' => $title,
+                'description' => $sentences,
+                'last_updated' => date('Y-m-d H:i:s')
+            ]
         );
     }
 
-    public function updateSplit($day, $username, $data = [])
+    public function updateSplit($day, $id, $title, $sentences)
     {
         return $this->splitRepository->updateSplit(
             $day,
-            $this->splitRepository->getSplitId($this->userRepository->find($username)->user_id, $day),
-            $data
+            $this->splitRepository->getSplitId($id, $day), [
+                'title' => $title,
+                'description' => $sentences,
+                'last_updated' => date('Y-m-d H:i:s')
+            ]
         );
     }
 }

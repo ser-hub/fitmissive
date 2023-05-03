@@ -4,16 +4,20 @@ namespace Application\Controllers;
 
 use Application\Core\Controller;
 use Application\Services\SplitService;
-use Application\Utilities\{Redirect, Input, Token, Validator, Constants};
+use Application\Services\ExerciseService;
+use Application\Utilities\{Constants, Redirect, Input, Token};
+use DateInterval;
 
 class Home extends Controller
 {
     private $splitService;
+    private $exerciseService;
     private $data;
 
     public function __construct()
     {
         $this->splitService = SplitService::getInstance();
+        $this->exerciseService = ExerciseService::getInstance();
 
         parent::__construct();
     }
@@ -21,17 +25,27 @@ class Home extends Controller
     public function index()
     {
         $followedSplits = $this->splitService->getRandomisedFollowedSplitsOf(
-            $this->userService->getFollowsArrayOf($this->loggedUser));
+            $this->userService->getFollowsArrayOf($this->loggedUser)
+        );
 
         if (!empty($followedSplits)) {
-            foreach($followedSplits as &$split) {
+            foreach ($followedSplits as &$split) {
                 $split['ratings'] = $this->splitService->getRatingsCountOf($split['user_id']);
                 $split['rating'] = $this->splitService->getRating($this->loggedUser, $split['user_id']);
+                $split['userPicture'] = $this->userService->getPicturePathOf($split['username']);
+                $split['color'] = $this->userService->getUserColor($split['user_id']);
                 unset($split['user_id']);
+
+                foreach ($split as $day) {
+                    if (isset($day->last_updated)) {
+                        $day->last_updated = $this->translateInterval(date_create()->diff(date_create($day->last_updated)));
+                    }
+                }
             }
         }
 
         $this->view('home/home', [
+            'color' => $this->userService->getUserColor($this->loggedUser),
             'splits' => $this->splitService->splitsOf($this->loggedUser),
             'followedSplits' => $followedSplits,
             'data' => $this->data
@@ -42,52 +56,120 @@ class Home extends Controller
     {
         if (Input::exists()) {
             if (Token::check(Input::get('token'), 'session/weekday_tokens/' . $day)) {
-                $data = [];
+                $response = ['error' => '', 'token' => Token::generate('session/weekday_tokens/' . $day)];
+                $inputData = Input::get('data');
+                $sentences = preg_split("/\r\n|\r|\n/", $inputData);
+                $categories = [];
+                //match regex
+                $errorFlag = false;
+                if ($sentences) {
+                    foreach ($sentences as $key => $sentence) {
+                        if (preg_match('/\d+ x \d+ (повторения)|(минути)|(секунди) [а-яА-Я\- ]+( #)?/', $sentence)) {
+                            $sentenceElements = explode(' ', $sentence);
+                            $sets = $sentenceElements[0];
+                            $reps = $sentenceElements[2];
+                            $comment = '';
 
-                if (!empty($_POST)) {
-                    $data['updateInput'] = $_POST;
-                }
-                
-                $data['updateInput']['day'] = $day;
+                            $hashtagPos = strpos($sentence, '#');
 
-                $validator = new Validator();
-                $validator->check($_POST, array(
-                    'title' => array(
-                        'name' => 'Title',
-                        'required' => true,
-                        'max' => 45
-                    ),
-                    'description' => array(
-                        'name' => 'Description',
-                        'required' => true,
-                        'max' => 800
-                    )
-                ));
+                            if ($hashtagPos) {
+                                $comment = trim(substr($sentence, $hashtagPos + 1));
+                            } else {
+                                $hashtagPos = strlen($sentence);
+                            }
 
-                if ($validator->passed()) {
-                    if (Input::keyExists('isEdit')) {
-                        $this->splitService->updateSplit($day, $this->loggedUser, array(
-                            'title' => Input::get('title'),
-                            'description' => trim(Input::get('description'))
-                        ));
-                    } else {
-                        $this->splitService->addSplit($this->loggedUser, $day, array(
-                            'title' => Input::get('title'),
-                            'description' => trim(Input::get('description'))
-                        ));
+                            $exerciseFirstWordIndex = strpos($sentence, $sentenceElements[4]);
+
+                            $exercise = trim(substr($sentence, $exerciseFirstWordIndex, $hashtagPos - $exerciseFirstWordIndex));
+                            if (!$this->exerciseService->exerciseExists($exercise)) {
+                                $errorFlag = true;
+                            }
+
+                            if (!in_array($this->exerciseService->getCategoryOf($exercise), $categories)) {
+                                $categories[] = $this->exerciseService->getCategoryOf($exercise);
+                            }
+
+                            if ($sets < 1 || $sets > 20 || $reps < 1 || $reps > 100 || strlen($comment) > 80) {
+                                $errorFlag = true;
+                            }
+                        } 
+                        
+                        if ($errorFlag) {
+                            strlen($response['error']) == 0 ? $response['error'] = 'Някои от данните не бяха записани' : 0;
+                            unset($sentences[$key]);
+                            $errorFlag = false;
+                        }
                     }
-                } else {
-                    $data['updateErrors'] = $validator->errors();
                 }
-                $this->data = $data;
+
+                //generate title
+                $title = 'Почивен';
+
+                if (count($categories) == 1) {
+                    $title = $categories[0];
+                } else if (count($categories) == 2) {
+                    $title = $categories[0] . ' & ' . $categories[1];
+                } else if (count($categories) > 2) {
+                    $title = 'Комплексна';
+                }
+
+                $userToBeUpdated = $this->loggedUser;
+                if ($this->userService->getLoggedUser()->role_name == Constants::USER_ROLE_ADMIN && Input::keyExists('user')) {
+                    $userToBeUpdated = Input::get('user');
+                }
+
+                if ($this->splitService->splitsOf($this->loggedUser)[$day]->description != null) {
+                    $this->splitService->updateSplit($day, $userToBeUpdated, $title, implode('\r\n', $sentences));
+                } else {
+                    $this->splitService->addSplit($day, $userToBeUpdated, $title, implode('\r\n', $sentences));
+                }
+
+                if (strlen($response['error']) != 0) {
+                    $response['savedSentences'] = $sentences;
+                }
+
+                $response['title'] = $title;
+                echo json_encode($response);
+                return;
             }
         }
         $this->index();
+    }
+
+    public function getInitalWorkoutData()
+    {
+        $response = [];
+        $response['splitData'] = $this->splitService->splitsOf($this->loggedUser, 1);
+        $response['exercises'] = $this->exerciseService->getAllExerciseData();
+        echo json_encode($response);
     }
 
     public function logout()
     {
         $this->userService->logout();
         Redirect::to('/index');
+    }
+
+    private function translateInterval($interval = new DateInterval('')) 
+    {
+        if ($interval->y > 0) {
+            if ($interval->y > 1) return 'преди ' . $interval->y . ' години';
+                             else return 'преди ' . $interval->y . ' година';
+            
+        } elseif ($interval->m > 0) {
+            if ($interval->m > 1) return 'преди ' . $interval->m . ' месеца';
+                             else return 'преди ' . $interval->m . ' месец';
+            
+        } elseif ($interval->d > 0) {
+            if ($interval->d > 1) return 'преди ' . $interval->d . ' дни';
+                             else return 'преди ' . $interval->d . ' ден';
+            
+        } elseif ($interval->h > 0) {
+            if ($interval->h > 1) return 'преди ' . $interval->h . ' часа';
+                             else return 'преди ' . $interval->h . ' час';
+        } elseif ($interval->i > 0) {
+            if ($interval->i > 1) return 'преди ' . $interval->i . ' минути';
+                             else return 'преди ' . $interval->i . ' минута';
+        }
     }
 }
