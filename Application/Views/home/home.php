@@ -12,7 +12,6 @@
 <div class="carousel-area">
     <div class="feed-wrapper">
         <?php require_once 'Application/Views/Common/workout-carousel-main.php' ?>
-        <script type="module" src='/Application/Views/home/wm-setup-home.js'></script>
         <div class="hr"></div>
 
         <?php
@@ -70,5 +69,5 @@
     </div>
 </div>
 
-<script src='/Application/Views/js/rateButtons.js'></script>
+<script src='/Application/Views/Common/js/rateButtons.js'></script>
 <script type="module" src="/node/assets/js/bootstrap.js"></script>

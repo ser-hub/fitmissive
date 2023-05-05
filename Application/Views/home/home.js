@@ -1,4 +1,4 @@
-import WorkoutManager from "../js/WorkoutManager/workoutManager.js"
+import WorkoutManager from "../Common/js/WorkoutManager/workoutManager.js"
 
 let workoutContainers = document.getElementsByName('workout-container')
 

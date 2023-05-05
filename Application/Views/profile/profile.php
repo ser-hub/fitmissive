@@ -132,6 +132,5 @@
 if (!$data['isMyProfile']) echo "<script src='/Application/Views/js/rateButtons.js'></script>";
 ?>
 
-<script src='/Application/Views/js/followButtons.js'></script>
-<script src='/Application/Views/profile/colorButtons.js'></script>
+<script src='/Application/Views/Common/js/followButtons.js'></script>
 <script type="module" src="/node/assets/js/bootstrap.js"></script>

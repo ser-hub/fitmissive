@@ -42,8 +42,8 @@ use Application\Utilities\Input;
     </div>
 <?php } ?>
 <script src="/node/node_modules/socket.io/client-dist/socket.io.js"></script>
-<script src="/Application/Views/js/utils.js"></script>
-<?php include "Application/Views/js/Socket/connect.php" ?>
+<script src="/Application/Views/Common/js/utils.js"></script>
+<?php include "Application/Views/Common/js/Socket/connect.php" ?>
 </body>
 
 </html>

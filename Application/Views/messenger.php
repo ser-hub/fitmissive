@@ -79,7 +79,7 @@
 
 </div>
 
-<?php include "Application/Views/js/Socket/chat.php" ?>
+<?php include "Application/Views/Common/js/Socket/chat.php" ?>
 
 <?php } ?>
 </div>

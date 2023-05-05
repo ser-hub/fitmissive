@@ -57,4 +57,4 @@
         <?php } ?>
     </div>
 </div>
-<script src='/Application/Views/js/followButtons.js'></script>
+<script src='/Application/Views/Common/js/followButtons.js'></script>

@@ -1,5 +1,5 @@
 <script type="module">
-    import WorkoutManager from "/Application/Views/js/WorkoutManager/workoutManager.js"
+    import WorkoutManager from "/Application/Views/Common/js/WorkoutManager/workoutManager.js"
     let workoutContainers = document.getElementsByName('workout-container')
 
     let xhr = new XMLHttpRequest()

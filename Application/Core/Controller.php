@@ -53,5 +53,9 @@ abstract class Controller
         require_once 'Application/Views/Common/header.php';
         require_once 'Application/Views/' . $view . '.php';
         require_once 'Application/Views/Common/footer.php';
+
+        if (file_exists('Application/Views/' . $view . '.js')) {
+            echo '<script src="/Application/Views/' . $view . '.js" type="module"></script>';
+        }
     }
 }
