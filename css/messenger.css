@@ -3,7 +3,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    border-left: 2px solid var(--rare-color);
+    background-image: linear-gradient(90deg, var(--main-color) -15%, transparent 12%);
 }
 
 .messenger-content {
@@ -21,15 +21,10 @@
 
 .message-box {
     display: flex;
-    border: 2px solid var(--rare-color);
     border-radius: 50px;
     margin: 10px;
     padding: 6px 12px;
-    background-image: linear-gradient(
-        90deg,
-        white 80%, 
-        transparent
-    );
+    background: white;
     font-size: medium;
 }
 
@@ -44,7 +39,6 @@
 }
 
 .message-send-btn {
-    color: var(--rare-color);
     background-color: transparent;
     border: 0;
     cursor: pointer;
@@ -54,20 +48,18 @@
 .chat-header {
     display: flex;
     margin: 10px;
-    padding: 10px 15px;
-    background: var(--main-color-weak);
-    color: white;
+    padding: 5px 10px 5px 5px;
+    background: white;
     border-radius: 50px;
     align-items: center;
-    font-size: 1.2rem;
     font-style: italic;
+    font-size: 11pt;
 }
 
 .messenger-profile-btn {
     text-decoration: none;
-    color: white;
+    color: black;
     margin-left: auto;
-    font-size: 12pt;
     font-style: initial;
 }
 
@@ -116,7 +108,7 @@
     height: var(--content-height);
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    width: 15%;
 }
 
 .user-chats::-webkit-scrollbar {
@@ -124,37 +116,36 @@
 }
 
 .chat-button {
-    padding: 8px 10px;;
+    border-right: 1px solid var(--main-color);
+    padding-left: .5rem;
+    height: inherit;
+    width: inherit;
     display: flex;
     position: relative;
-    padding-right: 10vw;
     align-items: center;
 }
 
 .user-chats a {
+    width: 100%;
+    height: 100%;
     text-decoration: none;
     color: inherit;
     display: flex;
     align-items: center;
 }
 
-.user-chats a .chat-button img {
-    margin-right: 10px
-}
-
 .selected {
-    background-color: var(--main-color-weak);
+    background-image: linear-gradient(270deg, transparent -80%, var(--main-color));
     color: white;
-}
-
-.selected img,
-.chat-header img{
-    border-color: var(--bg-color);
+    border-color: var(--main-color);
+    border-width: 1px 0px 1px 1px;
+    border-style: solid;
 }
 
 .chat-button-text {
     display: flex;
     flex-direction: column;
+    overflow-wrap: anywhere;
 }
 
 .online {
@@ -177,29 +168,41 @@
 @media (max-width: 600px) {
     .messenger-content {
         flex-direction: column;
+        height: 82svh;
     }
-    
+
     .messages {
-        height: 50vh;
+        height: 100%;
         margin: 10px 10px 0px 10px;
+    }
+
+    .profile-pic {
+        margin: 0;
     }
 
     .user-chats {
         flex-direction: row;
-        height: 100%;
-        width: 100svw;
+        width: 100%;
+        height: 15%;
+        overflow: scroll;
     }
 
     .chat-button {
-        padding: 8px 5px;
+        align-items: center;
+        justify-content: center;
+        background-image: none;
+        padding: 0px 8px;
         flex-direction: column;
+        border-right: 0;
     }
 
-    .chat-button-text {
-        margin-right: 10px;
+    .selected {
+        border: 0;
+        background-color: var(--main-color);
     }
 
     .chat-window {
-        border-left: 0px;
+        background-image: none;
+        border-left: 0;
     }
 }

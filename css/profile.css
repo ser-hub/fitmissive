@@ -6,11 +6,6 @@
     padding: 0px;
 }
 
-.carousel {
-    width: 100%;
-    margin: 0px;
-}
-
 .carousel-inner {
     background-color: var(--main-color) /*#C5C3C6*/;
 }

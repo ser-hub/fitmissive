@@ -23,8 +23,8 @@ export default class MessageService {
                     "SELECT chat_id FROM chats WHERE (user_a = ? AND user_b = ?) OR (user_b = ? AND user_a = ?)",
                     [result[0].user_id, result[1].user_id, result[0].user_id, result[1].user_id], function (result) {
                         db.query(
-                            "CALL insert_message(?)",
-                            [[result[0].chat_id, senderId, content, seen == true ? time : null]])
+                            "CALL insert_message(?, ?, ?, ?, ?)",
+                            [result[0].chat_id, senderId, content, seen == true ? time : null, time])
                     })
             }
         })

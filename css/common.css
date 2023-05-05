@@ -1,12 +1,12 @@
 :root {
-    --content-height: 82svh;
+    --content-height: 84svh;
 }
 
 body {
     font-family: Candara;
     margin: 0px;
     display: flex;
-    font-size: 11pt;
+    font-size: 10pt;
     line-height: normal;
     box-sizing: unset;
     background-color: var(--bg-color);
@@ -24,7 +24,6 @@ body {
     display: flex;
     align-items: center;
     background-color: var(--main-color);
-    height: 10vh;
     padding: 0px 10px;
     justify-content: center;
 }
@@ -254,6 +253,7 @@ textarea:focus {
         padding: 0px;
         border-left: 0px;
         border-top: 3px solid var(--rare-color);
+        overflow: hidden;
     }
 
     .header-container img {
@@ -266,7 +266,6 @@ textarea:focus {
 
     .side-bar a {
         margin: 0px;
-        font-size: larger;
         height: inherit;
         display: flex;
         flex-direction: column;

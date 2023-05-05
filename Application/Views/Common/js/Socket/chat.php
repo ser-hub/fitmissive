@@ -64,14 +64,13 @@
 
         socket.emit('request status', recipient);
 
-        input.addEventListener('keydown', function(e) {
-            if (e.which === 13 && !e.shiftKey) {
-                console.log(input.value)
-                emitMessage(input, socket)
-                input.value = '';
-                if (prompt) prompt.style.display = 'none';
-
-                e.preventDefault();
+        input.addEventListener('keydown', (event) => {
+            if (event.which === 13 && !event.shiftKey) {
+                if (emitMessage(input, socket)) {
+                    input.value = '';
+                    if (prompt) prompt.style.display = 'none';
+                }
+                event.preventDefault();
             } else {
                 socket.emit('chat status', {
                     content: ' is typing...',
@@ -156,6 +155,9 @@
                 content: inputField.value,
                 to: recipient
             });
+            return true;
+        } else {
+            return false;
         }
     }
 </script>

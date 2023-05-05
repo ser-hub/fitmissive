@@ -28,7 +28,7 @@
     <?php if (isset($data['receiver'])) { ?>
         <div class="chat-window">
             <div class="chat-header">
-                <img src="<?= $data['receiverPic'] ?>" class="profile-pic" height="40" width="40" alt="profile picture" style="margin-right: 10px">
+                <img src="<?= $data['receiverPic'] ?>" class="profile-pic" height="50" width="50" alt="profile picture" style="margin-right: 10px">
                 <?= $data['receiver'] ?>
                 <a href="/profile/<?= $receiver ?>" class="messenger-profile-btn">Виж профила</a>
             </div>
@@ -52,7 +52,7 @@
                         ?>" class="profile-pic" height="30" width="30" alt="profile picture">
         </div>
         <div>
-            <div class="author"><?= $message->user_id ?></div>
+            <div class="author"><?= $message->user_id ?> <?= $message->sent_at ?></div>
             <div class="message"><?= $message->message ?></div>
         <?php
                             $currentAuthor = $message->user_id;
@@ -78,8 +78,6 @@
 </div>
 
 </div>
-
-<?php include "Application/Views/Common/js/Socket/chat.php" ?>
 
 <?php } ?>
 </div>
