@@ -6,7 +6,7 @@ use DateTime;
 
 class Time
 {
-    public static function ElapsedString(DateTime $timestampPast)
+    public static function elapsedString(DateTime $timestampPast)
     {
         $interval = date_create()->diff($timestampPast);
         if ($interval->y > 0) {
@@ -28,5 +28,10 @@ class Time
             if ($interval->i > 1) return 'преди ' . $interval->i . ' минути';
                              else return 'преди ' . $interval->i . ' минута';
         }
+    }
+
+    public static function elapsedMinutes(DateTime $timestampPast) {
+        $interval = date_create()->diff($timestampPast);
+        return $interval->y * 525600 + $interval->m * 43800 + $interval->h * 1440 + $interval->i; 
     }
 }

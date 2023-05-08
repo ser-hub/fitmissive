@@ -31,7 +31,11 @@ class SplitService
             $raw_splits = $this->splitRepository->getUserSplits($user_id);
             $splitsData = [];
             foreach ($raw_splits as $key => $value) {
-                $splitsData[$key] = $value->description;
+                if ($value) {
+                    $splitsData[$key] = $value->description;
+                } else {
+                    $splitsData[$key] = '';
+                }
             }
             return $splitsData;
         } else {

@@ -41,10 +41,6 @@ use Application\Utilities\Input;
         </a>
     </div>
 <?php } ?>
-<script src="/node/node_modules/socket.io/client-dist/socket.io.js"></script>
-<script src="/Application/Views/Common/js/utils.js"></script>
-<?php include "Application/Views/Common/js/Socket/connect.php" ?>
-<?php if ($view == 'messenger') include "Application/Views/Common/js/Socket/chat.php" ?>
 </body>
 
 </html>

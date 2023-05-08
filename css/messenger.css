@@ -1,9 +1,12 @@
+.messenger-content {
+    background-image: linear-gradient(270deg, transparent 76%, var(--main-color));
+}
+
 .chat-window {
     height: var(--content-height);
     width: 100%;
     display: flex;
     flex-direction: column;
-    background-image: linear-gradient(90deg, var(--main-color) -15%, transparent 12%);
 }
 
 .messenger-content {
@@ -65,7 +68,7 @@
 
 .messages {
     height: 100%;
-    margin: 10px;
+    margin: 0.5rem 1rem;
     overflow-y: auto;
     padding-right: 6px;
 }
@@ -79,10 +82,18 @@
     background: white;
     border-radius: 10px;
     box-shadow: 0px 1px 2px var(--rare-color);
-    padding: 10px 25px 10px 10px;
+    padding: 10px 20px 10px 10px;
     margin: 10px 0px;
     margin-bottom: 5px;
     width: fit-content;
+}
+
+.timestamp {
+    border-top: 1px solid;
+    width: 50%;
+    margin: auto;
+    text-align: center;
+    margin-top: 1rem;
 }
 
 .status {
@@ -91,6 +102,10 @@
     right: 1vh;
     background-color: white;
     color: #2A9D8F
+}
+
+.user-status {
+    font-size: 9pt;
 }
 
 .author {
@@ -108,6 +123,7 @@
     height: var(--content-height);
     display: flex;
     flex-direction: column;
+    overflow: scroll;
     width: 15%;
 }
 
@@ -117,17 +133,17 @@
 
 .chat-button {
     border-right: 1px solid var(--main-color);
-    padding-left: .5rem;
+    padding: .5rem;
     height: inherit;
     width: inherit;
     display: flex;
     position: relative;
     align-items: center;
+    background-color: var(--bg-color);
 }
 
 .user-chats a {
     width: 100%;
-    height: 100%;
     text-decoration: none;
     color: inherit;
     display: flex;
@@ -135,11 +151,15 @@
 }
 
 .selected {
-    background-image: linear-gradient(270deg, transparent -80%, var(--main-color));
     color: white;
     border-color: var(--main-color);
     border-width: 1px 0px 1px 1px;
     border-style: solid;
+    background-color: transparent;
+}
+
+.selected .profile-pic {
+    border-color: white;
 }
 
 .chat-button-text {

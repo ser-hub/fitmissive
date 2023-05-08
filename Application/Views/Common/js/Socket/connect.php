@@ -1,3 +1,4 @@
+<script src='/node/node_modules/socket.io/client-dist/socket.io.js'></script>
 <script>
     var recipient = <?php
                     if (isset($data['receiver'])) {

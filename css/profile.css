@@ -22,7 +22,7 @@
 }
 
 .profile-data {
-    min-width: 20svw;
+    width: 20svw;
     height: var(--content-height);
     margin: auto;
     display: flex;

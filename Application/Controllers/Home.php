@@ -37,7 +37,7 @@ class Home extends Controller
 
                 foreach ($split as $day) {
                     if (isset($day->last_updated)) {
-                        $day->last_updated = Time::ElapsedString(date_create($day->last_updated));
+                        $day->last_updated = Time::elapsedString(date_create($day->last_updated));
                     }
                 }
             }

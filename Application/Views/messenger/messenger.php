@@ -1,4 +1,4 @@
-<div class="messenger-content">
+<div class="messenger-content" style="--main-color: #<?= $data['userColor']?>">
     <div class="user-chats">
         <?php foreach ($data['chats'] as $chat) { ?>
             <?php
@@ -29,7 +29,10 @@
         <div class="chat-window">
             <div class="chat-header">
                 <img src="<?= $data['receiverPic'] ?>" class="profile-pic" height="50" width="50" alt="profile picture" style="margin-right: 10px">
-                <?= $data['receiver'] ?>
+                <div>
+                    <?= $data['receiver'] ?>
+                    <div class="user-status"></div>
+                </div>
                 <a href="/profile/<?= $receiver ?>" class="messenger-profile-btn">Виж профила</a>
             </div>
             <div class="messages">
@@ -42,7 +45,7 @@
         </div>
     <?php } ?>
     <div class="chat-item" <?= $message->user_id == $data['sender'] ? "style='margin-left: auto'" : '' ?>>
-        <div style="margin-right: 10px;">
+        <div style="margin-right: 5px;">
             <img src="<?php
                             if ($message->user_id == $data['sender']) {
                                 echo $data['senderPic'];

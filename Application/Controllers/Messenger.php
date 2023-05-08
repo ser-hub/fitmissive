@@ -3,6 +3,7 @@
 namespace Application\Controllers;
 
 use Application\Core\Controller;
+use Application\Utilities\Time;
 
 class Messenger extends Controller
 {
@@ -52,13 +53,47 @@ class Messenger extends Controller
             }
         }
 
-        $this->view('messenger', [
+        if ($messages) {
+            foreach ($messages as $message) {
+                $message->sent_at = Time::elapsedString(date_create($message->sent_at));
+            }
+        }
+
+        $this->view('messenger/messenger', [
             'sender' => $loggedUser->username,
+            'userColor' => $loggedUser->color_hex,
             'receiver' => $username,
             'chats' => $chats,
             'messages' => $messages,
             'senderPic' => $this->userService->getPicturePathOf($loggedUser->username),
             'receiverPic' => $this->userService->getPicturePathOf($username)
         ]);
+    }
+
+    public function messages($target = false) {
+        $messagesParsed = [];
+        if ($target) {
+            $receiver = $this->userService->getUser($target);
+
+            if ($receiver) {
+                $chatId = $this->chatService->startChat($this->loggedUser, $receiver->user_id);
+                if (is_numeric($chatId)) {
+                    foreach($this->chatService->getMessagesOf($chatId) as $message) {
+                        $messagesParsed[] = [
+                            'author' => $message->user_id,
+                            'timestamp' => str_replace(' ', 'T', $message->sent_at) . 'Z',
+                            'text' => $message->message
+                        ];
+                    }
+                    $this->chatService->setAllMessagesSeen($chatId, $receiver->user_id);
+                }
+            }
+
+            echo json_encode([
+                'ownPicture' => $this->userService->getPicturePathOf($this->loggedUsername),
+                'targetPicture' => $this->userService->getPicturePathOf($target),
+                'messages' => $messagesParsed
+            ]);
+        }
     }
 }

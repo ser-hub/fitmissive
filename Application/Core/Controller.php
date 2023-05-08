@@ -8,10 +8,10 @@ use Application\Services\{UserService, InfoService, ChatService};
 abstract class Controller
 {
     protected $loggedUser;
+    protected $loggedUsername;
     protected $userService;
     protected $chatService;
     private $infoService = null;
-    private $loggedUsername;
 
     public function __construct()
     {
@@ -23,7 +23,7 @@ abstract class Controller
             Redirect::to('/index');
         }
 
-        $loggedUserData = $this->userService->getLoggedUser(); // look into this
+        $loggedUserData = $this->userService->getLoggedUser(); 
         $this->loggedUsername = $loggedUserData->username;
         $this->loggedUser = $loggedUserData->user_id;
     }
@@ -49,10 +49,11 @@ abstract class Controller
         }
         
         $data['info'] = [];
-        $data['info'] = $this->infoService->getAllInfo();
+        $data['info'] = $this->infoService->getAllInfo();;
         require_once 'Application/Views/Common/header.php';
         require_once 'Application/Views/' . $view . '.php';
         require_once 'Application/Views/Common/footer.php';
+        require_once 'Application/Views/Common/js/Socket/connect.php';
 
         if (file_exists('Application/Views/' . $view . '.js')) {
             echo '<script src="/Application/Views/' . $view . '.js" type="module"></script>';
