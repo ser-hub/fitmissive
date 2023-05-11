@@ -57,15 +57,15 @@ class Info extends Controller
                 $title = Input::get('title');
                 $content = Input::get('content');
                 if (strlen($content) < 4000) {
-                    $this->infoService->updateInfo($title, array(
+                    $this->infoService->updateInfo($title, [
                         'content' => $content,
                         'updated_at' => date('Y-m-d H:i:s')
-                    ));
+                    ]);
                 } else {
-                    $this->data['inputs'] = array(
+                    $this->data['inputs'] = [
                         'content' => $content
-                    );
-                    $this->data['errors'] = array('Content is too long.');
+                    ];
+                    $this->data['errors'] = array('Съдържанието е твърде дълго (>4000).');
                     Input::put('action', 'edit');
                 }
             }
@@ -93,27 +93,27 @@ class Info extends Controller
                 $content = Input::get('content');
 
                 $validator = new Validator();
-                $validator->check($_POST, array(
-                    'title' => array(
-                        'name' => 'Title',
+                $validator->check($_POST, [
+                    'title' => [
+                        'name' => 'Заглавието',
                         '!contains' => '\\/?#@*=;\'"',
                         'required' => true,
                         'max' => 45
-                    ),
-                    'slug' => array(
+                    ],
+                    'slug' => [
                         'name' => 'Slug',
                         'required' => true,
                         'max' => 45,
                         '!contains' => ' \\/?%&#@!*()+=,.;:\'"',
                         'unique' => 'info',
                         'dbColumn' => 'slug'
-                    ),
-                    'content' => array(
-                        'name' => 'Content',
+                    ],
+                    'content' => [
+                        'name' => 'Съдържанието',
                         'required' => true,
                         'max' => 4000
-                    )
-                ));
+                    ]
+                ]);
 
                 if ($validator->passed()) {
                     $this->infoService->addInfo(array(

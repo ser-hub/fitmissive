@@ -23,26 +23,26 @@ class Validator
                 $item = Functions::escape($item);
 
                 if ($rule === 'required' && empty($value)) {
-                    $this->addError("{$rules['name']} is required.");
+                    $this->addError("{$rules['name']} е задължително.");
                 } else if ($rule === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    $this->addError("{$rules['name']} is not valid.");
+                    $this->addError("{$rules['name']} не е валиден.");
                 } else {
                     switch ($rule) {
                         case 'min':
                             if (strlen($value) < $ruleValue) {
-                                $this->addError("{$rules['name']} must be at least {$ruleValue} characters long.");
+                                $this->addError("{$rules['name']} трябва да е поне {$ruleValue} символа.");
                             }
                             break;
 
                         case 'max':
                             if (strlen($value) > $ruleValue) {
-                                $this->addError("{$rules['name']} must be less than {$ruleValue} characters long.");
+                                $this->addError("{$rules['name']} трябва да е по-малко от {$ruleValue} символа.");
                             }
                             break;
 
                         case 'matches':
                             if ($value != $source[$ruleValue]) {
-                                $this->addError("{$rules['name']}s don't match.");
+                                $this->addError("{$rules['name']} не съвпада.");
                             }
                             break;
 
@@ -50,16 +50,16 @@ class Validator
                             foreach (str_split($ruleValue) as $char) {
                                 if (!str_contains($value, $char)) {
                                     if ($char === ' ') {
-                                        $this->addError("{$rules['name']} must contain empty spaces.");
+                                        $this->addError("{$rules['name']} трябва да съдържа празен символ.");
                                     }
-                                    $this->addError("{$rules['name']} must contain '{$char}'.");
+                                    $this->addError("{$rules['name']} трябва да съдържа '{$char}'.");
                                 }
                             }
                             break;
                         case '!contains':
                             foreach (str_split($ruleValue) as $char) {
                                 if (str_contains($value, $char)) {
-                                    $this->addError("{$rules['name']} contains illegal characters.");
+                                    $this->addError("{$rules['name']} съдържа забранени символи.");
                                     break;
                                 }
                             }
@@ -68,13 +68,13 @@ class Validator
                         case 'unique': // must go through the spcific service
                             $check = $this->db->get($ruleValue, array($rules['dbColumn'], '=', $value));
                             if ($check->count()) {
-                                $this->addError("{$rules['name']} already exists.");
+                                $this->addError("{$rules['name']} е заето.");
                             }
                             break;
                         case 'exists': // must go through the specific service
                             $check = $this->db->get($ruleValue, array($rules['dbColumn'], '=', $value));
                             if (!$check->count()) {
-                                $this->addError("{$rules['name']} already exists.");
+                                $this->addError("{$rules['name']} е заето.");
                             }
                             break;
                     }
@@ -99,27 +99,27 @@ class Validator
         $fileActualExt = strtolower(end($fileExt));
 
         if ($fileError === 1) {
-            $this->addError('Error uploading your file.');
+            $this->addError('Грешка при качването на файла.');
         }
 
         foreach ($items as $rule => $ruleValue) {
             switch ($rule) {
                 case 'allowedTypes':
                     if (!in_array($fileActualExt, $ruleValue)) {
-                        $this->addError("You cannot upload files of this type.");
+                        $this->addError("Не може да качвате файлове от този тип.");
                     }
                     break;
 
                 case 'maxSize':
                     if ($fileSize > $ruleValue) {
-                        $this->addError("File too big.");
+                        $this->addError("Файлът е твърде голям.");
                     }
                     break;
 
                 case 'illegalSymbols':
                     foreach ($ruleValue as $value) {
                         if (str_contains($fileName, $value)) {
-                            $this->addError("File name contains illegal symbols.");
+                            $this->addError("Името на файла съдържа забранени символи.");
                         }
                     }
                     break;

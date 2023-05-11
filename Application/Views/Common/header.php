@@ -4,7 +4,7 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
 
 <!doctype html>
 <html lang="bg">
-    
+
 <head>
     <title>Fitmissive</title>
     <meta charset="utf-8">
@@ -12,27 +12,27 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
     <?php if ($view == 'profile/profile' || $view == 'home/home') { ?>
         <meta name="viewport" class="carousel-content">
         <link rel="stylesheet" href="/node/assets/css/bootstrap.css">
-    <?php } 
-        if ($view == 'profile/profile' || $view == 'search' || $view == 'info') { ?>
+    <?php }
+    if ($view == 'profile/profile' || $view == 'search' || $view == 'info') { ?>
         <link rel="stylesheet" href="/css/home.css" type="text/css">
-    <?php } 
-        if ($view == 'home/index') { 
-            if (rand(1,2) % 2 == 0) {
-                $pattern = 'plus';
-            } else {
-                $pattern = 'circle';
-            }?>
-            <link rel="stylesheet" href="/css/patterns/body-pattern-<?= $pattern ?>-animated.css" type="text/css">
-        <?php } ?>
+    <?php } ?>
 
     <?php
     $stylesheet = $view;
-    if (str_contains($view, '/')) {
-        $stylesheet = explode('/', $view);
+
+    if (str_contains($stylesheet, '/')) {
+        $stylesheet = explode('/', $stylesheet);
         $stylesheet = end($stylesheet);
     }
 
-    ?>
+    if ($stylesheet == 'index') {
+        if (rand(1, 2) % 2 == 0) {
+            $pattern = 'plus';
+        } else {
+            $pattern = 'circle';
+        } ?>
+        <link rel="stylesheet" href="/css/patterns/body-pattern-<?= $pattern ?>-animated.css" type="text/css">
+    <?php } ?>
 
     <link href="/node/node_modules/@fortawesome/fontawesome-free/css/fontawesome.css" rel="stylesheet">
     <link href="/node/node_modules/@fortawesome/fontawesome-free/css/regular.css" rel="stylesheet">
@@ -41,7 +41,6 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
     <link href="/css/common.css" rel="stylesheet" type="text/css">
     <link href="/css/colors/colors.css" rel="stylesheet" type="text/css">
     <link href="/css/<?= $stylesheet ?>.css" rel="stylesheet" type="text/css">
-    <link href="data:;base64,iVBORw0KGgo=" rel="icon">
 </head>
 
 <body>

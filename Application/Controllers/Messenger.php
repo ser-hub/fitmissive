@@ -70,7 +70,8 @@ class Messenger extends Controller
         ]);
     }
 
-    public function messages($target = false) {
+    public function messages($target = false)
+    {
         $messagesParsed = [];
         if ($target) {
             $receiver = $this->userService->getUser($target);
@@ -78,22 +79,25 @@ class Messenger extends Controller
             if ($receiver) {
                 $chatId = $this->chatService->startChat($this->loggedUser, $receiver->user_id);
                 if (is_numeric($chatId)) {
-                    foreach($this->chatService->getMessagesOf($chatId) as $message) {
-                        $messagesParsed[] = [
-                            'author' => $message->user_id,
-                            'timestamp' => str_replace(' ', 'T', $message->sent_at) . 'Z',
-                            'text' => $message->message
-                        ];
+                    $messages = $this->chatService->getMessagesOf($chatId);
+                    if ($messages) {
+                        foreach ($messages as $message) {
+                            $messagesParsed[] = [
+                                'author' => $message->user_id,
+                                'timestamp' => str_replace(' ', 'T', $message->sent_at) . 'Z',
+                                'text' => $message->message
+                            ];
+                        }
+                        $this->chatService->setAllMessagesSeen($chatId, $receiver->user_id);
                     }
-                    $this->chatService->setAllMessagesSeen($chatId, $receiver->user_id);
                 }
             }
-
-            echo json_encode([
-                'ownPicture' => $this->userService->getPicturePathOf($this->loggedUsername),
-                'targetPicture' => $this->userService->getPicturePathOf($target),
-                'messages' => $messagesParsed
-            ]);
         }
+
+        echo json_encode([
+            'ownPicture' => $this->userService->getPicturePathOf($this->loggedUsername),
+            'targetPicture' => $this->userService->getPicturePathOf($target),
+            'messages' => $messagesParsed
+        ]);
     }
 }

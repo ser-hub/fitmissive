@@ -1,10 +1,9 @@
 import WorkoutManager from "../Common/js/WorkoutManager/workoutManager.js"
 
-let workoutContainers = document.getElementsByName('workout-container')
+const workoutContainers = document.getElementsByName('workout-container')
 
-let xhr = new XMLHttpRequest()
+const xhr = new XMLHttpRequest()
 xhr.open('GET', `/home/getInitalWorkoutData`, true)
-xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
 xhr.onload = function () {
     if (this.status == 200) {
         let parsedResponse = JSON.parse(this.response)

@@ -20,14 +20,18 @@
             <?php if ($errors != null) include 'Application/Views/Common/error-section.php' ?>
             <form action="/info/update/<?= $slug ?>" method="POST">
                 <input type="hidden" name="title" value="<?= $data['title'] ?>">
+                <div style="margin-bottom:10px">
+                    <?= $data['title'] ?>
+                </div>
                 <input type="hidden" name="token" value="<?= Token::generate('session/info_update_token') ?>">
-                <textarea name="content" maxlength="5001"><?php
+                <textarea name="content" maxlength="4000"><?php
                                                             if (isset($data['content'])) echo $data['content'];
                                                             else if (isset($data['inputs']['content'])) echo $data['inputs']['content'] ?></textarea>
-                <input type="submit" value="Save">
+                <input type="submit" class="btn-default" value="Запамети">
+                <a href="/info/<?= $slug ?>" class="menu-item" style="margin-top: 10px">Назад</a>
             </form>
         <?php } elseif (Input::keyExists('action') && Input::get('action') == 'delete') { ?>
-            Are you sure you want to delete '<?= $data['title'] ?>'?
+            Сигурни ли сте, че искате да изтриете '<?= $data['title'] ?>'?
             <div class='bottom'>
                 <form action="/info/delete/<?php foreach ($data['info'] as $info) {
                                                 if ($info->slug == $slug) {
@@ -35,8 +39,8 @@
                                                 }
                                             } ?>" method="POST" class="yes-no">
                     <input type="hidden" name="token" value="<?= Token::generate('session/info_delete_token') ?>">
-                    <input type="submit" value="Yes" style="margin-right: 10px">
-                    <a href="/info/<?= $slug ?>" class="menu-item">No</a>
+                    <input type="submit" value="Да" style="margin-right: 10px">
+                    <a href="/info/<?= $slug ?>" class="menu-item">Не</a>
                 </form>
             </div>
         <?php } elseif ((Input::keyExists('action') && Input::get('action') == 'create') || $errors != null) { ?>
@@ -46,7 +50,7 @@
                 <div style="margin: 10px">
                     <input type="text" name="slug" maxlength="45" placeholder="Slug" required value="<?php if ($inputs != null) echo $inputs['slug'] ?>">
                 </div>
-                <textarea name="content" maxlength="1000" placeholder="Content" required><?php if ($inputs != null) echo $inputs['content'] ?></textarea>
+                <textarea name="content" maxlength="1000" placeholder="Съдържание" required><?php if ($inputs != null) echo $inputs['content'] ?></textarea>
                 <input type="hidden" name="token" value="<?= Token::generate('session/info_create_token') ?>">
                 <input type="submit" class="btn-default" value="Запамети">
                 <a href="/info" class="menu-item" style="margin-top: 10px">Назад</a>

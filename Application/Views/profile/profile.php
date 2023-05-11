@@ -23,7 +23,7 @@
 
 
 <div class="profile-content">
-    <div class="profile-data">
+    <div class="profile-data" <?= $isProfileEdit ? 'style="width: auto"' : ''?>>
         <?php if ($isDelete) { ?>
             <span style="margin: 10px">Сигурли си сте, че искате да изтриете @<?= $username ?>?</span>
             <div class="delete-action">

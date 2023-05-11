@@ -65,17 +65,17 @@ class Profile extends Controller
                 $validator = new Validator();
                 $validator->check($_POST, [
                     'fullname' => [
-                        'name' => 'fullname',
+                        'name' => 'Пълното име',
                         '!contains' => '\\/?%&#@!*()+=,;:\'"',
                         'min' => 2,
                         'max' => 32,
                     ],
                     'description' => [
-                        'name' => 'desciption',
+                        'name' => 'Описанието',
                         'max' => 500,
                     ],
                     'email' => [
-                        'name' => 'Email',
+                        'name' => 'Имейлът',
                         'required' => true,
                         'email' => true,
                         'unique' => 'users',

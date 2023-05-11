@@ -21,7 +21,7 @@ class DB
     {
         try {
             $this->pdo = new PDO(
-                'mysql:host=' . Config::get('mysql/host') . ';dbname=' . Config::get('mysql/db'),
+                'mysql:host=' . Config::get('mysql/host') . ';dbname=' . Config::get('mysql/db_name'),
                 Config::get('mysql/username'),
                 Config::get('mysql/password')
             );

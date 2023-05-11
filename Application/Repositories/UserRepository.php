@@ -71,6 +71,15 @@ class UserRepository
         return false;
     }
 
+    public function getUserByX($field, $value) {
+        $data = $this->db->query('SELECT * FROM ' . self::USERS_TABLE . ' WHERE ' . $field . ' = ?', [$value]);
+
+        if ($data->count()) {
+            return $data->first();
+        }
+        return false;
+    }
+
     public function getAllUsersLike($keyword = null, $exclude = null, $from = 0, $count = null)
     {
         $sql = 'SELECT SQL_CALC_FOUND_ROWS * FROM ' . self::USERS_TABLE . ' WHERE';
