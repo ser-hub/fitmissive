@@ -4,7 +4,7 @@ namespace Application\Controllers;
 
 use Application\Core\Controller;
 use Application\Services\UserService;
-use Application\Utilities\{Redirect, Session, Validator, Input, Token, DeviceCookies};
+use Application\Utilities\{Redirect, Session, Validator, Input, Token, DeviceCookies, Mailer, Hash};
 use Application\Models\User;
 use \Exception;
 
@@ -15,10 +15,6 @@ class Index extends Controller
     public function __construct()
     {
         $this->userService = UserService::getInstance();
-
-        if ($this->userService->isUserLoggedIn()) {
-            Redirect::to('/home');
-        }
     }
 
     public function index()
@@ -40,59 +36,70 @@ class Index extends Controller
                     $data['LogInput'] = $_POST;
                 }
 
-                $cookieFlag = false;
-                /*
-                if (!isset($_COOKIE['device_cookie'])) {
-                    $deviceCookie = $_COOKIE['device_cookie'];
-                    if (!DeviceCookies::validate(Input::get('username'), $deviceCookie)) {
-                        if ($this->userService->isUserLockedOut(Input::get('username'))) {
-                            $cookieFlag = true;
-                        }
-                    } else {
-                        // if device cookie is in the lockout list- reject authentication
-                    }
-                } 
+                $user = [
+                    'username' => Input::get('username'),
+                    'password' => Input::get('password')
+                ];
 
-                if ($cookieFlag) {
-                    $data['LogErrors'] = array("The account you're trying to access is temporarily locked.");
-                    $this->data = $data;
-                    $this->index();
-                    return;
+                /*
+                $lockedError = ['Този акаунт беше временно заключен от съображения за сигурност'];
+                $credentialsError = ['Грешно потребителско име или парола'];
+                if (isset($_COOKIE['device_cookie']))) {
+                    $deviceCookieContent = $_COOKIE['device_cookie']
+                    if ($this->userService->validateCookie($user['username'], $deviceCookieContent)) {
+                        if (!$this->userService->isDeviceCookieLocked($user['username'])) {
+                            $data['LogErrors'] = $lockedError;
+                        }
+                        elseif ($this->userService->authenticate($user)) {
+                            // issue device cookie
+                            issueCookie($user['username']);
+                            $this->index();
+                            return; 
+                        } else {
+                            $data['LogErrors'] = credentialsError;
+                            //register cookie failed attempt
+                            $this->userService->registerCookieFail($user['username']));
+                        }
+                    }
+                }
+
+                if ($this->userService->isLockedForUntrustedUsers($user['username'])) {
+                        $data['LogErrors'] = $lockedError;
+                } else {
+                    if ($this->userService->authenticate($user)) {
+                        // issue device cookie
+                        issueCookie($user['username']);
+                        $this->index();
+                        return; 
+                    } else {
+                        $data['LogErrors'] = credentialsError;
+                        //register regular failed attempt
+                        $this->userService->registerRegularFail($deviceCookie));
+                    }
                 }
                 */
 
-                $validator = new Validator();
-                $validator->check($_POST, array(
-                    'username' => array(
-                        'required' => true,
-                    ),
-                    'password' => array(
-                        'required' => true,
-                    )
-                ));
-
-                if ($validator->passed()) {
-                    $user = array(
-                        'username' => Input::get('username'),
-                        'password' => Input::get('password')
-                    );
-
-                    if ($this->userService->login($user)) {
-                        setcookie('device_cookie', DeviceCookies::generate($user['username']));
-                        $this->index();
-                        return;
-                    } else {
-                        $data['LogErrors'] = array('Username or password is incorrect.');
-                        //process failed attempt
-                    }
+                if ($this->userService->authenticate($user)) {
+                    // issue device cookie
+                    setcookie('device_cookie', DeviceCookies::generate($user['username']));
+                    $this->index();
+                    return;
                 } else {
-                    $data['LogErrors'] = $validator->errors();
+                    $data['LogErrors'] = ['Грешно потребителско име или парола'];
+                    //process failed attempt
                 }
 
                 $this->data = $data;
             }
         }
         $this->index();
+    }
+
+    private function issueCookie($username)
+    {
+        $deviceCookieContent = DeviceCookies::generate($username);
+        $this->userService->registerDeviceCookie($username, $deviceCookieContent);
+        setcookie('device_cookie', $deviceCookieContent);
     }
 
     public function registerAction()
@@ -108,7 +115,7 @@ class Index extends Controller
                 $validator = new Validator();
                 $validator->check($_POST, [
                     'usernameReg' => [
-                        'name' => 'Username',
+                        'name' => 'Потребилеското име',
                         'required' => true,
                         '!contains' => ' \\/?%&#@!*()+=,;:\'"',
                         'min' => 2,
@@ -117,22 +124,23 @@ class Index extends Controller
                         'dbColumn' => 'username'
                     ],
                     'passwordReg' => [
-                        'name' => 'Password',
+                        'name' => 'Паролата',
                         'required' => true,
                         'min' => 6,
                         'max' => 64
                     ],
                     'password2' => [
-                        'name' => 'Password',
+                        'name' => 'Втората парола',
                         'required' => true,
                         'matches' => 'passwordReg'
                     ],
                     'email' => [
-                        'name' => 'Email',
+                        'name' => 'Имейлът',
                         'required' => true,
                         'email' => true,
                         'unique' => 'users',
-                        'dbColumn' => 'email'
+                        'dbColumn' => 'email',
+                        'max' => 255
                     ]
                 ]);
 
@@ -145,7 +153,7 @@ class Index extends Controller
 
                     try {
                         $this->userService->register($user);
-                        Session::flash('success', 'You have been registered and can now log in.');
+                        Session::flash('success', 'Успешна регистрация.');
                     } catch (Exception $e) {
                         Session::flash('error', $e->getMessage());
                     }
@@ -158,5 +166,78 @@ class Index extends Controller
             }
         }
         $this->index();
+    }
+
+    public function forgottenPassword()
+    {
+        if (Input::exists()) {
+            $result = '';
+
+            $targetUser = $this->userService->getUserIdByEmail(Input::get('pr-target'));
+            if ($targetUser) {
+                $FPKey = Hash::salt(8);
+                if (Mailer::sendPasswordRecoveryMail(Input::get('pr-target'), $FPKey)) {
+                    $result = 'Беше ви изпратен имейл с линк за смяна на паролата ви';
+                    $this->userService->initiatePR($targetUser->user_id, $FPKey);
+                } else {
+                    $result = 'Грешка при изпращането на имейл';
+                }
+            } else {
+                $result = 'Не беше намерен потребител с този имейл';
+            }
+
+            echo $result;
+        }
+    }
+
+    public function recoverPassword($PRKey = '')
+    {
+        if ($this->userService->validatePRKey($PRKey)) {
+            $this->view('password-reset/index', [
+                'key' => $PRKey
+            ]);
+        } else {
+            $this->index();
+        }
+    }
+
+    public function updatePassword()
+    {
+        if (Input::exists()) {
+            if (Token::check(Input::get('token'), 'session/pr_token')) {
+                $status = 'Успешна смяна на паролата!';
+                if (!$this->userService->validatePRKey(Input::get('key'))) {
+                    $status = 'Този линк е невалиден или изтекъл';
+                }
+                $validator = new Validator();
+                $validator->check($_POST, [
+                    'password' => [
+                        'name' => 'Паролата',
+                        'required' => true,
+                        'min' => 6,
+                        'max' => 64
+                    ],
+                    'password2' => [
+                        'name' => 'Втората парола',
+                        'required' => true,
+                        'matches' => 'password'
+                    ]
+                ]);
+
+                if ($validator->passed()) {
+                    $this->userService->updateUserPassword(
+                        Input::get('key'),
+                        input::get('password')
+                    );
+                    $this->userService->finishPR(Input::get('key'));
+                } else {
+                    $status = $validator->errors()[0];
+                }
+            }
+        }
+        $this->view('password-reset/index', [
+            'key' => Input::get('key'),
+            'status' => $status . '<a href="/index">Към начало</a>'
+        ]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Application\Services;
 
-use Application\Repositories\{UserRepository, SplitRepository, ChatRepository, DCRepository, DeviceCookiesRepository};
+use Application\Repositories\{UserRepository, SplitRepository, ChatRepository, DeviceCookiesRepository};
 use Application\Utilities\{Config, Constants, Session, Hash};
 
 use \Exception;
@@ -175,6 +175,48 @@ class UserService
         );
     }
     // General user service end
+    
+    // Fogotten password service start
+    public function getUserIdByEmail($email) {
+        return $this->userRepository->getUserByX('email', $email);
+    }
+
+    public function initiatePR($userId, $key)
+    {
+        $this->userRepository->updateUser($userId, [
+            'pr_key' => $key,
+            'pr_key_sent_at' => time()
+        ]);
+    }
+
+    public function finishPR($key)
+    {
+        $targetUser = $this->userRepository->getUserByX('pr_key', $key);
+        $this->userRepository->updateUser($targetUser->user_id, [
+            'pr_key' => null,
+            'pr_key_sent_at' => null
+        ]);
+    }
+
+    public function validatePRKey($key) 
+    {
+        $targetUser = $this->userRepository->getUserByX('pr_key', $key);
+        return $targetUser && $targetUser->pr_key_sent_at < time() + 3600;
+    }
+
+    public function updateUserPassword($PRKey, $newPassword) 
+    {
+        $targetUser = $this->userRepository->getUserByX('pr_key', $PRKey);
+        if ($this->validatePRKey($PRKey)) {
+            $salt = Hash::salt(16);
+            $passwordHashed = Hash::make($newPassword, $salt);
+            return $this->updateUser([
+                'salt' => $salt,
+                'password' => $passwordHashed
+            ], $targetUser->user_id);
+        }
+    }
+    // Forgotten password service end
 
     // User color service start
     public function getUserColor($userId)

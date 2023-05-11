@@ -14,7 +14,13 @@ $GLOBALS['config'] = [
         'host' => $_SERVER['DB_HOST'],
         'username' => $_SERVER['DB_USERNAME'],
         'password' => $_SERVER['DB_PASSWORD'],
-        'db' => $_SERVER['DB_NAME']
+        'db_name' => $_SERVER['DB_NAME']
+    ],
+    'mailer' => [
+        'host' => $_SERVER['MAILER_HOST'],
+        'username' => $_SERVER['MAILER_USERNAME'],
+        'password' => $_SERVER['MAILER_PASSWORD'],
+        'alias' => $_SERVER['MAILER_ALIAS']
     ],
     'session' => [
         'session_name' => 'user',
@@ -36,7 +42,8 @@ $GLOBALS['config'] = [
         'info_delete_token' => 'token7',
         'rating_token' => 'token8',
         'follow_token' => 'token9',
-        'color_token' => 'token10'
+        'color_token' => 'token10',
+        'pr_token' => 'token11'
     ]
 ];
 
