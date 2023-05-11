@@ -73,6 +73,7 @@ input[type=submit]:hover {
 
 .header-wrapper {
     display:flex;
+    margin-left: .5rem;
 }
 
 .header {
