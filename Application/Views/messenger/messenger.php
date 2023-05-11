@@ -1,4 +1,4 @@
-<div class="messenger-content" style="--main-color: #<?= $data['userColor']?>">
+<div class="messenger-content" style="--main-color: #<?= $data['userColor'] ?>">
     <div class="user-chats">
         <?php foreach ($data['chats'] as $chat) { ?>
             <?php
@@ -35,52 +35,17 @@
                 </div>
                 <a href="/profile/<?= $receiver ?>" class="messenger-profile-btn">Виж профила</a>
             </div>
-            <div class="messages">
-                <?php if (!empty($data['messages'])) { ?>
-                    <?php $currentAuthor = null ?>
-                    <?php foreach ($data['messages'] as $message) { ?>
-                        <?php if ($message->user_id !== $currentAuthor) { ?>
-                            <?php if ($currentAuthor != null) { ?>
+            <div class="messages"></div>
+            <input type="hidden" class="sender" value="<?= $data['senderPic'] ?>">
+            <input type="hidden" class="receiver" value="<?= $data['receiverPic'] ?>">
+            <input type="hidden" class="username" value="<?= $data['sender'] ?>">
+
+            <div class="message-box">
+                <input type="text" class="message-field" name="input" spellcheck="false" placeholder="Aa...">
+                <button class="message-send-btn" onclick="emitMessage(document.querySelector('.message-field'), socket)">Изпращане</button>
             </div>
+
         </div>
+
     <?php } ?>
-    <div class="chat-item" <?= $message->user_id == $data['sender'] ? "style='margin-left: auto'" : '' ?>>
-        <div style="margin-right: 5px;">
-            <img src="<?php
-                            if ($message->user_id == $data['sender']) {
-                                echo $data['senderPic'];
-                            } else {
-                                echo $data['receiverPic'];
-                            }
-                        ?>" class="profile-pic" height="30" width="30" alt="profile picture">
-        </div>
-        <div>
-            <div class="author"><?= $message->user_id ?> <?= $message->sent_at ?></div>
-            <div class="message"><?= $message->message ?></div>
-        <?php
-                            $currentAuthor = $message->user_id;
-                        } else { ?>
-            <div class="message"><?= $message->message ?></div>
-        <?php } ?>
-    <?php } ?>
-        </div>
-    </div>
-<?php } else { ?>
-    <div class="prompt">
-        Кажи здрасти на <?= $data['receiver'] ?>
-    </div>
-<?php } ?>
-</div>
-<input type="hidden" class="sender" value="<?= $data['senderPic'] ?>">
-<input type="hidden" class="receiver" value="<?= $data['receiverPic'] ?>">
-<input type="hidden" class="username" value="<?= $data['sender'] ?>">
-
-<div class="message-box">
-    <input type="text" class="message-field" name="input" spellcheck="false" placeholder="Aa...">
-    <button class="message-send-btn" onclick="emitMessage(document.querySelector('.message-field'), socket)">Изпращане</button>
-</div>
-
-</div>
-
-<?php } ?>
 </div>
