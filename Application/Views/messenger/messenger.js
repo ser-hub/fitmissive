@@ -1,24 +1,23 @@
 import MessageBox from "./messageBox/MessageBox.js"
 
-let messageManager = null;
-let xhr = new XMLHttpRequest()
-xhr.open('GET', `/messenger/messages/${recipient}`, true)
-xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+const xhr = new XMLHttpRequest();
+xhr.open('GET', `/messenger/messages/${recipient}`, true);
+
 xhr.onload = function () {
     if (this.status == 200) {
-        console.log()
-        let parsedResponse = JSON.parse(this.response)
-        messageManager = new MessageBox(
+        const parsedResponse = JSON.parse(this.response);
+        const messageManager = new MessageBox(
             document.querySelector('.messages'),
             username,
             recipient,
             parsedResponse
-        )
+        );
 
-        messageManager.displayMessages()
+        messageManager.displayMessages();
     }
 }
-xhr.send()
+
+xhr.send();
 
 window.addEventListener('load', function () {
     let messages = document.querySelector('.messages');
@@ -45,7 +44,7 @@ if (socket) {
     input.addEventListener('keydown', (event) => {
         if (event.which === 13 && !event.shiftKey) {
             if (!/^\s*$/m.test(input.value)) {
-                messageManager.addMessage(username, input.value)
+                messageManager.addMessage(username, input.value);
                 socket.emit('chat message', {
                     content: input.value,
                     to: recipient
@@ -64,11 +63,11 @@ if (socket) {
 
     socket.on('user status', function (data) {
         if (data) {
-            document.querySelector('.user-status').textContent = 'online'
-            document.querySelector('.user-status').style.color = 'green'
+            document.querySelector('.user-status').textContent = 'online';
+            document.querySelector('.user-status').style.color = 'green';
         } else {
-            document.querySelector('.user-status').textContent = 'offline'
-            document.querySelector('.user-status').style.color = 'gray'
+            document.querySelector('.user-status').textContent = 'offline';
+            document.querySelector('.user-status').style.color = 'gray';
         }
     })
 
@@ -83,9 +82,9 @@ if (socket) {
         from
     }) {
         if (from === recipient || from === username) {
-            messageManager.addMessage(from, content)
+            messageManager.addMessage(from, content);
         } else {
-            let chats = document.querySelectorAll('.chat-button-text');
+            const chats = document.querySelectorAll('.chat-button-text');
             let flag = false;
             chats.forEach(element => {
                 if (element.textContent.trim() == from) {
@@ -95,12 +94,12 @@ if (socket) {
             });
 
             if (!flag) {
-                let chats = document.querySelector('.user-chats');
-                let newChat = document.createElement('a');
+                const chats = document.querySelector('.user-chats');
+                const newChat = document.createElement('a');
                 newChat.href = '/messenger/' + from;
-                let newChatButton = document.createElement('div');
+                const newChatButton = document.createElement('div');
                 newChatButton.className = 'chat-button notification';
-                let newChatButtonText = document.createElement('div');
+                const newChatButtonText = document.createElement('div');
                 newChatButtonText.className = 'chat-button-text';
                 newChatButtonText.style = 'margin-left: 15px';
                 newChatButtonText.textContent = from;
