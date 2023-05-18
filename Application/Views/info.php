@@ -62,7 +62,7 @@
                 </div>
             <?php }
             if (isset($data['content']) && strlen($data['content'])) { ?>
-                <span class="info-title"><?= isset($data['title']) ? $data['title'] : '' ?></span>
+                <span class="info-title"><img src="/img/logo-black.png" width="70px" height="70px" style="margin-right:5px"><?= isset($data['title']) ? $data['title'] : '' ?></span>
                 <span class="info-text"><?= trim($data['content']) ?></span>
                 <?php } elseif ($data['adminMode']) {
                 echo "<div class='infos-menu'>";

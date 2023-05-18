@@ -1,0 +1,4 @@
+.admin-container {
+    height: var(--content-height);
+    background-color: white;
+}

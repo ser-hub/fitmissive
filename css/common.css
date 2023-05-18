@@ -78,7 +78,7 @@ body {
 }
 
 .side-bar i {
-    margin-right: 3px;
+    margin-right: 6px;
     color: white;
 }
 
@@ -86,6 +86,8 @@ body {
     padding: 15px;
     text-decoration: none;
     color: white;
+    display: flex;
+    align-items: center;
 }
 
 .side-bar a:hover,
@@ -93,6 +95,7 @@ body {
     background-color: var(--rare-color);
     text-shadow: 1px 2px black;
     padding-left: 10px;
+    padding-right: 20px;
 }
 
 .home-btn {
@@ -213,6 +216,19 @@ textarea:focus {
     padding: 10px 13px;
 }
 
+.rating-btn {
+    cursor: pointer;
+}
+
+.fa-arrow-up,
+.fa-arrow-down {
+    padding-right: 5px;
+}
+
+.fa-xl {
+    color: var(--main-color);
+}
+
 @media (max-height: 700px) {
     body {
         font-size: 0.8rem;
@@ -238,6 +254,7 @@ textarea:focus {
 
     .main-content {
         height: 90svh;
+        overflow: hidden;
     }
     
     .menu {
@@ -286,10 +303,6 @@ textarea:focus {
     .side-bar i {
         margin-bottom: 1rem;
         font-size: x-large;
-    }
-
-    .rating-section i {
-        font-size: large;
     }
 
     .footer-container {

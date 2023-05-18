@@ -64,19 +64,6 @@ class Validator
                                 }
                             }
                             break;
-
-                        case 'unique': // must go through the spcific service
-                            $check = $this->db->get($ruleValue, array($rules['dbColumn'], '=', $value));
-                            if ($check->count()) {
-                                $this->addError("{$rules['name']} е заето.");
-                            }
-                            break;
-                        case 'exists': // must go through the specific service
-                            $check = $this->db->get($ruleValue, array($rules['dbColumn'], '=', $value));
-                            if (!$check->count()) {
-                                $this->addError("{$rules['name']} е заето.");
-                            }
-                            break;
                     }
                 }
             }

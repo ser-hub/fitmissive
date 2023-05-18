@@ -20,8 +20,8 @@ use Application\Utilities\Input;
 </div>
 <?php if (isset($data['loggedUser'])) { ?>
     <div class="side-bar">
-        <a href="/home" class="home-btn <?= str_contains(Input::get('url'), 'home') ? " menu-selected" : "" ?>">
-            <i class="fa-<?= str_contains(Input::get('url'), 'home') ? "solid" : "regular" ?> fa-flag fa-xl"></i>
+        <a href="/home" class="home-btn <?= $stylesheet == 'home' ? " menu-selected" : "" ?>">
+            <i class="fa-<?= $stylesheet == 'home' ? "solid" : "regular" ?> fa-newspaper fa-xl"></i>
             Начало
         </a>
 
@@ -30,10 +30,17 @@ use Application\Utilities\Input;
             Моят профил
         </a>
 
-        <a href="/messenger" class="<?= str_contains(Input::get('url'), 'messenger') ? " menu-selected" : "" ?>">
-            <i class="fa-<?= str_contains(Input::get('url'), 'messenger') ? "solid" : "regular" ?> fa-paper-plane fa-xl"></i>
+        <a href="/messenger" class="<?= $stylesheet == 'messenger' ? " menu-selected" : "" ?>">
+            <i class="fa-<?= $stylesheet == 'messenger' ? "solid" : "regular" ?> fa-message fa-xl"></i>
             Съобщения
         </a>
+
+        <?php if ($data['isAdmin']) { ?>
+        <a href="/admin" class="<?= $stylesheet == 'admin' ? " menu-selected" : "" ?>">
+            <i class="fa-<?= $stylesheet == 'admin' ? "solid" : "regular" ?> fa-file-code fa-xl"></i>
+            Администраторски панел
+        </a>
+        <?php } ?>
 
         <a href="/home/logout" class="logout-btn">
             <i class="fa-solid fa-door-open fa-xl"></i>

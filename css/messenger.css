@@ -26,7 +26,7 @@
     display: flex;
     border-radius: 50px;
     margin: 10px;
-    padding: 6px 12px;
+    padding: 6px 8px;
     background: white;
     font-size: medium;
 }
@@ -35,6 +35,7 @@
     background-color: transparent;
     border: 0;
     width: 100%;
+    font-size: smaller;
 }
 
 .message-field:focus {
@@ -94,6 +95,15 @@
     margin: auto;
     text-align: center;
     margin-top: 1rem;
+    font-family: system-ui;
+    font-size: x-small;
+}
+
+.message-timestamp {
+    padding-left: 10px;
+    font-weight: lighter;
+    font-family: system-ui;
+    font-size: smaller;
 }
 
 .status {
@@ -112,6 +122,8 @@
     font-weight: bold;
     font-style: italic;
     border-bottom: 1px solid;
+    display: flex;
+    justify-content: space-between;
 }
 
 .message {
@@ -188,7 +200,7 @@
 @media (max-width: 600px) {
     .messenger-content {
         flex-direction: column;
-        height: 82svh;
+        background-image: none;
     }
 
     .messages {
@@ -203,8 +215,12 @@
     .user-chats {
         flex-direction: row;
         width: 100%;
-        height: 15%;
+        height: auto;
         overflow: scroll;
+    }
+
+    .user-chats a {
+        height: fit-content;
     }
 
     .chat-button {
@@ -222,7 +238,8 @@
     }
 
     .chat-window {
-        background-image: none;
+        height: 73svh;
+        background-image: var(--bg-color);
         border-left: 0;
     }
 }

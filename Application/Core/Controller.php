@@ -4,6 +4,7 @@ namespace Application\Core;
 
 use Application\Utilities\Redirect;
 use Application\Services\{UserService, InfoService, ChatService};
+use Application\Utilities\Constants;
 
 abstract class Controller
 {
@@ -42,6 +43,7 @@ abstract class Controller
             $data['loggedUser'] = $this->loggedUser;
             $data['loggedUsername'] = $this->loggedUsername;
             $data['unseenMessages'] = $this->chatService->unseenMessages($this->loggedUser);
+            $data['isAdmin'] = $this->userService->getLoggedUser()->role_name === Constants::USER_ROLE_ADMIN;
         }
 
         if ($this->infoService == null) {

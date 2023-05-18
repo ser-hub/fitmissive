@@ -1,5 +1,7 @@
 <?php
+
 $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : false;
+
 ?>
 
 <!doctype html>
@@ -46,8 +48,10 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
 <body>
     <div class="main-content">
         <header class="header-container">
-            <a href="/home" id="home"></a>
-            <div class="hint"><i>Сподели своята тренировка</i></div>
+            <a href="/home" id="home">
+                <img src="/img/logo-white.png" width="60px" height="60px" style="margin-right:5px">
+            </a>
+            <div class="hint"><i>Fitmissive</i></div>
             <?php if (isset($data['loggedUser'])) { ?>
                 <div class="menu">
                     <form action="/search" class="search-form">

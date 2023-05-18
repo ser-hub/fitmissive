@@ -2,8 +2,12 @@
     text-align: center;
 }
 
+.header-container {
+    display: none;
+}
+
 .index-content {
-    height: var(--content-height);
+    height: 92svh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -12,10 +16,22 @@
 .letter {
     border: 10px solid var(--main-color);
     background-color: white;
+    margin: 0 auto;
+    box-shadow: 0px 0px 4px;
+}
+
+.letter-header {
+    background-image: linear-gradient(to bottom, var(--main-color) 85%, transparent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+.pages {
     display: flex;
     justify-content: center;
-    margin: auto;
-    box-shadow: 0px 0px 4px;
 }
 
 .page {
@@ -94,7 +110,7 @@ legend {
 }
 
 @media (max-width: 992px) {
-    .letter {
+    .pages {
         flex-direction: column;
     }
 

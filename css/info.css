@@ -16,6 +16,10 @@
     font-size: 16pt;
     margin: .5rem auto;
     font-style: italic;
+    display: flex;
+    align-items: center;
+    margin-right: 3rem;
+    margin-left: 0;
 }
 
 .info-text {

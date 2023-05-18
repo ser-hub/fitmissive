@@ -9,7 +9,7 @@ $splits = null;
 if (isset($data['splits'])) $splits = $data['splits'];
 ?>
 
-<div id="SplitCarousel" class="carousel slide" data-bs-ride="false">
+<div id="SplitCarousel" class="carousel slide" data-bs-ride="false" style="margin-top:15px">
     <div class="carousel-indicators">
         <?php for ($i = 0; $i < 7; $i++) { ?>
             <button data-bs-target="#SplitCarousel" data-bs-slide-to="<?php echo $i ?>" <?= $i == $today ? "class='active' aria-current='true'" : '' ?> aria-label="<?php echo $dayOfWeek[$i] ?> slide"></button>
