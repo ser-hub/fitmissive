@@ -23,11 +23,47 @@ class ColorService
         return self::$instance;
     }
 
+    public function updateColor($id, $value)
+    {
+        $lengthValidate = strlen($value) == 6;
+        $rangeValidate = true;
+        if ($lengthValidate) {
+            for ($i = 0; $i < 5; $i += 2) {
+                $pair = hexdec($value[$i] . $value[$i + 1]);
+                if ($pair < 0 || $pair > 255) {
+                    $rangeValidate = false;
+                    break;
+                }
+            }
+        }
+
+        if ($rangeValidate && $lengthValidate) {
+            return $this->colorRepository->update($id, $value);
+        } else {
+            return 'Невалидна стойност';
+        }
+    }
+
     public function getAllColorsHex()
     {
         return array_map(function ($color) {
             return $color->color_hex;
         }, $this->colorRepository->getAll());
+    }
+
+    public function getColorData()
+    {
+        $data = $this->colorRepository->getAll();
+        $result = [];
+
+        foreach ($data as $value) {
+            $result[] = [
+                "id" => $value->color_id,
+                "value" => $value->color_hex
+            ];
+        }
+
+        return $result;
     }
 
     public function getColorId($value)

@@ -3,17 +3,22 @@
 namespace Application\Services;
 
 use Application\Repositories\{SplitRepository, UserRepository};
+use Application\Utilities\Time;
 
 class SplitService
 {
     private static $instance;
-    private $splitRepository;
-    private $userRepository;
+    private $splitRepository,
+            $userRepository,
+            $userService;
+    private $exerciseService;
 
     private function __construct()
     {
         $this->splitRepository = SplitRepository::getInstance();
         $this->userRepository = UserRepository::getInstance();
+        $this->exerciseService = ExerciseService::getInstance();
+        $this->userService = UserService::getInstance();
     }
 
     public static function getInstance()
@@ -43,7 +48,7 @@ class SplitService
         }
     }
 
-    public function getRandomisedFollowedSplitsOf($follows = [])
+    private function getRandomisedFollowedSplitsOf($follows = [])
     {
         $allSplits = [];
 
@@ -73,6 +78,29 @@ class SplitService
         return $allSplits;
     }
 
+    public function getFollowedSplits($loggedUser, $follows = [])
+    {
+        $data = $this->getRandomisedFollowedSplitsOf($follows);
+
+        if (!empty($data)) {
+            foreach ($data as &$split) {
+                $split['ratings'] = $this->getRatingsCountOf($split['user_id']);
+                $split['rating'] = $this->getRating($loggedUser, $split['user_id']);
+                $split['userPicture'] = $this->userService->getPicturePathOf($split['username']);
+                $split['color'] = $this->userService->getUserColor($split['user_id']);
+                unset($split['user_id']);
+
+                foreach ($split as $day) {
+                    if (isset($day->last_updated)) {
+                        $day->last_updated = Time::elapsedString(date_create($day->last_updated));
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
     public function getRatingsCountOf($target_id)
     {
         $data = $this->splitRepository->getAllRatingsOf($target_id);
@@ -87,6 +115,37 @@ class SplitService
             }
         }
         return ['likes' => $likesCount, 'dislikes' => $dislikesCount];
+    }
+
+    public function rate($user_id, $target, $rating)
+    {
+        $target = $this->userRepository->find($target)->user_id;
+        if ($this->getRating($user_id, $target) === null) {
+            if ($this->addRating($user_id, $target, $rating)) {
+                return 'Rated';
+            } else {
+                return 'Error';
+            }
+        } else if ($this->getRating($user_id, $target) != $rating) {
+            if (!$this->updateRating($user_id, $target, $rating)) {
+                return 'Updated';
+            } else {
+                return 'Error';
+            }
+        } else if ($this->getRating($user_id, $target) === $rating) {
+            return;
+        } else {
+            return 'Error';
+        }
+    }
+
+    private function addRating($user_id, $target, $rating)
+    {
+        return $this->splitRepository->insertRating(
+            $user_id,
+            $target,
+            $rating
+        );
     }
 
     public function getRating($user_id, $target_id)
@@ -104,7 +163,7 @@ class SplitService
         return null;
     }
 
-    public function updateRating($user_id, $target_id)
+    private function updateRating($user_id, $target_id)
     {
         $data = $this->splitRepository->getAllRatingsOf($target_id);
 
@@ -120,20 +179,12 @@ class SplitService
         }
     }
 
-    public function rate($user_id, $rated, $rating)
-    {
-        return $this->splitRepository->insertRating(
-            $user_id,
-            $this->userRepository->find($rated)->user_id,
-            $rating
-        );
-    }
-
     public function addSplit($day, $username, $title, $sentences)
     {
         return $this->splitRepository->insertSplit(
             $this->userRepository->find($username)->user_id,
-            $day, [
+            $day,
+            [
                 'title' => $title,
                 'description' => $sentences,
                 'last_updated' => date('Y-m-d H:i:s')
@@ -141,15 +192,87 @@ class SplitService
         );
     }
 
-    public function updateSplit($day, $id, $title, $sentences)
+    public function updateSplit($day, $data, $userId)
     {
-        return $this->splitRepository->updateSplit(
-            $day,
-            $this->splitRepository->getSplitId($id, $day), [
-                'title' => $title,
-                'description' => $sentences,
-                'last_updated' => date('Y-m-d H:i:s')
-            ]
-        );
+        $result = ['error' => ''];
+        $sentences = preg_split("/\r\n|\r|\n/", $data);
+        $categories = [];
+        //match regex
+        $errorFlag = false;
+        if ($sentences) {
+            foreach ($sentences as $key => $sentence) {
+                if (preg_match('/\d+ x \d+ (повторения)|(минути)|(секунди) [а-яА-Я\- ]+( #)?/', $sentence)) {
+                    $sentenceElements = explode(' ', $sentence);
+                    $sets = $sentenceElements[0];
+                    $reps = $sentenceElements[2];
+                    $comment = '';
+
+                    $hashtagPos = strpos($sentence, '#');
+
+                    if ($hashtagPos) {
+                        $comment = trim(substr($sentence, $hashtagPos + 1));
+                    } else {
+                        $hashtagPos = strlen($sentence);
+                    }
+
+                    $exerciseFirstWordIndex = strpos($sentence, $sentenceElements[4]);
+
+                    $exercise = trim(substr($sentence, $exerciseFirstWordIndex, $hashtagPos - $exerciseFirstWordIndex));
+                    if (!$this->exerciseService->exerciseExists($exercise)) {
+                        $errorFlag = true;
+                    }
+
+                    if (!in_array($this->exerciseService->getCategoryOf($exercise), $categories)) {
+                        $categories[] = $this->exerciseService->getCategoryOf($exercise);
+                    }
+
+                    if ($sets < 1 || $sets > 20 || $reps < 1 || $reps > 100 || strlen($comment) > 80) {
+                        $errorFlag = true;
+                    }
+                }
+
+                if ($errorFlag) {
+                    if (strlen($result['error']) == 0) {
+                        $result['error'] = 'Някои от данните не бяха записани';
+                    }
+                    unset($sentences[$key]);
+                    $errorFlag = false;
+                }
+            }
+        }
+
+        //generate title
+        $title = 'Почивен';
+
+        if (count($categories) == 1) {
+            $title = $categories[0];
+        } else if (count($categories) == 2) {
+            $title = $categories[0] . ' & ' . $categories[1];
+        } else if (count($categories) > 2) {
+            $title = 'Комплексна';
+        }
+
+        if ($this->splitsOf($userId)[$day] != null) {
+            if (!$this->splitRepository->updateSplit(
+                $day,
+                $this->splitRepository->getSplitId($userId, $day),
+                [
+                    'title' => $title,
+                    'description' => implode('\r\n', $sentences),
+                    'last_updated' => date('Y-m-d H:i:s')
+                ]
+            )) {
+                $result['error'] = 'Грешка при записването на данните.';
+            };
+        } else {
+            $this->addSplit($day, $userId, $title, implode('\r\n', $sentences));
+        }
+
+        if (strlen($result['error']) != 0) {
+            $result['savedSentences'] = preg_split("/\r\n|\r|\n/", $this->splitsOf($userId)[$day]->description);
+        }
+
+        $result['title'] = $title;
+        return $result;
     }
 }

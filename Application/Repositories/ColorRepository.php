@@ -42,4 +42,12 @@ class ColorRepository
         }
         return false;
     }
+
+    public function update($id, $value) 
+    {
+        return $this->db->update(self::COLORS_TABLE, [
+            'field' => 'color_id',
+            'value' => $id
+        ], [ 'color_hex' => $value ]);
+    }
 }

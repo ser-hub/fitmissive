@@ -7,8 +7,8 @@ use Application\Database\DB;
 class ExerciseRepository {
     private static $instance = null;
     private $db;
-    private const EXERCISE_CATEGORY_TABLE = "exercise_category";
-    private const EXERCISE_TABLE = "exercise";
+    private const EXERCISE_CATEGORY_TABLE = "exercise_categories";
+    private const EXERCISE_TABLE = "exercises";
 
     private function __construct()
     {
@@ -44,7 +44,8 @@ class ExerciseRepository {
 
     public function getComplete()
     {
-        $data = $this->db->query('SELECT * FROM ' . self::EXERCISE_CATEGORY_TABLE . ' ec join exercise e on ec.exercise_category_id = e.category_id');
+        $data = $this->db->query('SELECT * FROM ' . self::EXERCISE_CATEGORY_TABLE . ' ec join ' . 
+            self::EXERCISE_TABLE . ' e on ec.exercise_category_id = e.category_id');
 
         if ($data->count()) {
             return $data->results();
@@ -77,7 +78,7 @@ class ExerciseRepository {
     public function add($exercise)
     {
         $fields = [
-            'category_id' => $this->getCategory($exercise['category']),
+            'category_id' => $exercise['category'],
             'exercise_name' => $exercise['name'],
             'exercise_description' => $exercise['description']
         ];
@@ -85,7 +86,18 @@ class ExerciseRepository {
         return $this->db->insert(self::EXERCISE_TABLE, $fields);
     }
 
-    public function delete($exercise_name) {
-        $this->db->delete(self::EXERCISE_TABLE, ['info_id', '=', $this->find($exercise_name)->exercise_id]);
+    public function update($exercise)
+    {
+        return $this->db->update(self::EXERCISE_TABLE, [
+            'field' => 'exercise_id',
+            'value' => $exercise['id']
+        ], [
+            'exercise_name' => $exercise['name'],
+            'exercise_description' => $exercise['description']
+        ]);
+    }
+
+    public function delete($id) {
+        return $this->db->delete(self::EXERCISE_TABLE, ['exercise_id', '=', $id]);
     }
 }

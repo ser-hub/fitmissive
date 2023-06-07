@@ -2,8 +2,9 @@
 
 namespace Application\Services;
 
-use Application\Repositories\{UserRepository, SplitRepository, ChatRepository, DeviceCookiesRepository};
-use Application\Utilities\{Config, Constants, Session, Hash};
+use Application\Repositories\{UserRepository, SplitRepository, ChatRepository};
+use Application\Utilities\{Config, Constants, Session, Hash, Validator, Mailer};
+use Application\Models\User;
 
 use \Exception;
 
@@ -12,7 +13,6 @@ class UserService
     private $splitRepository;
     private $userRepository;
     private $chatRepository;
-    private $DCRepository;
     private $sessionName;
     private static $instance;
 
@@ -21,7 +21,6 @@ class UserService
         $this->userRepository = UserRepository::getInstance();
         $this->splitRepository = SplitRepository::getInstance();
         $this->chatRepository = ChatRepository::getInstance();
-        $this->DCRepository = DeviceCookiesRepository::getInstance();
 
         $this->sessionName = Config::get('session/session_name');
     }
@@ -36,10 +35,60 @@ class UserService
     }
 
     // User session service start
-    public function register($user)
+    public function register($input)
     {
-        if (!$this->userRepository->addUser($user)) {
-            throw new Exception('Something unexpected happened.');
+        $errors = [];
+        $validator = new Validator();
+        $validator->check($input, [
+            'username-reg' => [
+                'name' => 'Потребилеското име',
+                'required' => true,
+                '!contains' => ' \\/?%&#@!*()+=,;:\'"',
+                'min' => 2,
+                'max' => 32,
+            ],
+            'password-reg' => [
+                'name' => 'Паролата',
+                'required' => true,
+                'min' => 6,
+                'max' => 64
+            ],
+            'password2' => [
+                'name' => 'Втората парола',
+                'required' => true,
+                'matches' => 'password-reg'
+            ],
+            'email' => [
+                'name' => 'Имейлът',
+                'required' => true,
+                'email' => true,
+                'max' => 255
+            ]
+        ]);
+
+        if (!$validator->passed()) {
+            $errors = $validator->errors();
+        }
+
+        if ($this->getUser($input['username-reg'])) {
+            $errors[] = 'Потребителското име е заето.';
+        }
+        if ($this->emailExists($input['email'])) {
+            $errors[] = 'Имейлът е зает.';
+        }
+
+        if (!empty($errors)) {
+            return $errors;
+        } else {
+            $user = new User(
+                $input['username-reg'],
+                $input['email'],
+                $input['password-reg']
+            );
+            if (!$this->userRepository->addUser($user)) {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -71,83 +120,61 @@ class UserService
     }
     // User session service end
 
-    // Device cookie service start
-    public function registerDeviceCookie($cookieContent)
-    {
-        $this->DCRepository->add($cookieContent);
-    }
-
-    public function isDeviceCookieLocked($cookieContent)
-    {
-        return $this->DCRepository->find($cookieContent) != false ? true : false;
-    }
-
-    private function lockOutDeviceCookie($cookieContent)
-    {
-        $deviceCookie = $this->DCRepository->find($cookieContent);
-
-        if ($deviceCookie) {
-            $this->DCRepository->delete($deviceCookie->dc_id);
-        }
-    }
-
-    public function registerDeviceCookieFail($cookieContent)
-    {
-    }
-
-    public function isLockedOutForUntrustedUsers($username)
-    {
-        $user = $this->getUser($username);
-        if ($user) {
-            return time() < $user->locked_untrusted_until;
-        }
-    }
-
-    private function lockOutUntrustedUsers($username)
-    {
-        $this->updateUser([
-            'locked_untrusted_until' => time() + 1800,
-            'untrusted_failed_attempts' => 0
-        ], $username);
-    }
-
-    public function registerRegularFail($username)
-    {
-        $user = $this->getUser($username);
-
-        if ($user->untrusted_failed_attempts == 0 || time() > $user->initial_untrusted_failed_attempt + 1800) {
-            $this->updateUser([
-                'initial_untrusted_failed_attempt' => time(),
-                'untrusted_failed_attempts' => 1
-            ], $username);
-        } elseif ($user->untrusted_failed_attempts < 10) {
-            $this->updateUser([
-                'untrusted_failed_attempts' => $user->untrusted_failed_attempts + 1
-            ], $username);
-        } elseif ($user->untrusted_failed_attempts == 10) {
-            $this->lockOutUntrustedUsers($username);
-        }
-    }
-    // Device cookie service end
-
     // General user service start
     public function getUser($user)
     {
         return $this->userRepository->find($user);
     }
 
+    public function getUserIdByEmail($email)
+    {
+        return $this->userRepository->getUserByX('email', $email);
+    }
+
     public function updateUser($fields = [], $username = null)
     {
+        $validator = new Validator();
+        $validator->check($fields, [
+            'fullname' => [
+                'name' => 'Пълното име',
+                '!contains' => '0123456789\\/?%&#@!*()+=,;:\'"',
+                'min' => 2,
+                'max' => 32,
+            ],
+            'description' => [
+                'name' => 'Описанието',
+                'max' => 500,
+            ],
+            'email' => [
+                'name' => 'Имейлът',
+                'required' => true,
+                'email' => true,
+                'max' => 255
+            ]
+        ]);
+
+        if (!$validator->passed()) {
+            return $validator->errors();
+        }
+
         $id = null;
         if ($username == null && $this->isUserLoggedIn()) {
             $id = $this->getLoggedUser()->user_id;
+            $email = $this->getLoggedUser()->email;
         } else {
             $id = $this->userRepository->find($username)->user_id;
+            $email = $this->userRepository->find($username)->email;
         }
 
-        if (!$this->userRepository->updateUser($id, $fields)) {
-            throw new Exception('Something unexpected happened.');
+        if (strcmp($fields['email'], $email) != 0) {
+            if ($this->emailExists($fields['email'])) {
+                return ['Имейлът вече съществува.'];
+            }
+        } else {
+            unset($fields['email']);
         }
+
+        return $this->userRepository->updateUser($id, $fields);
     }
 
     public function deleteUser($username = null)
@@ -174,37 +201,78 @@ class UserService
             $count
         );
     }
+
+    public function emailExists($email)
+    {
+        return $this->userRepository->getUserByX('email', $email) != false;
+    }
     // General user service end
-    
+
     // Fogotten password service start
-    public function getUserIdByEmail($email) {
-        return $this->userRepository->getUserByX('email', $email);
+    public function initiatePR($target)
+    {
+        $targetUser = $this->getUserIdByEmail($target);
+        if ($targetUser) {
+            $FPKey = Hash::salt(8);
+
+            if (!$this->userRepository->updateUser($targetUser->user_id, [
+                'pr_key' => $FPKey,
+                'pr_key_sent_at' => time()
+            ])) {
+                return 'Грешка. Опитайте отново.';
+            } elseif (Mailer::sendPasswordRecoveryMail($target, $FPKey)) {
+                return 'Беше ви изпратен имейл с линк за смяна на паролата ви';
+            } else {
+                return 'Грешка при изпращането на имейл';
+            }
+        } else {
+            return 'Не беше намерен потребител с този имейл';
+        }
     }
 
-    public function initiatePR($userId, $key)
+    public function finishPR($key, $input)
     {
-        $this->userRepository->updateUser($userId, [
-            'pr_key' => $key,
-            'pr_key_sent_at' => time()
+        if (!$this->validatePRKey($key)) {
+            return 'Този линк е невалиден или изтекъл';
+        }
+
+        $validator = new Validator();
+        $validator->check($input, [
+            'password' => [
+                'name' => 'Паролата',
+                'required' => true,
+                'min' => 6,
+                'max' => 64
+            ],
+            'password2' => [
+                'name' => 'Втората парола',
+                'required' => true,
+                'matches' => 'password'
+            ]
         ]);
-    }
 
-    public function finishPR($key)
-    {
+        if (!$validator->passed()) {
+            return $validator->errors()[0];
+        }
+
         $targetUser = $this->userRepository->getUserByX('pr_key', $key);
-        $this->userRepository->updateUser($targetUser->user_id, [
+        if ($this->userRepository->updateUser($targetUser->user_id, [
             'pr_key' => null,
             'pr_key_sent_at' => null
-        ]);
+        ])) {
+            return 'Успешна смяна на паролата!';
+        } else {
+            return 'Грешка при смяна на паролата';
+        }
     }
 
-    public function validatePRKey($key) 
+    public function validatePRKey($key)
     {
         $targetUser = $this->userRepository->getUserByX('pr_key', $key);
         return $targetUser && $targetUser->pr_key_sent_at < time() + 3600;
     }
 
-    public function updateUserPassword($PRKey, $newPassword) 
+    public function updateUserPassword($PRKey, $newPassword)
     {
         $targetUser = $this->userRepository->getUserByX('pr_key', $PRKey);
         if ($this->validatePRKey($PRKey)) {
@@ -226,7 +294,7 @@ class UserService
 
     public function setLoggedUserColor($colorId)
     {
-        $this->updateUser(['color_id' => $colorId], $this->getLoggedUser()->user_id);
+        $this->userRepository->updateUser($this->getLoggedUser()->user_id, ['color_id' => $colorId]);
     }
     // User color service end
 
@@ -284,6 +352,19 @@ class UserService
     // User picture service start
     public function savePictureOf($username, $file)
     {
+        $validator = new Validator();
+        $validator->checkFile($file, [
+            'allowedTypes' => Constants::ALLOWED_IMAGE_TYPES,
+            'maxSize' => 5242880,
+            'illegalSymbols' => [
+                '.php',
+            ]
+        ]);
+
+        if (!$validator->passed()) {
+            return $validator->errors();
+        }
+
         $fileNameExploded = explode('.', $file['name']);
         $newExt = strtolower(end($fileNameExploded));
         $fileName = Hash::make($username);

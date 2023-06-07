@@ -43,7 +43,7 @@ class Search extends Controller
                 }
             }
 
-            $this->view('search', [
+            $this->view('search/search', [
                 'keyword' => $keyword,
                 'searchResults' => $searchResults,
                 'profilePictures' => $profilePictures,
@@ -52,19 +52,6 @@ class Search extends Controller
         }
         else {
             Redirect::to('/home');
-        }
-    }
-
-    public function follow()
-    {
-        if (Input::exists() && Token::check(Input::get('token'), 'session/follow_token')) {
-            if (Input::get('action') == 'Follow') {
-                $this->userService->follow($this->loggedUser, Input::get('followed'));
-            }
-            else if (Input::get('action') == 'Unfollow') {
-                $this->userService->unfollow($this->loggedUser, Input::get('followed'));
-            }
-            echo Token::generate('session/follow_token');
         }
     }
 }

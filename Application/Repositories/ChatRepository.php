@@ -27,29 +27,29 @@ class ChatRepository
     }
 
     public function startChat($userA, $userB) {
-        $chats = $this->db->query('SELECT * FROM ' . self::CHATS_TABLE);
-
-        if ($chats->results()) {
-            foreach ($chats->results() as $chat) {
-                if (($chat->user_a == $userA && $chat->user_b == $userB) || ($chat->user_a == $userB && $chat->user_b == $userA)) {
-                    return $chat->chat_id;
-                }
-            }
+        $queryString = "SELECT * FROM " . self::CHATS_TABLE . " WHERE user_a = ? AND user_b = ?";
+        if ($this->db->query($queryString, [$userA, $userB])->count()){
+            $chatId = $this->db->query($queryString, [$userA, $userB])->first()->chat_id;
+        } elseif ($this->db->query($queryString, [$userB, $userA])->count()) {
+            $chatId = $this->db->query($queryString, [$userB, $userA])->first()->chat_id;
+        } else {
+            $this->db->insert(self::CHATS_TABLE, [
+                'user_a' => $userA,
+                'user_b' => $userB,
+                'started_at' => date('Y-m-d H:i:s')
+            ]);
+            $chatId = $this->db->query($queryString, [$userA, $userB])->first()->chat_id;
         }
 
-        return $this->db->insert(self::CHATS_TABLE, [
-            'user_a' => $userA,
-            'user_b' => $userB,
-            'started_at' => date('Y-m-d H:i:s')
-        ]);
+        return $chatId;
     }
 
     public function getChats($userId = null, $top = 0) {
-        $sql = "SELECT * FROM " . self::CHATS_TABLE . " WHERE user_a = ? OR user_b = ? ORDER BY started_at DESC";
+        $queryString = "SELECT * FROM " . self::CHATS_TABLE . " WHERE user_a = ? OR user_b = ? ORDER BY started_at DESC";
         if ($top > 0) {
-            $sql .= " LIMIT " . $top;
+            $queryString .= " LIMIT " . $top;
         }
-        $chats = $this->db->query($sql, [$userId, $userId]);
+        $chats = $this->db->query($queryString, [$userId, $userId]);
 
         $chatsArray = array();
 

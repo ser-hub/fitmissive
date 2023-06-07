@@ -41,7 +41,7 @@ class Info extends Controller
             }
         }
 
-        $this->view('info', [
+        $this->view('info/info', [
             'title' => $data['title'],
             'content' => $data['content'],
             'adminMode' => $this->adminMode,
@@ -92,43 +92,18 @@ class Info extends Controller
                 $slug = Input::get('slug');
                 $content = Input::get('content');
 
-                $validator = new Validator();
-                $validator->check($_POST, [
-                    'title' => [
-                        'name' => 'Заглавието',
-                        '!contains' => '\\/?#@*=;\'"',
-                        'required' => true,
-                        'max' => 45
-                    ],
-                    'slug' => [
-                        'name' => 'Slug',
-                        'required' => true,
-                        'max' => 45,
-                        '!contains' => ' \\/?%&#@!*()+=,.;:\'"',
-                        'unique' => 'info',
-                        'dbColumn' => 'slug'
-                    ],
-                    'content' => [
-                        'name' => 'Съдържанието',
-                        'required' => true,
-                        'max' => 4000
-                    ]
+                $status = $this->infoService->addInfo([
+                    'title' => $title,
+                    'slug' => $slug,
+                    'content' => $content
                 ]);
 
-                if ($validator->passed()) {
-                    $this->infoService->addInfo(array(
-                        'title' => $title,
-                        'slug' => $slug,
-                        'content' => $content
-                    ));
+                if (is_array($status)) {
+                    $this->data['errors'] = $status;
+                } elseif ($status == true) {
                     Redirect::to('/info/' . $slug);
                 } else {
-                    $this->data['inputs'] = array(
-                        'title' => $title,
-                        'slug' => $slug,
-                        'content' => $content
-                    );
-                    $this->data['errors'] = $validator->errors();
+                    $this->data['errors'] = ['Грешка при създаването на инфо страница.'];
                 }
             }
         }
