@@ -24,7 +24,7 @@ ratingSections.forEach(parentNode => {
     likeBtn.btn.addEventListener('click', function () {
         if (likeBtn.state) {
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', `/profile/rate/${parentNode.dataset.user}`, true);
+            xhr.open('POST', `/data/rateworkout/${parentNode.dataset.user}`, true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             xhr.onload = likePressed;
             xhr.send(`rating=1&token=${ratingSections[0].dataset.token}`);
@@ -34,7 +34,7 @@ ratingSections.forEach(parentNode => {
     dislikeBtn.btn.addEventListener('click', function () {
         if (dislikeBtn.state) {
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', `/profile/rate/${parentNode.dataset.user}`, true);
+            xhr.open('POST', `/data/rateworkout/${parentNode.dataset.user}`, true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             xhr.onload = dislikePressed;
             xhr.send(`rating=0&token=${ratingSections[0].dataset.token}`);
@@ -42,12 +42,16 @@ ratingSections.forEach(parentNode => {
     });
 
     function activate(node) {
+        node.btn.classList.replace('fa-xl', 'fa-lg');
+        node.btn.classList.add('rating-btn');
         node.btn.addEventListener('mouseover', mouseoverlistener);
         node.btn.addEventListener('mouseleave', mouseleavelistener);
         node.state = true;
     }
 
     function deactivate(node) {
+        node.btn.classList.replace('fa-lg', 'fa-xl');
+        node.btn.classList.remove('rating-btn');
         node.btn.removeEventListener('mouseover', mouseoverlistener);
         node.btn.removeEventListener('mouseleave', mouseleavelistener);
         node.state = false;
@@ -75,6 +79,7 @@ ratingSections.forEach(parentNode => {
 
     function likePressed() {
         if (this.status == 200) {
+            console.log(this.response)
             let response = JSON.parse(this.response);
             if (response.result == 'Rated' || response.result == 'Updated') {
                 likeBtn.btn.classList.replace('fa-lg', 'fa-xl');
@@ -86,9 +91,7 @@ ratingSections.forEach(parentNode => {
                 activate(dislikeBtn);
                 decreaseCounter(dislikesCounter);
             }
-            ratingSections.forEach(node => {
-                node.dataset.token = response.token;
-            });
+            ratingSections[0].dataset.token = response.token;
         }
     }
 
@@ -105,9 +108,7 @@ ratingSections.forEach(parentNode => {
                 activate(likeBtn);
                 decreaseCounter(likesCounter);
             }
-            ratingSections.forEach(node => {
-                node.dataset.token = response.token;
-            });
+            ratingSections[0].dataset.token = response.token;
         }
     }
 })

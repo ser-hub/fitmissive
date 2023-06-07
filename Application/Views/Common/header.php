@@ -34,6 +34,8 @@ $unseenMessages = isset($data['unseenMessages']) ? $data['unseenMessages'] : fal
             $pattern = 'circle';
         } ?>
         <link rel="stylesheet" href="/css/patterns/body-pattern-<?= $pattern ?>-animated.css" type="text/css">
+    <?php } elseif ($stylesheet == 'admin') { ?>
+        <link href="/css/help.css" rel="stylesheet" type="text/css">
     <?php } ?>
 
     <link href="/node/node_modules/@fortawesome/fontawesome-free/css/fontawesome.css" rel="stylesheet">

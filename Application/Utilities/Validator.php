@@ -7,13 +7,7 @@ use Application\Database\DB;
 class Validator
 {
     private $passed = false,
-        $errors = [],
-        $db = null;
-
-    public function __construct()
-    {
-        $this->db = DB::getInstance();
-    }
+        $errors = [];
 
     public function check($source, $items = [])
     {
@@ -42,7 +36,8 @@ class Validator
 
                         case 'matches':
                             if ($value != $source[$ruleValue]) {
-                                $this->addError("{$rules['name']} не съвпада.");
+                                $match = mb_strtolower($items[$ruleValue]['name']);
+                                $this->addError("{$rules['name']} не съвпада с {$match}.");
                             }
                             break;
 
@@ -59,7 +54,7 @@ class Validator
                         case '!contains':
                             foreach (str_split($ruleValue) as $char) {
                                 if (str_contains($value, $char)) {
-                                    $this->addError("{$rules['name']} съдържа забранени символи.");
+                                    $this->addError("{$rules['name']} съдържа забранени символи.({$rules['!contains']})");
                                     break;
                                 }
                             }

@@ -1,29 +1,28 @@
 <?php
 
-    use Application\Utilities\{Token, Functions, Input, Constants};
+use Application\Utilities\{Token, Functions, Input, Constants};
 
-    $today = date('N');
-    $today--;
-    $file = null;
-    $isProfileEdit = (Input::keyExists('action') && Input::get('action') == 'Edit') || isset($data['data']['edit']);
-    $isDelete = Input::keyExists('action') && Input::get('action') == 'Delete';
-    $user = $data['user'];
-    $isAdmin = $data['isAdmin'];
-    $username = $user->username;
-    $rating = $data['rating'];
-    $likes = $data['ratings']['likes'];
-    $dislikes = $data['ratings']['dislikes'];
-    $ratingToken = Token::generate('session/rating_token');
-    $followToken = Token::generate('session/follow_token');
-    $colorToken = Token::generate('session/color_token');
+$today = date('N');
+$today--;
+$file = null;
+$isProfileEdit = (Input::keyExists('action') && Input::get('action') == 'Edit') || isset($data['data']['edit']);
+$isDelete = Input::keyExists('action') && Input::get('action') == 'Delete';
+$user = $data['user'];
+$isAdmin = $data['isAdmin'];
+$username = $user->username;
+$rating = $data['rating'];
+$likes = $data['ratings']['likes'];
+$dislikes = $data['ratings']['dislikes'];
+$ratingToken = Token::generate('session/rating_token');
+$followToken = Token::generate('session/follow_token');
 
-    if ($user->description) $user->description = Functions::escape($user->description);
-    if (isset($data['data']['tmp_name'])) $file = $data['data']['tmp_name'];
+if ($user->description) $user->description = Functions::escape($user->description);
+if (isset($data['data']['tmp_name'])) $file = $data['data']['tmp_name'];
 ?>
 
 
 <div class="profile-content">
-    <div class="profile-data" <?= $isProfileEdit ? 'style="width: auto"' : ''?>>
+    <div class="profile-data" <?= $isProfileEdit ? 'style="width: auto"' : '' ?>>
         <?php if ($isDelete) { ?>
             <span style="margin: 10px">Сигурли си сте, че искате да изтриете @<?= $username ?>?</span>
             <div class="delete-action">
@@ -35,23 +34,23 @@
             </div>
         <?php } else { ?>
             <div class="header-wrapper" <?= $isProfileEdit ? "style='flex-direction:column; align-items: center'" : '' ?>>
-            <img src="<?= $data['picturePath'] ?>" class="profile-pic" width="75px" height="75px" alt="Profile picture" <?= $isProfileEdit ? "style='margin-bottom: 10px'" : '' ?>>
-            <div class="header">
-                <div class="title">
-                    <?php if ($user->fullname != null && !$isProfileEdit) echo '<span>' . $user->fullname . '</span>';
-                    else if ($isProfileEdit) { ?>
-                        <form action="/profile/updateUser/<?= $username ?>" method="post" enctype="multipart/form-data">
-                            <input type="text" name="fullname" placeholder="Пълно име" maxlength="32" value="<?= $user->fullname ?>">
-                            <input type="text" name="email" placeholder="Имейл" maxlength="32" value="<?= $user->email ?>">
-                        <?php } ?>
-                        <span <?php if ($user->fullname != null) echo "style='font-size: 10pt'" ?>>
-                            <?php if (!$isProfileEdit) echo '@' . $username ?>
-                        </span>
+                <img src="<?= $data['picturePath'] ?>" class="profile-pic" width="75px" height="75px" alt="Profile picture" <?= $isProfileEdit ? "style='margin-bottom: 10px'" : '' ?>>
+                <div class="header">
+                    <div class="title">
+                        <?php if ($user->fullname != null && !$isProfileEdit) echo '<span>' . $user->fullname . '</span>';
+                        else if ($isProfileEdit) { ?>
+                            <form action="/profile/updateUser/<?= $username ?>" method="post" enctype="multipart/form-data">
+                                <input type="text" name="fullname" placeholder="Пълно име" maxlength="32" value="<?= $user->fullname ?>">
+                                <input type="text" name="email" placeholder="Имейл" maxlength="32" value="<?= $user->email ?>">
+                            <?php } ?>
+                            <span <?php if ($user->fullname != null) echo "style='font-size: 10pt'" ?>>
+                                <?php if (!$isProfileEdit) echo '@' . $username ?>
+                            </span>
+                    </div>
+                    <?= (!$isProfileEdit) && ($user->user_id == $data['loggedUser'] || $isAdmin) ? "<a href='?action=Edit'>Редактирай</a>" : '' ?>
                 </div>
-                <?= (!$isProfileEdit) && ($user->user_id == $data['loggedUser'] || $isAdmin) ? "<a href='?action=Edit'>Редактирай</a>" : '' ?>
             </div>
-            </div>
-            <div class="body">
+            <div class="body" style="background-color: #<?= $data['color'] ?>">
                 <div class="follows">
                     <h1>
                         <?= $data['follows'] ?>
@@ -77,9 +76,9 @@
                     <div class="footer">
                         <input type="hidden" name="token" value="<?= Token::generate('session/profile_edit_token') ?>">
                         <input type="file" name="profilePic" accept="image/png, image/jpg, image/gif, image/jpeg">
-                        <input type="submit" value="Save" name="save" class="profile-view-btn">
+                        <input type="submit" value="Запази" name="save" class="profile-view-btn">
                         </form>
-                        <a href="/profile/<?= $username ?>" class="cancel-btn profile-view-btn">Cancel</a>
+                        <a href="/profile/<?= $username ?>" class="cancel-btn profile-view-btn">Назад</a>
                     </div>
                     <div style="margin: 5px">
                         <?php
@@ -113,15 +112,16 @@
 
     <?php if (!$isProfileEdit) { ?>
         <div class="carousel-area">
-            <?php 
-                require 'Application/Views/Common/workout-carousel-main.php';
-                require 'wm-setup-profile.php'; 
+            <?php
+            require 'Application/Views/Common/workout-carousel-main.php';
+            require 'wm-setup-profile.php';
             ?>
             <div class="carousel-bottom">
                 <?php require_once 'Application/Views/Common/rating-section.php' ?>
-                <div class="colors" data-token="<?= $colorToken ?>">
-                    <?php foreach ($data['colors'] as $color) { ?>
-                        <button class="color-picker" name="cp" data-value="<?= $color ?>" style="background-color: #<?= $color ?>"></button>
+                <div class="colors" data-token="<?= Token::generate('session/color_token') ?>">
+                    <?php $cpIndex = 1;
+                    foreach ($data['colors'] as $color) { ?>
+                        <button class="color-picker" name="cp" data-value="<?= $color ?>" style="background-color: #<?= $color ?>;margin-left:<?= 110 - $cpIndex++ * 19 ?>px"></button>
                     <?php } ?>
                 </div>
             </div>
@@ -129,8 +129,8 @@
     <?php } ?>
 </div>
 <?php
-if (!$data['isMyProfile']) echo "<script src='/Application/Views/js/rateButtons.js'></script>";
+if (!$data['isMyProfile']) echo "<script src='/Application/Views/js/rate.js'></script>";
 ?>
 
-<script src='/Application/Views/Common/js/followButtons.js'></script>
+<script src='/Application/Views/Common/js/follow.js'></script>
 <script type="module" src="/node/assets/js/bootstrap.js"></script>

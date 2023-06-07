@@ -1,119 +1,159 @@
 export default class WorkoutManager {
+    #parentContainer;
+    #sentences;
+    #tempSentences;
+    #exerciseData;
+    #exerciseArray;
+    #user;
+    #CSRF;
+    #workoutContainer;
+    #sentencesDiv;
+    #controlsDiv;
+    #plusBtn;
+    #saveBtn;
+    #editBtn;
+    #cancelBtn;
+    #copyBtn;
+    #mainWM;
+
     constructor(parentNode) {
-        if (parentNode != null) {
-            this.$parentConatiner = parentNode;
-            this.$CSRF = this.$parentConatiner.dataset.token;
+        this.#parentContainer = parentNode;
+        this.#CSRF = this.#parentContainer.dataset.token;
 
-            this.$workoutContainer = document.createElement('div');
-            this.$workoutContainer.classList.add('workout-container');
-            this.$workoutContainer.parentClass = this;
+        this.#workoutContainer = document.createElement('div');
+        this.#workoutContainer.classList.add('workout-container');
+        this.#workoutContainer.parentClass = this;
 
-            this.$sentencesDiv = document.createElement('div');
-            this.$sentencesDiv.classList.add('sentences');
+        this.#sentencesDiv = document.createElement('div');
+        this.#sentencesDiv.classList.add('sentences');
 
-            this.$controlsDiv = document.createElement('div');
-            this.$controlsDiv.classList.add('controls');
+        this.#controlsDiv = document.createElement('div');
+        this.#controlsDiv.classList.add('controls');
 
-            this.$prepareButtons();
-        }
+        this.#prepareButtons();
     }
 
     setSentenceString(sentences) {
-        this.$sentences = [];
+        this.#sentences = [];
         if (sentences != null && sentences.length > 0) {
-            this.$sentences = sentences.split('\n');
-            this.$cleanSentences();
+            this.#sentences = sentences.split('\\r\\n');
+            this.#cleanSentences();
         }
     }
 
     setSentences(sentences) {
-        this.$sentences = [];
+        this.#sentences = [];
         if (sentences != null && sentences.length > 0) {
-            this.$sentences = sentences;
-            this.$cleanSentences();
+            this.#sentences = sentences;
+            this.#cleanSentences();
         }
     }
 
     getSentences() {
-        return join(this.$sentences);
+        return join(this.#sentences);
     }
 
     setExercises(exercises) {
-        this.$exerciseData = exercises;
+        this.#exerciseData = exercises;
+        this.#exerciseArray = [];
+        Object.values(this.#exerciseData).forEach(element => {
+            this.#exerciseArray = this.#exerciseArray.concat(element);
+        })
     }
 
     setUser(user) {
-        this.$user = user;
+        this.#user = user;
     }
 
     setCSRF(csrf) {
-        this.$CSRF = csrf;
+        this.#CSRF = csrf;
     }
 
     setError(error) {
-        this.$sentencesDiv.childNodes[this.$sentencesDiv.childNodes.length - 1].innerHTML = error;
+        this.#sentencesDiv.childNodes[this.#sentencesDiv.childNodes.length - 1].innerHTML = error;
     }
 
     setMain(mainReference) {
-        this.$mainWM = mainReference;
+        this.#mainWM = mainReference;
     }
 
     copy(sentences) {
-        this.$tempSentences = this.$sentences.slice();
+        this.#tempSentences = this.#sentences.slice();
         this.setSentences(sentences);
-        this.$initiateEdit();
-        document.getElementsByClassName('feed-wrapper')[0].scrollTo(0, 0);
+        this.#initiateEdit();
+
+        document.querySelector('.feed-wrapper').scrollTo(0, 0);
+
+        const mainCarouselindicators = Array.from(document.querySelectorAll('.carousel-indicators button')).slice(0, 6);
+        mainCarouselindicators.forEach(element => {
+            if (element.classList.contains('active')) {
+                element.classList.remove('active')
+            }
+
+            if (element.ariaLabel == this.#parentContainer.dataset.day + ' slide') {
+                element.classList.add('active');
+            }
+        })
+
+        const mainCarouselItems = Array.from(document.querySelectorAll('.carousel-item')).slice(0, 6);
+        mainCarouselItems.forEach(element => {
+            if (element.classList.contains('active')) {
+                element.classList.remove('active')
+            }
+        })
+
+        this.#parentContainer.parentElement.parentElement.classList.add('active');
     }
 
     initiateDefault() {
-        this.$setWMState();
-        this.$display();
+        this.#setWMState();
+        this.#display();
     }
 
     initiateCopy() {
-        this.$setWMState('copy');
-        this.$display();
+        this.#setWMState('copy');
+        this.#display();
     }
 
     initiateView() {
-        this.$setWMState('view');
-        this.$display();
+        this.#setWMState('view');
+        this.#display();
     }
 
-    $initiateEdit() {
-        this.$setWMState('edit');
-        this.$display();
+    #initiateEdit() {
+        this.#setWMState('edit');
+        this.#display();
     }
 
-    $setSentences(mode) {
-        this.$sentencesDiv.innerHTML = '';
-        if (this.$sentences) {
-            this.$sentences.forEach(sentence => {
+    #setSentences(mode) {
+        this.#sentencesDiv.innerHTML = '';
+        if (this.#sentences) {
+            this.#sentences.forEach(sentence => {
                 const sentenceDiv = document.createElement('div');
                 sentenceDiv.classList.add('sentence');
                 if (mode == 'edit') {
-                    this.$prepareSentenceEdit(sentence, sentenceDiv);
-                    let xBtn = this.$makeXBtn();
+                    this.#prepareSentenceEdit(sentence, sentenceDiv);
+                    let xBtn = this.#makeXBtn();
                     xBtn.sentence = sentence;
                     sentenceDiv.appendChild(xBtn);
                 } else {
-                    this.$prepareSentenceDefault(sentence, sentenceDiv);
+                    this.#prepareSentenceDefault(sentence, sentenceDiv);
                 }
-                this.$sentencesDiv.appendChild(sentenceDiv);
+                this.#sentencesDiv.appendChild(sentenceDiv);
             });
         }
-        if (this.$sentencesDiv.childNodes.length < 1) {
+        if (this.#sentencesDiv.childNodes.length < 1) {
             const restDiv = document.createElement('div');
             restDiv.classList.add('rest-div');
             restDiv.innerHTML = 'Почивен ден';
-            this.$sentencesDiv.appendChild(restDiv);
+            this.#sentencesDiv.appendChild(restDiv);
         }
         const errorsDiv = document.createElement('div');
         errorsDiv.classList.add('workout-edit-errors');
-        this.$sentencesDiv.appendChild(errorsDiv);
+        this.#sentencesDiv.appendChild(errorsDiv);
     }
 
-    $prepareSentenceDefault(sentence, parent) {
+    #prepareSentenceDefault(sentence, parent) {
         const words = sentence.split(' ');
         parent.innerHTML = `<div class='sets inline-pill'>${words[0]}</div>`;
         parent.innerHTML += ` x <div class='reps inline-pill'>${words[2]} ${words[3]}</div>`;
@@ -133,37 +173,46 @@ export default class WorkoutManager {
         }
     }
 
-    $prepareSentenceEdit(sentence, parent) {
+    #prepareSentenceEdit(sentence, parent) {
         const words = sentence.split(' ');
-        this.$addNumericDropdown(parent, 'sets', 1, 20, words[0]);
+        this.#addNumericDropdown(parent, 'sets', 1, 20, words[0]);
         parent.append(` x `);
-        this.$addNumericDropdown(parent, 'reps', 1, 100, words[2]);
-        this.$addStringDropdown(parent, 'metric', words[3], ['повторения', 'секунди', 'минути']);
+        this.#addNumericDropdown(parent, 'reps', 1, 100, words[2]);
+        this.#addStringDropdown(parent, 'metric', words[3], ['повторения', 'секунди', 'минути']);
 
         let commentIndex = sentence.length + 1;
         if (sentence.indexOf('#') != -1) {
             commentIndex = sentence.indexOf('#');
         }
 
-        this.$addExerciseDropdowns(parent, sentence.substring(sentence.indexOf(words[4]), commentIndex - 1), this.$exerciseData);
-        this.$addCommentField(parent, 'sentence-comment', sentence.substring(commentIndex + 2));
+        this.#addExerciseDropdowns(parent, sentence.substring(sentence.indexOf(words[4]), commentIndex - 1), this.#exerciseData);
+        this.#addCommentField(parent, 'sentence-comment', sentence.substring(commentIndex + 2));
     }
 
-    $cleanSentences() {
-        const sentenceFormat = /^\d+ x \d+ (повторения)|(минути)|(секунди) [а-яА-Я- ]+( #)?/;
-        let rawSentences = this.$sentences;
-        this.$sentences = [];
+    #cleanSentences() {
+        const sentenceFormat = /^\d+ x \d+ (повторения)|(минути)|(секунди) [а-яА-Я- ]+ ( #)?/;
+        let rawSentences = this.#sentences;
+        this.#sentences = [];
         if (rawSentences) {
             rawSentences.forEach(sentence => {
                 if (sentenceFormat.test(sentence)) {
-                    this.$sentences.push(sentence);
+                    let words = sentence.split(' ');
+                    words.splice(0, 4);
+                    if (words.includes('#')) {
+                        words.splice(words.indexOf('#'), words.length - words.indexOf('#'))
+                    }
+                    let exercise = words.join(' ');
+
+                    if (this.#exerciseArray.includes(exercise)) {
+                        this.#sentences.push(sentence);
+                    }
                 }
             });
         }
     }
 
-    $setTitle(title) {
-        const carouselItem = this.$parentConatiner.parentNode.nextSibling;
+    #setTitle(title) {
+        const carouselItem = this.#parentContainer.parentNode.nextSibling;
         if (carouselItem && title) {
             const titleNode = carouselItem.nextSibling.childNodes[1];
             if (titleNode && titleNode.innerHTML != title) {
@@ -172,7 +221,7 @@ export default class WorkoutManager {
         }
     }
 
-    $addCommentField(parent, className, content) {
+    #addCommentField(parent, className, content) {
         const commentField = document.createElement('input');
         commentField.type = 'text';
         commentField.classList.add('inline-pill');
@@ -184,7 +233,7 @@ export default class WorkoutManager {
         parent.appendChild(commentField);
     }
 
-    $addNumericDropdown(parent, specificClass = '', min = 1, max = 1, selected = 1) {
+    #addNumericDropdown(parent, specificClass = '', min = 1, max = 1, selected = 1) {
         const numericDropdown = document.createElement('select');
         numericDropdown.classList.add('inline-pill');
         numericDropdown.classList.add(specificClass);
@@ -199,7 +248,7 @@ export default class WorkoutManager {
         parent.appendChild(numericDropdown);
     }
 
-    $addStringDropdown(parent, specificClass = '', selected = '', data = []) {
+    #addStringDropdown(parent, specificClass = '', selected = '', data = []) {
         const stringDropdown = document.createElement('select');
         stringDropdown.classList.add('inline-pill');
         stringDropdown.classList.add(specificClass);
@@ -212,7 +261,7 @@ export default class WorkoutManager {
         parent.appendChild(stringDropdown);
     }
 
-    $addExerciseDropdowns(parent = document.createElement('div'), selected = '', data) {
+    #addExerciseDropdowns(parent = document.createElement('div'), selected = '', data) {
         const categorySelect = document.createElement('select');
         categorySelect.classList.add('category');
         categorySelect.classList.add('inline-pill');
@@ -262,126 +311,125 @@ export default class WorkoutManager {
         parent.appendChild(exerciseSelect);
     }
 
-    $prepareButtons() {
-        this.$plusBtn = document.createElement('button');
-        this.$plusBtn.innerHTML = "<i class='fa-regular fa-plus'></i>";
-        this.$plusBtn.classList.add('plus');
-        this.$plusBtn.parent = this;
-        this.$plusBtn.onclick = this.$onPlusClick;
+    #prepareButtons() {
+        this.#plusBtn = document.createElement('button');
+        this.#plusBtn.innerHTML = "<i class='fa-regular fa-plus'></i>";
+        this.#plusBtn.classList.add('plus');
+        this.#plusBtn.parent = this;
+        this.#plusBtn.onclick = this.#onPlusClick;
 
-        this.$saveBtn = document.createElement('button');
-        this.$saveBtn.innerHTML = "<i class='fa-solid fa-check'></i>";
-        this.$saveBtn.classList.add('save');
-        this.$saveBtn.parent = this;
-        this.$saveBtn.onclick = this.$onSaveClick;
+        this.#saveBtn = document.createElement('button');
+        this.#saveBtn.innerHTML = "<i class='fa-solid fa-check'></i>";
+        this.#saveBtn.classList.add('save');
+        this.#saveBtn.parent = this;
+        this.#saveBtn.onclick = this.#onSaveClick;
 
-        this.$editBtn = document.createElement('button');
-        this.$editBtn.innerHTML = 'Редактирай';
-        this.$editBtn.classList.add('edit');
-        this.$editBtn.parent = this;
-        this.$editBtn.onclick = this.$onEditClick;
+        this.#editBtn = document.createElement('button');
+        this.#editBtn.innerHTML = 'Редактирай';
+        this.#editBtn.classList.add('edit');
+        this.#editBtn.parent = this;
+        this.#editBtn.onclick = this.#onEditClick;
 
-        this.$cancelBtn = document.createElement('button');
-        this.$cancelBtn.innerHTML = "<i class='fa-solid fa-arrow-left'></i>";
-        this.$cancelBtn.classList.add('cancel');
-        this.$cancelBtn.parent = this;
-        this.$cancelBtn.onclick = this.$onCancelClick;
+        this.#cancelBtn = document.createElement('button');
+        this.#cancelBtn.innerHTML = "<i class='fa-solid fa-arrow-left'></i>";
+        this.#cancelBtn.classList.add('cancel');
+        this.#cancelBtn.parent = this;
+        this.#cancelBtn.onclick = this.#onCancelClick;
 
-        this.$copyBtn = document.createElement('button');
-        this.$copyBtn.innerHTML = 'Копирай';
-        this.$copyBtn.classList.add('edit');
-        this.$copyBtn.parent = this;
-        this.$copyBtn.onclick = this.$onCopyClick;
+        this.#copyBtn = document.createElement('button');
+        this.#copyBtn.innerHTML = 'Копирай';
+        this.#copyBtn.classList.add('edit');
+        this.#copyBtn.parent = this;
+        this.#copyBtn.onclick = this.#onCopyClick;
     }
 
-    $makeXBtn() {
+    #makeXBtn() {
         const xBtn = document.createElement('button');
         xBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
         xBtn.classList.add('xmark');
         xBtn.parent = this;
-        xBtn.onclick = this.$onXClick;
+        xBtn.onclick = this.#onXClick;
         return xBtn;
     }
 
-    $addNewSentence() {
-        this.$sentences.push(`1 x 1 повторения ${Object.values(this.$exerciseData)[0][0]}`);
-        this.$initiateEdit();
-        this.$parentConatiner.scrollTo(0, document.body.scrollHeight);
+    #addNewSentence() {
+        this.#sentences.push(`1 x 1 повторения ${Object.values(this.#exerciseData)[0][0]}`);
+        this.#initiateEdit();
+        this.#parentContainer.scrollTo(0, document.body.scrollHeight);
     }
 
-    $removeSentence(sentence) {
-        this.$sentences.splice(this.$sentences.indexOf(sentence), 1);
-        this.$initiateEdit();
-        this.$parentConatiner.scrollTo(0, document.body.scrollHeight);
+    #removeSentence(sentence) {
+        this.#sentences.splice(this.#sentences.indexOf(sentence), 1);
+        this.#initiateEdit();
+        this.#parentContainer.scrollTo(0, document.body.scrollHeight);
     }
 
-    $onXClick() {
-        this.parent.$persistSentences();
-        this.parent.$removeSentence(this.sentence);
+    #onXClick() {
+        this.parent.#persistSentences();
+        this.parent.#removeSentence(this.sentence);
     }
 
-    $onPlusClick() {
-        this.parent.$persistSentences();
-        this.parent.$addNewSentence();
+    #onPlusClick() {
+        this.parent.#persistSentences();
+        this.parent.#addNewSentence();
     }
 
-    $onSaveClick() {
-        this.parent.$persistSentences();
-        this.parent.$sendData();
+    #onSaveClick() {
+        this.parent.#persistSentences();
+        this.parent.#sendData();
     }
 
-    $onEditClick() {
-        this.parent.$tempSentences = this.parent.$sentences.slice();
-        console.log(this.parent.$sentences);
-        this.parent.$initiateEdit('edit');
+    #onEditClick() {
+        this.parent.#tempSentences = this.parent.#sentences.slice();
+        this.parent.#initiateEdit('edit');
     }
 
-    $onCancelClick() {
-        this.parent.$sentences = this.parent.$tempSentences.slice();
+    #onCancelClick() {
+        this.parent.#sentences = this.parent.#tempSentences.slice();
         this.parent.initiateDefault();
     }
 
-    $onCopyClick() {
-        this.parent.$mainWM.copy(this.parent.$sentences);
+    #onCopyClick() {
+        this.parent.#mainWM.copy(this.parent.#sentences);
     }
 
-    $setWMState(state) {
-        this.$workoutContainer.innerHTML = '';
-        this.$sentencesDiv.innerHTML = '';
-        this.$controlsDiv.innerHTML = '';
+    #setWMState(state) {
+        this.#workoutContainer.innerHTML = '';
+        this.#sentencesDiv.innerHTML = '';
+        this.#controlsDiv.innerHTML = '';
         if (state == null) {
-            this.$setSentences();
-            this.$controlsDiv.appendChild(this.$editBtn);
-            if (this.$controlsDiv.classList.contains('edit-mode')) {
-                this.$controlsDiv.classList.remove('edit-mode');
+            this.#setSentences();
+            this.#controlsDiv.appendChild(this.#editBtn);
+            if (this.#controlsDiv.classList.contains('edit-mode')) {
+                this.#controlsDiv.classList.remove('edit-mode');
             }
         } else if (state == 'edit') {
-            this.$setSentences('edit');
-            if (!this.$controlsDiv.classList.contains('edit-mode')) {
-                this.$controlsDiv.classList.add('edit-mode');
+            this.#setSentences('edit');
+            if (!this.#controlsDiv.classList.contains('edit-mode')) {
+                this.#controlsDiv.classList.add('edit-mode');
             }
-            this.$controlsDiv.appendChild(this.$cancelBtn);
-            this.$controlsDiv.appendChild(this.$plusBtn);
-            this.$controlsDiv.appendChild(this.$saveBtn);
+            this.#controlsDiv.appendChild(this.#cancelBtn);
+            this.#controlsDiv.appendChild(this.#plusBtn);
+            this.#controlsDiv.appendChild(this.#saveBtn);
         } else if (state == 'copy') {
-            this.$setSentences();
-            this.$controlsDiv.appendChild(this.$copyBtn);
-        } else if (state =='view') {
-            this.$setSentences();
+            this.#setSentences();
+            this.#controlsDiv.appendChild(this.#copyBtn);
+        } else if (state == 'view') {
+            this.#setSentences();
         }
     }
 
-    $display() {
-        this.$parentConatiner.innerHTML = '';
-        this.$workoutContainer.appendChild(this.$sentencesDiv);
-        this.$workoutContainer.appendChild(this.$controlsDiv);
-        this.$parentConatiner.appendChild(this.$workoutContainer);
+    #display() {
+        this.#parentContainer.innerHTML = '';
+        this.#workoutContainer.appendChild(this.#sentencesDiv);
+        this.#workoutContainer.appendChild(this.#controlsDiv);
+        this.#parentContainer.appendChild(this.#workoutContainer);
     }
 
-    $persistSentences() {
+    #persistSentences() {
         let data = [];
         let sentence = '';
-        this.$sentencesDiv.childNodes.forEach(node => {
+        this.#sentencesDiv.childNodes.forEach(node => {
             if (node.classList[0] == 'sentence' && node.childNodes[2].value.length > 0) {
                 sentence = `${node.childNodes[0].value} x ${node.childNodes[2].value} ${node.childNodes[3].value}`;
                 sentence += ` ${node.childNodes[5].value}`;
@@ -391,18 +439,25 @@ export default class WorkoutManager {
                 data.push(sentence);
             }
         })
-        
+
         this.setSentences(data);
     }
 
-    $sendData() {
+    #loading() {
+        this.#parentContainer.innerHTML = '';
+        this.#workoutContainer.innerHTML = '<i class="fa-solid fa-dumbbell fa-spin fa-lg" style="margin:1.2rem auto"></i>';
+        this.#parentContainer.appendChild(this.#workoutContainer);
+    }
+
+    #sendData() {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `/home/update/${this.$parentConatiner.dataset.day}`, true);
+        xhr.open('POST', `/data/updateworkoutday/${this.#parentContainer.dataset.day}`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.sender = this;
 
         xhr.onload = function () {
             if (this.status == 200) {
+                console.log(this.response)
                 let responseParsed = JSON.parse(this.response);
 
                 if (responseParsed.error.length > 0) {
@@ -414,15 +469,16 @@ export default class WorkoutManager {
                     this.sender.initiateDefault();
                 }
                 this.sender.setCSRF(responseParsed.token);
-                this.sender.$setTitle(responseParsed.title);
+                this.sender.#setTitle(responseParsed.title);
             }
         };
 
-        const postStringDefault = `data=${this.$sentences.join('\n')}&token=${this.$CSRF}`;
-        if (this.$user != undefined) {
-            xhr.send(postStringDefault + `&user=${this.$user}`);
+        const postStringDefault = `data=${this.#sentences.join('\n')}&token=${this.#CSRF}`;
+        if (this.#user != undefined) {
+            xhr.send(postStringDefault + `&user=${this.#user}`);
         } else {
             xhr.send(postStringDefault);
         }
+        this.#loading();
     }
 }

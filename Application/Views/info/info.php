@@ -1,5 +1,5 @@
 <?php
-    use Application\Utilities\{Input, Token, Constants};
+    use Application\Utilities\{Input, Token, Constants, Functions};
 
     $slug = explode('/', Input::get('url'));
     $slug = end($slug);
@@ -7,10 +7,6 @@
     if (!$data['adminMode'] && !strlen($data['content'] && $data['info'])) {
         $data['title'] = $data['info'][0]->title;
         $data['content'] = $data['info'][0]->content;
-    }
-    $inputs = null;
-    if ($data['inputs'] != null) {
-        $inputs = $data['inputs'];
     }
 ?>
 
@@ -46,13 +42,13 @@
         <?php } elseif ((Input::keyExists('action') && Input::get('action') == 'create') || $errors != null) { ?>
             <?php if ($errors != null) include 'Application/Views/Common/error-section.php' ?>
             <form action="/info/create" method="POST">
-                <input type="text" name="title" maxlength="45" placeholder="Заглавие" required value="<?php if ($inputs != null) echo $inputs['title'] ?>">
+                <input type="text" name="title" maxlength="45" placeholder="Заглавие" required value="<?= Input::keyExists('title') ? Functions::escape(Input::get('title')) : '' ?>">
                 <div style="margin: 10px">
-                    <input type="text" name="slug" maxlength="45" placeholder="Slug" required value="<?php if ($inputs != null) echo $inputs['slug'] ?>">
+                    <input type="text" name="slug" maxlength="45" placeholder="Slug" required value="<?= Input::keyExists('slug') ? Functions::escape(Input::get('slug')) : '' ?>">
                 </div>
-                <textarea name="content" maxlength="1000" placeholder="Съдържание" required><?php if ($inputs != null) echo $inputs['content'] ?></textarea>
+                <textarea name="content" maxlength="1000" placeholder="Съдържание" required><?= Input::keyExists('content') ? Functions::escape(Input::get('content')) : '' ?></textarea>
                 <input type="hidden" name="token" value="<?= Token::generate('session/info_create_token') ?>">
-                <input type="submit" class="btn-default" value="Запамети">
+                <input type="submit" class="btn-default" value="Запази">
                 <a href="/info" class="menu-item" style="margin-top: 10px">Назад</a>
             </form>
             <?php } else {
@@ -67,7 +63,7 @@
                 <?php } elseif ($data['adminMode']) {
                 echo "<div class='infos-menu'>";
                 foreach ($data['info'] as $info) { ?>
-                    <a href="/info/<?= $info->slug ?>"><?= $info->title ?></a><br>
+                    <a href="/info/<?= $info->slug ?>"><?= $info->title ?></a>
                 <?php }
                 echo '</div>';
             } else {

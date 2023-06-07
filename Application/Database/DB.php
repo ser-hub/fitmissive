@@ -7,7 +7,6 @@ use application\utilities\Config;
 use \PDO;
 use \PDOException;
 
-//database wrapper class
 class DB
 {
     private static $instance = null;

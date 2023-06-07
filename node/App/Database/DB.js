@@ -1,7 +1,7 @@
 import * as mysql2 from 'mysql2'
 
 export default class DB {
-    #connection
+    #connection;
     constructor(host, username, password, dbName) {
         if (host != null && username != null && password != null && dbName != null) {
             this.#connection = mysql2.createConnection({
@@ -9,16 +9,16 @@ export default class DB {
                 user: username,
                 password: password,
                 database: dbName
-            })
+            });
         } else {
             this.#connection = mysql2.createConnection({
                 host: process.env.DB_HOST,
                 user: process.env.DB_USERNAME,
                 password: process.env.DB_PASSWORD,
                 database: process.env.DB_NAME
-            })
+            });
         }
-        this.#connect()
+        this.#connect();
     }
 
     #connect() {
@@ -30,8 +30,8 @@ export default class DB {
 
     query(queryString, parameters = [], callback) {
         this.#connection.query(queryString, parameters, function (err, result, fields) {
-            if (err) throw err
-            if (callback) callback(result)
-        })
+            if (err) throw err;
+            if (callback) callback(result);
+        });
     }
 }

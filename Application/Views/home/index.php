@@ -1,6 +1,6 @@
 <?php
 
-use Application\Utilities\{Token, Session, Functions};
+use Application\Utilities\{Token, Session, Functions, Input};
 ?>
 
 <div class="index-content">
@@ -17,28 +17,28 @@ use Application\Utilities\{Token, Session, Functions};
                         <legend>Нямаш акаунт? Регистрирай се тук.</legend>
                     </div>
                     <div class="row">
-                        <label for="usernameReg">Потребителско име:</label>
-                        <input type="text" name="usernameReg" id="usernameReg" value="<?= isset($data['RegInput']['usernameReg']) ? Functions::escape($data['RegInput']['usernameReg']) : '' ?>" required />
+                        <label for="username-reg">Потребителско име:</label>
+                        <input type="text" name="username-reg" id="username-reg" value="<?= Input::keyExists('usernameReg') ? Functions::escape(Input::get('usernameReg')) : '' ?>" required />
                     </div>
                     <div class="row">
                         <label for="email">Имейл:</label>
-                        <input type="text" name="email" id="email" value="<?= isset($data['RegInput']['email']) ? Functions::escape($data['RegInput']['email']) : '' ?>" required />
+                        <input type="text" name="email" id="email" value="<?= Input::keyExists('email') ? Functions::escape(Input::get('email')) : '' ?>" required />
                     </div>
                     <div class="row">
-                        <label for="passwordReg">Парола:</label>
-                        <input type="password" name="passwordReg" id="passwordReg" required />
+                        <label for="password-reg">Парола:</label>
+                        <input type="password" name="password-reg" id="password-reg" required />
                     </div>
                     <div class="row">
                         <label for="password2">Повторете паролата:</label>
                         <input type="password" name="password2" id="password2" required />
                     </div>
                     <div class="row row-btn">
-                        <input type="hidden" name="RegisterToken" value="<?= Token::generate('session/register_token'); ?>">
+                        <input type="hidden" name="register-token" value="<?= Token::generate('session/register_token'); ?>">
                         <input type="submit" value="Регистрирай се">
                     </div>
                     <?php
-                    $errorsLabel = 'RegErrors';
-                    if (isset($data[$errorsLabel]) || Session::exists('error') || Session::exists('success')) {
+                    $errorsLabel = 'regErrors';
+                    if (isset($data[$errorsLabel]) || Session::exists('success')) {
                         echo '<div class="row row-errors">';
                         require_once 'Application/Views/Common/error-section.php';
                         echo '</div>';
@@ -54,21 +54,21 @@ use Application\Utilities\{Token, Session, Functions};
                     </div>
                     <div class="row">
                         <label for="username">Потребителско име:</label>
-                        <input type="text" name="username" id="username" value="<?= isset($data['LogInput']['username']) ? Functions::escape($data['LogInput']['username']) : '' ?>" />
+                        <input type="text" name="username" id="username" value="<?= Input::keyExists('username') ? Functions::escape(Input::get('username')) : '' ?>" />
                     </div>
                     <div class="row">
                         <label for="password">Парола:</label>
-                        <input type="password" name="password" id="password" value="<?= isset($data['LogInput']['password']) ? Functions::escape($data['LogInput']['password']) : '' ?>" />
+                        <input type="password" name="password" id="password"/>
                     </div>
                     <div class="row row-btn">
-                        <input type="hidden" name="LoginToken" value="<?= Token::generate('session/login_token'); ?>">
+                        <input type="hidden" name="login-token" value="<?= Token::generate('session/login_token'); ?>">
                         <input type="submit" value="Влизане">
                     </div>
                     <div class="row row-btn">
                         <a href="#" id="forgotten-password">Забравих паролата си</a>
                     </div>
                     <?php
-                    $errorsLabel = 'LogErrors';
+                    $errorsLabel = 'logErrors';
                     if (isset($data[$errorsLabel])) {
                         echo '<div class="row row-errors">';
                         require_once 'Application/Views/Common/error-section.php'; // do something about error-section.php

@@ -1,16 +1,15 @@
 import {Server} from 'socket.io'
 
-export default class Socket 
-{
-    #io
+export default class Socket {
+    #io;
     constructor(server) {
-        this.#io = new Server(server)
+        this.#io = new Server(server);
     }
 
     filter(filterFunc) {
         this.#io.use((socket, next) => {
             if (filterFunc && socket && next) {
-                filterFunc(socket, next)
+                filterFunc(socket, next);
             }
         })
     }
@@ -18,18 +17,18 @@ export default class Socket
     setUpResponse(messageString, response) {
         this.#io.on('connection', (socket) => {
             socket.on(messageString, (args) => {
-                response(socket, args)
+                response(socket, args);
             })
         })
     }
 
     onConnection(toDo) {
         this.#io.on('connection', (socket) => {
-            toDo(socket)
+            toDo(socket);
         })
     }
 
     getSockets() {
-        return this.#io.of("/").sockets
+        return this.#io.of("/").sockets;
     }
 }

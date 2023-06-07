@@ -4,18 +4,22 @@ if (searchResults) {
     searchResults.forEach(node => {
         node.addEventListener('click', function () {
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `/search/follow`, true);
+                xhr.open('POST', `/data/followuser`, true);
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 xhr.onload = function() {
                     if (this.status == 200) {
-                        changeFollowState(node);
-                        node.dataset.token = this.responseText;
+                        const response = JSON.parse(this.response);
+                        if (response.status == 'success') {
+                            changeFollowState(node);
+                            node.style.opacity = '100%';
+                        }
+                        node.dataset.token = response.token;
                     }
                 };
                 xhr.send(`action=${node.innerText}&followed=${node.dataset.target}&token=${node.dataset.token}`);
+                node.style.opacity = '50%';
         });
     });
-    
 }
 
 function changeFollowState(element) {
