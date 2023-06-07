@@ -42,7 +42,7 @@ abstract class Controller
         if ($this->loggedUser) {
             $data['loggedUser'] = $this->loggedUser;
             $data['loggedUsername'] = $this->loggedUsername;
-            $data['unseenMessages'] = $this->chatService->unseenMessages($this->loggedUser);
+            $data['unseenMessages'] = $this->chatService->unseenMessagesCount($this->loggedUser);
             $data['isAdmin'] = $this->userService->getLoggedUser()->role_name === Constants::USER_ROLE_ADMIN;
         }
 

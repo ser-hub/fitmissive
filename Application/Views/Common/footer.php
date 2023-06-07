@@ -33,6 +33,7 @@ use Application\Utilities\Input;
         <a href="/messenger" class="<?= $stylesheet == 'messenger' ? " menu-selected" : "" ?>">
             <i class="fa-<?= $stylesheet == 'messenger' ? "solid" : "regular" ?> fa-message fa-xl"></i>
             Съобщения
+            <div class="notification"><?= $data['unseenMessages'] > 0 ? $data['unseenMessages'] : '' ?></div>
         </a>
 
         <?php if ($data['isAdmin']) { ?>
@@ -41,6 +42,11 @@ use Application\Utilities\Input;
             Администраторски панел
         </a>
         <?php } ?>
+
+        <a href="/help" class="<?= $stylesheet == 'help' ? " menu-selected" : "" ?>" style="margin-top: auto">
+            <i class="fa-solid fa-magnifying-glass fa-xl"></i>
+            Упражнения
+        </a>
 
         <a href="/home/logout" class="logout-btn">
             <i class="fa-solid fa-door-open fa-xl"></i>

@@ -1,13 +1,13 @@
 <script src='/node/node_modules/socket.io/client-dist/socket.io.js'></script>
 <script>
-    var recipient = <?php
+    const recipient = <?php
                     if (isset($data['receiver'])) {
                         echo json_encode($data['receiver']);
                     } else {
                         echo json_encode('');
                     }
                     ?>;
-    var username = <?php
+    const username = <?php
                     if (isset($data['loggedUsername'])) {
                         echo json_encode($data['loggedUsername']);
                     } else {
@@ -35,13 +35,16 @@
             content,
             from
         }) {
-            if (recipient == "") {
-                var menuItems = document.querySelector('.items');
-                menuItems.childNodes.forEach(function(menuItem) {
-                    if (menuItem.textContent == 'Messenger' && !menuItem.classList.contains('notification')) {
-                        menuItem.classList.add('notification');
+            if (document.baseURI.split('/')[3] != "messenger") {
+                const messageCount = document.querySelector('.notification');
+                if (messageCount.textContent.length > 0) {
+                    let count = parseInt(messageCountText.textContent);
+                    if (count != 99) {
+                        messageCount.textContent = ++count;
                     }
-                });
+                } else {
+                    messageCount.textContent = '1';
+                }
             }
         });
 
