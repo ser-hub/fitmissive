@@ -1,0 +1,65 @@
+.help-container {
+    height: var(--content-height);
+    background-color: white;
+    display: grid;
+    width: 50svw;
+    margin: auto;
+    grid-template-rows: .1fr;
+    border-left: 1px solid;
+    border-right: 1px solid;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    grid-column: span 2;
+}
+
+.controls {
+    grid-column: 2;
+}
+
+.selector-section {
+    width: fit-content;
+}
+
+.selector-section,
+.controls {
+    flex-basis: fit-content;
+    margin: 1rem .5rem;
+}
+
+.category-select {
+    width: 100%;
+    padding: 2px 6px;
+    border: 2px solid var(--main-color);
+    border-radius: 10px;
+}
+
+.options {
+    border: 2px solid var(--main-color);
+    margin-top: .5rem;
+    border-radius: 10px;
+}
+
+.option {
+    padding: 1px 0.5rem 2px 0.5rem;
+    cursor: pointer;
+}
+
+.option:nth-child(1) {
+    border-radius: 7px 7px 0 0;
+}
+
+.option:last-child {
+    border-radius: 0 0 7px 7px;
+}
+
+.option-selected,
+.option:hover {
+    background-color: var(--main-color);
+    color: white;
+    padding: 2px 0.5rem 3px 0.5rem;
+}

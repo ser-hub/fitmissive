@@ -1,4 +1,213 @@
 .admin-container {
     height: var(--content-height);
     background-color: white;
+    width: fit-content;
+    margin: auto;
+    border-left: 1px solid;
+    border-right: 1px solid;
 }
+
+.nav-bar {
+    background-image: linear-gradient(to left, var(--rare-color) -60%, transparent);
+    display: flex;
+    margin: 5px 5px 0 5px;
+}
+
+.nav-link {
+    color: inherit;
+    text-decoration: none;
+    padding: .5rem;
+}
+
+.nav-selected,
+.nav-link:hover {
+    color: var(--main-color);
+}
+
+.nav-selected {
+    text-decoration: underline;
+}
+
+.nav-link:hover {
+    animation: nav-select 1s linear infinite;
+}
+
+.panel-container {
+    margin: 0 5px 5px 5px;
+    display: flex;
+}
+
+.plus-btn {
+    text-align: center;
+    padding: 2px 0;
+    cursor: pointer;
+    border-radius: 0 0 10px 10px;
+}
+
+.options {
+    border-radius: 10px 10px 0 0;
+    border-bottom: 0;
+}
+
+.option:last-child {
+    border-radius: 0;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.result {
+    font-family: system-ui;
+    border: 2px solid var(--main-color);
+    border-radius: 10px;
+    padding: .5rem 1rem;
+}
+
+.controls-color {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 20px;
+    margin: .5rem;
+}
+
+#exercise-title, 
+#exercise-description {
+    border: 2px solid var(--main-color);
+    margin: 5px;
+    padding: 3px 6px;
+    resize: none;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+#exercise-title {
+    margin: 5px 9px;
+    width: 200px;
+}
+
+textarea {
+    width: 40svw;
+}
+
+.row {
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.row-btn {
+    justify-content: center;
+}
+
+.save-btn {
+    background-color: var(--main-color);
+    color: white;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.color-section {
+    margin: .5rem;
+    margin-inline-start: .5rem;
+}
+
+.color-select {
+    width: 40px;
+    height: 25px;
+    border-left: 2px solid;
+    position: absolute;
+    box-shadow: 1px 0px 2px var(--rare-color);
+}
+
+.color-select:hover,
+.color-selected {
+    cursor: pointer;
+    width: 50px;
+    box-shadow: 1px 1px 2px var(--rare-color);
+}
+
+.color-display {
+    width: 40px;
+    height: 40px;
+    margin: .5rem auto;
+    box-shadow: 1px 1px 2px;
+}
+
+.color-piece {
+    width: 20px;
+    height: 1px;
+    border-right: 2px solid;
+    border-left: 2px solid;
+}
+
+.red,
+.green,
+.blue {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 2px solid;
+    border-bottom: 2px solid;
+}
+
+.red-value,
+.green-value,
+.blue-value {
+    font-family: system-ui;
+    margin: .5rem;
+    width: 50px;
+}
+
+.result-value {
+    border: 0;
+    margin: .5rem 0;
+    cursor: pointer;
+    width: 50px;
+}
+
+@media (max-width: 600px) {
+    #exercise-title {
+        width: 150px;
+    }
+
+    .row {
+        flex-direction: column;
+    }
+}
+
+@keyframes nav-select {
+    0% {
+        text-shadow: 0px 1px 1px var(--rare-color);
+    }
+
+    25% {
+        text-shadow: 1px 2px 3px var(--rare-color);
+        padding-top: 7px;
+        padding-left: 7px;
+        padding-right: 9px;
+    }
+
+    50% {
+        text-shadow: 2px 3px 3px var(--rare-color);
+        padding-top: 6px;
+        padding-left: 6px;
+        padding-right: 10px;
+    }
+
+    75% {
+        text-shadow: 1px 2px 3px var(--rare-color);
+        padding-top: 7px;
+        padding-left: 7px;
+        padding-right: 9px;
+    }
+
+    100% {
+        text-shadow: 0px 1px 1px var(--main-color);
+    }
+  }

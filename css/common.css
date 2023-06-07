@@ -1,5 +1,5 @@
 :root {
-    --content-height: 84svh;
+    --content-height: 87svh;
 }
 
 body {
@@ -25,11 +25,16 @@ body {
     align-items: center;
     background-color: var(--main-color);
     padding: 0px 10px;
-    justify-content: center;
+    justify-content: flex-end;
+}
+
+.hint {
+    text-align: center;
+    font-size: large;
 }
 
 .footer-container {
-    height: 8svh;
+    height: 5svh;
     font-size: small;
     align-items: baseline;
     color: black;
@@ -40,6 +45,7 @@ body {
 }
 
 .profile-pic {
+    padding: 1px;
     border: 2px solid;
     border-color: var(--secondary-color);
     margin-right: 5px;
@@ -48,7 +54,6 @@ body {
 
 .footer-items {
     text-align: center;
-    padding-top: 5px
 }
 
 .footer-items a {
@@ -62,8 +67,6 @@ body {
 }
 
 .side-bar {
-    width: 13vw;
-    padding: 10px 0px;
     background-color: var(--secondary-color);
     border-left: 3px solid var(--rare-color);
     display: flex;
@@ -73,7 +76,6 @@ body {
 }
 
 .side-bar a.logout-btn {
-    margin-top: auto;
     margin-bottom: 10px
 }
 
@@ -178,8 +180,13 @@ textarea:focus {
 
 .row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
+}
+
+.row-btn {
+    justify-content: center;
+    padding: 10px 0px;
 }
 
 .error {
@@ -191,7 +198,14 @@ textarea:focus {
 }
 
 .notification {
-    text-decoration: underline;
+        text-decoration: none;
+        padding: 0px 3px;
+        margin-left: 0.3rem;
+        font-family: system-ui;
+        font-size: xx-small;
+        position: absolute;
+        margin-bottom: 5px;
+        margin-left: 2px;
 }
 
 .rating-section {

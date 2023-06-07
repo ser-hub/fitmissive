@@ -7,7 +7,8 @@
 }
 
 .carousel-inner {
-    background-color: var(--main-color) /*#C5C3C6*/;
+    background-color: var(--main-color);
+    box-shadow: -1px 1px 4px var(--rare-color);;
 }
 
 .profile-content {
@@ -201,19 +202,21 @@ h4 {
     margin-right: .3rem;
     display: flex;
     height: 100%;
+    width: 120px;
 }
 
 .color-picker {
     border: 0;
-    height: 80%;
-    width: 26px;
+    height: 30px;
+    width: 25px;
     border-radius: 0 0 10px 10px;
+    position: absolute;
+    box-shadow: 0px 1px 1px var(--rare-color);
 }
 
 .color-picker-selected,
 .color-picker:hover {
-    width: 30px;
-    margin: 0 2px;
+    height: 40px;
 }
 
 .profile-data-bottom {

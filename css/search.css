@@ -9,16 +9,17 @@
     display: flex;
     flex-direction: column;
     background-color: white;
-    box-shadow: 0px 0px 3px;
     width: 40vw;
-    margin: auto;
+    border-right: 1px solid;
+    border-left: 1px solid;
 }
 
 .results-wrapper {
     height: inherit;
-    display: inherit;
+    display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    gap: 1rem;
+    padding: 0.5rem;
 }
 
 .search-results-empty {
@@ -78,6 +79,12 @@ input[type=submit] {
     border-radius: 10px;
     border: none;
     padding: 5px 12px;
+}
+
+@media (max-width: 991px) {
+    .search-results {
+        width: 60svw;
+    }
 }
 
 @media (max-width: 600px) {

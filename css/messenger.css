@@ -1,10 +1,16 @@
-.messenger-content {
-    background-image: linear-gradient(270deg, transparent 76%, var(--main-color));
+.empty-message {
+    width: inherit;
+    height: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
 }
 
 .chat-window {
     height: var(--content-height);
-    width: 100%;
+    margin: auto;
+    width: 65%;
     display: flex;
     flex-direction: column;
 }
@@ -25,7 +31,7 @@
 .message-box {
     display: flex;
     border-radius: 50px;
-    margin: 10px;
+    margin: 10px 20px;
     padding: 6px 8px;
     background: white;
     font-size: medium;
@@ -47,6 +53,7 @@
     border: 0;
     cursor: pointer;
     font-weight: bold;
+    color: var(--main-color);
 }
 
 .chat-header {
@@ -79,6 +86,7 @@
 }
 
 .chat-item {
+    max-width: 50%;
     display: flex;
     background: white;
     border-radius: 10px;
@@ -97,6 +105,7 @@
     margin-top: 1rem;
     font-family: system-ui;
     font-size: x-small;
+    font-style: italic;
 }
 
 .message-timestamp {
@@ -136,7 +145,9 @@
     display: flex;
     flex-direction: column;
     overflow: scroll;
-    width: 18%;
+    width: 220px;
+    background-color: white;
+    border-right: 1px solid var(--main-color);
 }
 
 .user-chats::-webkit-scrollbar {
@@ -144,14 +155,12 @@
 }
 
 .chat-button {
-    border-right: 1px solid var(--main-color);
     padding: .5rem;
     height: inherit;
     width: inherit;
     display: flex;
     position: relative;
     align-items: center;
-    background-color: var(--bg-color);
 }
 
 .user-chats a {
@@ -162,22 +171,33 @@
     align-items: center;
 }
 
-.selected {
-    color: white;
+.chat-header .profile-pic {
     border-color: var(--main-color);
-    border-width: 1px 0px 1px 1px;
-    border-style: solid;
-    background-color: transparent;
+}
+
+.selected {
+    background-image: linear-gradient(to left, var(--main-color) -15%, transparent 20%);
 }
 
 .selected .profile-pic {
-    border-color: white;
+    border-color: var(--main-color);
 }
 
 .chat-button-text {
     display: flex;
     flex-direction: column;
     overflow-wrap: anywhere;
+}
+
+.messages-notify {
+    color: var(--main-color);
+    font-size: smaller;
+}
+
+.chat-notify {
+    width: 100%;
+    text-align: center;
+    color: green;
 }
 
 .online {
@@ -197,7 +217,23 @@
     font-style: italic;
 }
 
+.loading-icon {
+    margin: auto;
+    width: fit-content;
+    margin-top: .5rem;
+}
+
+@media (max-width: 1050px) {
+    .chat-window {
+        width: 100%;
+    }
+}
+
 @media (max-width: 600px) {
+    .empty-message {
+        margin-bottom: 2rem;
+    }
+
     .messenger-content {
         flex-direction: column;
         background-image: none;

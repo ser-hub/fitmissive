@@ -36,6 +36,10 @@ textarea {
     background-color: var(--rare-color);
 }
 
+.carousel-caption {
+    padding-top: 0;
+}
+
 .carousel-area::-webkit-scrollbar {
     display: none;
 }
@@ -61,10 +65,14 @@ textarea {
 
 .sentences {
     border-radius: 10px 10px 0px 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 2px 0;
 }
 
 .sentence {
-    padding: 0.3rem 0.5rem;
+    padding: 0 0.5rem;
 }
 
 .controls {
@@ -110,7 +118,7 @@ textarea {
     box-shadow: 1px 1px 0px;
     border-radius: 99px;
     border: 0;
-    padding: 5px 10px;
+    padding: 5px 6px;
     margin: 5px 0;
 }
 
@@ -120,6 +128,7 @@ textarea {
 
 .sets {
     background-color: var(--extra-color2);
+    padding: 5px 9px;
 }
 
 .reps {
@@ -194,7 +203,7 @@ select:focus {
     align-items: center;
     color: black;
     width: 80%;
-    max-height: 85%;
+    max-height: 80%;
     padding: 10px 0;
     overflow-y: auto;
 }

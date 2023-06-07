@@ -1,13 +1,9 @@
-.hint {
-    text-align: center;
-}
-
 .header-container {
     display: none;
 }
 
 .index-content {
-    height: 92svh;
+    height: 95svh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -21,15 +17,16 @@
 }
 
 .letter-header {
-    background-image: linear-gradient(to bottom, var(--main-color) 85%, transparent);
+    background-color: var(--main-color);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-bottom: 10px;
+    padding-bottom: 7px;
 }
 
 .pages {
+    box-shadow: inset 0px 1px 7px var(--rare-color);
     display: flex;
     justify-content: center;
 }
@@ -58,6 +55,7 @@ input[type=password] {
 }
 
 input[type=submit] {
+    cursor: pointer;
     font-style: italic;
     padding: 10px 30px;
     border-radius: 10px;
@@ -80,11 +78,6 @@ input[type=submit]:hover {
     font-style: italic;
 }
 
-.row-btn {
-    justify-content: center;
-    padding: 10px 0px;
-}
-
 legend {
     color: var(--secondary-color);
     width: 100%;
@@ -105,7 +98,6 @@ legend {
 .email-btn {
     border: 0px;
     font-size: 9pt;
-    font-style: italic;
     border-radius: 10px;
 }
 
