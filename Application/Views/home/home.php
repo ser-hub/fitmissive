@@ -3,7 +3,7 @@
 
     $today = date('N');
     $today--;
-    $followedSplits = $data['followedSplits'];
+    $followedSplits = $data['followedWorkouts'];
 
     $ratingToken = Token::generate('session/rating_token');
     $weekDayTokens = [];
@@ -19,7 +19,7 @@
         foreach ($followedSplits as $userId => $split) {
         ?>
             <div class="followed-split">
-                <div id="FollowedSplitCarousel<?= $currentCarousel ?>" class="carousel slide" data-bs-ride="false">
+                <div id="FollowedSplitCarousel<?= $currentCarousel ?>" class="carousel slide">
                     <div class="carousel-indicators">
                         <?php for ($i = 0; $i < 7; $i++) { ?>
                             <button data-bs-target="#FollowedSplitCarousel<?= $currentCarousel ?>" data-bs-slide-to="<?php echo $i ?>" <?= $i == $today ? "class='active' aria-current='true'" : '' ?> aria-label="<?php echo $dayOfWeek[$i] ?> slide"></button>
@@ -31,6 +31,7 @@
                                 <div class="carousel-content">
                                     <div class="scroller" name="<?= $dayOfWeek[$i] ?>">
                                         <?= isset($split[$dayOfWeek[$i]]->description) ? $split[$dayOfWeek[$i]]->description : "" ?>
+                                            <i class="fa-solid fa-dumbbell fa-spin fa-lg" style="margin-left: 1rem"></i>
                                     </div>
                                 </div>
                                 <div class="carousel-caption d-none d-md-block">
@@ -51,7 +52,13 @@
                     </button>
                 </div>
                 <div class="carousel-bottom">
-                    <img src="<?= $split['userPicture'] ?>" class="profile-pic" width="50px" height="50px" alt="Profile picture">
+                    <img 
+                        src="<?= $split['userPicture'] ?>" 
+                        class="profile-pic" 
+                        width="50px" 
+                        height="50px" 
+                        alt="Profile picture"
+                        style="border-color: #<?= $split['color'] ?>">
                     <?= $userId ?>
                     <?php
                     $username = $split['username'];
@@ -69,5 +76,5 @@
     </div>
 </div>
 
-<script src='/Application/Views/Common/js/rateButtons.js'></script>
+<script src='/Application/Views/Common/js/rate.js'></script>
 <script type="module" src="/node/assets/js/bootstrap.js"></script>

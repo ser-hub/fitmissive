@@ -6,10 +6,10 @@ $dayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 $dayOfWeekDisplay = ['Понеделник', 'Вторник', 'Сряда', 'Четвъртък', 'Петък', 'Събота', 'Неделя'];
 
 $splits = null;
-if (isset($data['splits'])) $splits = $data['splits'];
+if (isset($data['workout'])) $splits = $data['workout'];
 ?>
 
-<div id="SplitCarousel" class="carousel slide" data-bs-ride="false" style="margin-top:15px">
+<div id="SplitCarousel" class="carousel slide" style="margin-top:15px">
     <div class="carousel-indicators">
         <?php for ($i = 0; $i < 7; $i++) { ?>
             <button data-bs-target="#SplitCarousel" data-bs-slide-to="<?php echo $i ?>" <?= $i == $today ? "class='active' aria-current='true'" : '' ?> aria-label="<?php echo $dayOfWeek[$i] ?> slide"></button>
@@ -21,6 +21,7 @@ if (isset($data['splits'])) $splits = $data['splits'];
                 <div class="carousel-content">
                     <div class="scroller" name="workout-container" data-day="<?= $dayOfWeek[$i] ?>" data-token="<?= Token::generate('session/weekday_tokens/' . $dayOfWeek[$i]) ?>">
                         <?= isset($splits[$dayOfWeek[$i]]) ? $splits[$dayOfWeek[$i]]->description : "" ?>
+                            <i class="fa-solid fa-dumbbell fa-spin fa-lg" style="margin-left: 1rem"></i>  
                     </div>
                 </div>
                 <div class="carousel-caption d-none d-md-block">
