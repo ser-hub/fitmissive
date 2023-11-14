@@ -1,7 +1,7 @@
-# fitmissive (prototype)
-  Social media platform for fitness enthusiasts
+# Fitmissive
+Social media platform for fitness enthusiasts (prototype)
 
-* A digital space where enthusiasts can share their workout plans -> learn from each other *
+* A digital space where enthusiasts can share their workout plans -> learn from each other
 
 Features:
 * User system: Login/Registration, Password Reset, User profiles, User search, Follow/Unfollow users
@@ -13,7 +13,7 @@ Features:
 * Admin account: Controls (CRUD) background colors, exercise database and site information
 
 
-
+Tech:
 Back-end: PHP
 Front-end: PHP, HTML, CSS and JavaScript
 Database: MySQL
