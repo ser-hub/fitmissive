@@ -14,8 +14,8 @@ Features:
 
 
 Tech:
-Back-end: PHP
-Front-end: PHP, HTML, CSS and JavaScript
-Database: MySQL
-Real-time chat: Socket.io with NodeJS back-end
-Emails: PHPMailer (Gmail)
+* Back-end: PHP
+* Front-end: PHP, HTML, CSS and JavaScript
+* Database: MySQL
+* Real-time chat: Socket.io with NodeJS back-end
+* Emails: PHPMailer (Gmail)
